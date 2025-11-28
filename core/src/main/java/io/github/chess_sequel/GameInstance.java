@@ -16,7 +16,7 @@ public class GameInstance extends Game {
     public void create(){
         batch = new SpriteBatch();
         font = new BitmapFont();
-        viewport = new FitViewport(10, 10);
+        viewport = new FitViewport(8, 8);
 
         font.setUseIntegerPositions(false);
         font.getData().setScale(viewport.getWorldHeight()/ Gdx.graphics.getHeight());

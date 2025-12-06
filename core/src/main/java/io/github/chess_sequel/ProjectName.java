@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import io.github.chess_sequel.gameScreen.MenuScreen;
 
-public class GameInstance extends Game {
+public class ProjectName extends Game {
 
     public SpriteBatch batch;
     public BitmapFont font;

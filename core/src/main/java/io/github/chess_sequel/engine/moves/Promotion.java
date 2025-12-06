@@ -1,7 +1,8 @@
 package io.github.chess_sequel.engine.moves;
 
 
-import io.github.chess_sequel.engine.location.Board;
+import io.github.chess_sequel.engine.location.board.Board;
+import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.pieces.*;
 
 public class Promotion extends Move{
@@ -21,13 +22,13 @@ public class Promotion extends Move{
 
         board.getPieces().remove(capturedPiece);
         if(type == PieceType.QUEEN){
-            promotionPiece = new Queen(newX, newY, movingPiece.isWhite(), board.getTileSize());
+            promotionPiece = new Queen(newX, newY, movingPiece.isWhite());
         } else if (type == PieceType.BISHOP){
-            promotionPiece = new Bishop(newX, newY, movingPiece.isWhite(), board.getTileSize());
+            promotionPiece = new Bishop(newX, newY, movingPiece.isWhite());
         }else if (type == PieceType.HORSE){
-            promotionPiece = new Horse(newX, newY, movingPiece.isWhite(), board.getTileSize());
+            promotionPiece = new Horse(newX, newY, movingPiece.isWhite());
         }else if (type == PieceType.CASTLE){
-            promotionPiece = new Castle(newX, newY, movingPiece.isWhite(), board.getTileSize());
+            promotionPiece = new Castle(newX, newY, movingPiece.isWhite());
         }
 
         board.getPieces().remove(movingPiece);

@@ -1,7 +1,8 @@
 package io.github.chess_sequel.engine.pieces;
 
 
-import io.github.chess_sequel.engine.location.Board;
+import io.github.chess_sequel.engine.location.board.Board;
+import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Castling;
 import io.github.chess_sequel.engine.moves.Move;
 
@@ -9,8 +10,8 @@ import java.util.ArrayList;
 
 public class King extends Piece {
 
-    public King(int x, int y, boolean isWhite, int size){
-        super(x, y, isWhite, "king", size);
+    public King(int x, int y, boolean isWhite){
+        super(x, y, isWhite, "king");
         pieceType = PieceType.KING;
 
     }
@@ -20,32 +21,32 @@ public class King extends Piece {
         ArrayList<Move> moves = new ArrayList<>();
         if(isWhite == board.getWhiteToMove()) {
             //Currently no moves are showing and this setup also means king can take pieces of its own colour
-            if (xord / size - 1 >= 0) {
-                moves.add(new Move(this, xord / size - 1, yord / size, board));
-                if (yord / size - 1 >= 0) {
-                    moves.add(new Move(this, xord / size - 1, yord / size - 1, board));
+            if (col - 1 >= 0) {
+                moves.add(new Move(this, col - 1, row, board));
+                if (row - 1 >= 0) {
+                    moves.add(new Move(this, col - 1, row - 1, board));
                 }
-                if (yord / size + 1 < board.boardY) {
-                    moves.add(new Move(this, xord / size - 1, yord / size + 1, board));
-                }
-            }
-
-            if (yord / size - 1 >= 0) {
-                moves.add(new Move(this, xord / size, yord / size - 1, board));
-            }
-
-            if (xord / size + 1 < board.boardX) {
-                moves.add(new Move(this, xord / size + 1, yord / size, board));
-                if (yord / size + 1 < board.boardX) {
-                    moves.add(new Move(this, xord / size + 1, yord / size + 1, board));
-                }
-                if (yord - 1 >= 0) {
-                    moves.add(new Move(this, xord / size + 1, yord / size - 1, board));
+                if (row + 1 < board.boardY) {
+                    moves.add(new Move(this, col - 1, row + 1, board));
                 }
             }
 
-            if (yord / size + 1 < board.boardX) {
-                moves.add(new Move(this, xord / size, yord / size + 1, board));
+            if (row - 1 >= 0) {
+                moves.add(new Move(this, col, row - 1, board));
+            }
+
+            if (col + 1 < board.boardX) {
+                moves.add(new Move(this, col + 1, row, board));
+                if (row + 1 < board.boardX) {
+                    moves.add(new Move(this, col + 1, row + 1, board));
+                }
+                if (row - 1 >= 0) {
+                    moves.add(new Move(this, col + 1, row - 1, board));
+                }
+            }
+
+            if (row + 1 < board.boardX) {
+                moves.add(new Move(this, col, row + 1, board));
             }
 
 

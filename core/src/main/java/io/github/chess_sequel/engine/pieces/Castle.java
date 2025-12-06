@@ -1,14 +1,15 @@
 package io.github.chess_sequel.engine.pieces;
 
-import io.github.chess_sequel.engine.location.Board;
+import io.github.chess_sequel.engine.location.board.Board;
+import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Move;
 
 import java.util.ArrayList;
 
 public class Castle extends Piece {
 
-    public Castle(int x, int y, boolean isWhite, int size){
-        super(x, y, isWhite, "castle", size);
+    public Castle(int x, int y, boolean isWhite){
+        super(x, y, isWhite, "castle");
         pieceType = PieceType.CASTLE;
 
     }
@@ -18,50 +19,50 @@ public class Castle extends Piece {
         ArrayList<Move> moves = new ArrayList<>();
         if(isWhite == board.getWhiteToMove()) {
             //pos x
-            for (int col = xord / size + 1; col < board.boardX; col += 1) {
-                if (board.getTiles().get(col).get(yord / size).getPiece() != null) {
-                    if (board.getTiles().get(col).get(yord / size).getPiece().getIsWhite() != isWhite) {
-                        moves.add(new Move(this, col, yord / size, board));
+            for (int c = col + 1; c < board.boardX; c += 1) {
+                if (board.getTiles().get(c).get(row).getPiece() != null) {
+                    if (board.getTiles().get(c).get(row).getPiece().getIsWhite() != isWhite) {
+                        moves.add(new Move(this, c, row, board));
                     }
                     break;
                 } else {
-                    moves.add(new Move(this, col, yord / size, board));
+                    moves.add(new Move(this, c, row, board));
                 }
             }
 
             //pos y
-            for (int row = yord / size + 1; row < board.boardY; row += 1) {
-                if (board.getTiles().get(xord / size).get(row).getPiece() != null) {
-                    if (board.getTiles().get(xord / size).get(row).getPiece().getIsWhite() != isWhite) {
-                        moves.add(new Move(this, xord / size, row, board));
+            for (int r = row + 1; r < board.boardY; r += 1) {
+                if (board.getTiles().get(col).get(r).getPiece() != null) {
+                    if (board.getTiles().get(col).get(r).getPiece().getIsWhite() != isWhite) {
+                        moves.add(new Move(this, col, r, board));
                     }
                     break;
                 } else {
-                    moves.add(new Move(this, xord / size, row, board));
+                    moves.add(new Move(this, col, r, board));
                 }
             }
 
             //neg x
-            for (int col = xord / size - 1; col >= 0; col -= 1) {
-                if (board.getTiles().get(col).get(yord / size).getPiece() != null) {
-                    if (board.getTiles().get(col).get(yord / size).getPiece().getIsWhite() != isWhite) {
-                        moves.add(new Move(this, col, yord / size, board));
+            for (int c = col - 1; c >= 0; c -= 1) {
+                if (board.getTiles().get(c).get(row).getPiece() != null) {
+                    if (board.getTiles().get(c).get(row).getPiece().getIsWhite() != isWhite) {
+                        moves.add(new Move(this, c, row, board));
                     }
                     break;
                 } else {
-                    moves.add(new Move(this, col, yord / size, board));
+                    moves.add(new Move(this, c, row, board));
                 }
             }
 
             //neg y
-            for (int row = yord / size - 1; row >= 0; row -= 1) {
-                if (board.getTiles().get(xord / size).get(row).getPiece() != null) {
-                    if (board.getTiles().get(xord / size).get(row).getPiece().getIsWhite() != isWhite) {
-                        moves.add(new Move(this, xord / size, row, board));
+            for (int r = row - 1; r >= 0; r -= 1) {
+                if (board.getTiles().get(col).get(r).getPiece() != null) {
+                    if (board.getTiles().get(col).get(r).getPiece().getIsWhite() != isWhite) {
+                        moves.add(new Move(this, col, r, board));
                     }
                     break;
                 } else {
-                    moves.add(new Move(this, xord / size, row, board));
+                    moves.add(new Move(this, col, r, board));
                 }
             }
 

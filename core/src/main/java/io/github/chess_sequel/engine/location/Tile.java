@@ -7,12 +7,11 @@ import io.github.chess_sequel.engine.pieces.Piece;
 public class Tile {
     private int xord;
     private int yord;
-    private int size;
+
     private Piece piece;
-    Tile(int xord, int yord, int size){
+    public Tile(int xord, int yord){
         this.xord=xord;
         this.yord=yord;
-        this.size = size;
     }
 
 

@@ -2,7 +2,9 @@ package io.github.chess_sequel.gui;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import io.github.chess_sequel.engine.location.Board;
+import io.github.chess_sequel.engine.Game;
+import io.github.chess_sequel.engine.location.board.Board;
+import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.Piece;
 
@@ -12,32 +14,31 @@ public class GameBoard {
     private static Texture lightTexture;
     private static Texture darkTexture;
 
-    int TILE_SIZE = 1;
+    public int TILE_SIZE = 1;
 
-    public Board board;
+    public Game game;
 
-    public GameBoard (){
+    public GameBoard (Game game){
         lightTexture = new Texture("tiles/caramel-tile.png");
         darkTexture = new Texture("tiles/brown-tile.png");
 
-
-        board = new Board(TILE_SIZE, 8, 8);
+        this.game = game;
     }
 
 
     public void render(SpriteBatch batch, BoardInput input){
 
-        for (int x = 0; x < board.boardX; x++) {
-            for (int y = 0; y < board.boardY; y++) {
+        for (int x = 0; x < game.getCurrentBoard().boardX; x++) {
+            for (int y = 0; y < game.getCurrentBoard().boardY; y++) {
                 Texture tileTex = (x + y) % 2 == 0 ? lightTexture : darkTexture;
                 batch.draw(tileTex, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
         }
 
-        for (Piece piece : board.getPieces()) {
+        for (Piece piece : game.getCurrentBoard().getPieces()) {
             Texture tex = TextureCache.get(piece.getFilePath());
-            if(piece == board.getSelectedPiece()){
-                batch.draw(tex, input.getDragX(), input.getDragY(), board.getTileSize(), board.getTileSize());
+            if(piece == game.getCurrentBoard().getSelectedPiece()){
+                batch.draw(tex, input.getDragX(), input.getDragY(), TILE_SIZE, TILE_SIZE);
             } else{
                 batch.draw(tex,
                     piece.getCol() * TILE_SIZE,
@@ -47,14 +48,14 @@ public class GameBoard {
 
         }
 
-        if(board.getSelectedPiece() != null && !board.getValidMoves().isEmpty()){
+        if(game.getCurrentBoard().getSelectedPiece() != null && !game.getCurrentBoard().getValidMoves().isEmpty()){
             // calculate pulsing alpha
             float time = (float)(System.currentTimeMillis() % 1000) / 1000f; // cycles every 1 sec
             float alpha = 0.5f + 0.5f * (float)Math.sin(time * Math.PI * 2); // 0->1->0
 
             Texture highlightTex = TextureCache.get("tiles/highlight.png"); // white square texture
 
-            for(Move move: board.getValidMoves()){
+            for(Move move: game.getCurrentBoard().getValidMoves()){
                 int col = move.getNewX();
                 int row = move.getNewY();
 

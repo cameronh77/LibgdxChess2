@@ -6,11 +6,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import io.github.chess_sequel.GameInstance;
+import io.github.chess_sequel.ProjectName;
+import io.github.chess_sequel.engine.Game;
 import io.github.chess_sequel.gui.BoardInput;
 import io.github.chess_sequel.gui.GameBoard;
 
@@ -18,7 +18,9 @@ import io.github.chess_sequel.gui.GameBoard;
 
 public class GameScreen implements Screen {
 
-    final GameInstance game;
+    final ProjectName game;
+
+    Game gameInstance;
     private SpriteBatch batch;
     private GameBoard board;
 
@@ -26,7 +28,7 @@ public class GameScreen implements Screen {
     private Table rootTable;
     BoardInput input;
 
-    public GameScreen(GameInstance game){
+    public GameScreen(ProjectName game){
         batch = game.batch;
 
 
@@ -47,10 +49,12 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        board = new GameBoard();
+
+        gameInstance = new Game();
+        board = new GameBoard(gameInstance);
         OrthographicCamera camera = new OrthographicCamera();
-        camera.setToOrtho(false, board.board.boardX, board.board.boardY);
-        this.input = new BoardInput(camera, board.board);
+        camera.setToOrtho(false, board.game.getCurrentBoard().boardX, board.game.getCurrentBoard().boardY);
+        this.input = new BoardInput(camera, board, board.game.getCurrentBoard());
 
         Gdx.input.setInputProcessor(input);
     }

@@ -1,15 +1,16 @@
 package io.github.chess_sequel.engine.pieces;
 
 
-import io.github.chess_sequel.engine.location.Board;
+import io.github.chess_sequel.engine.location.board.Board;
+import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Move;
 
 import java.util.ArrayList;
 
 public class Bishop extends Piece{
 
-    public Bishop(int x, int y, boolean isWhite, int size){
-        super(x, y, isWhite, "bishop", size);
+    public Bishop(int x, int y, boolean isWhite){
+        super(x, y, isWhite, "bishop");
         pieceType = PieceType.BISHOP;
 
     }
@@ -19,48 +20,48 @@ public class Bishop extends Piece{
         ArrayList<Move> moves = new ArrayList<>();
         if(isWhite == board.getWhiteToMove()) {
             //pos pos
-            for (int offset = 1; offset + xord / size < board.boardX && offset + yord / size < board.boardY; offset += 1) {
-                if (board.getTiles().get(xord / size + offset).get(yord / size + offset).getPiece() != null) {
-                    if (board.getTiles().get(xord / size + offset).get(yord / size + offset).getPiece().getIsWhite() != isWhite) {
-                        moves.add(new Move(this, xord / size + offset, yord / size + offset, board));
+            for (int offset = 1; offset + col < board.boardX && offset + row < board.boardY; offset += 1) {
+                if (board.getTiles().get(col + offset).get(row + offset).getPiece() != null) {
+                    if (board.getTiles().get(col + offset).get(row + offset).getPiece().getIsWhite() != isWhite) {
+                        moves.add(new Move(this, col + offset, row + offset, board));
                     }
                     break;
                 } else {
-                    moves.add(new Move(this, xord / size + offset, yord / size + offset, board));
+                    moves.add(new Move(this, col + offset, row + offset, board));
                 }
             }
 
             //pos neg
-            for (int offset = 1; offset + xord / size < board.boardX && -offset + yord / size >= 0; offset += 1) {
-                if (board.getTiles().get(xord / size + offset).get(yord / size - offset).getPiece() != null) {
-                    if (board.getTiles().get(xord / size + offset).get(yord / size - offset).getPiece().getIsWhite() != isWhite) {
-                        moves.add(new Move(this, xord / size + offset, yord / size - offset, board));
+            for (int offset = 1; offset + col < board.boardX && -offset + row >= 0; offset += 1) {
+                if (board.getTiles().get(col + offset).get(row - offset).getPiece() != null) {
+                    if (board.getTiles().get(col + offset).get(row - offset).getPiece().getIsWhite() != isWhite) {
+                        moves.add(new Move(this, col + offset, row - offset, board));
                     }
                     break;
                 } else {
-                    moves.add(new Move(this, xord / size + offset, yord / size - offset, board));
+                    moves.add(new Move(this, col + offset, row - offset, board));
                 }
             }
 
-            for (int offset = 1; -offset + xord / size >= 0 && offset + yord / size < board.boardY; offset += 1) {
-                if (board.getTiles().get(xord / size - offset).get(yord / size + offset).getPiece() != null) {
-                    if (board.getTiles().get(xord / size - offset).get(yord / size + offset).getPiece().getIsWhite() != isWhite) {
-                        moves.add(new Move(this, xord / size - offset, yord / size + offset, board));
+            for (int offset = 1; -offset + col >= 0 && offset + row < board.boardY; offset += 1) {
+                if (board.getTiles().get(col - offset).get(row + offset).getPiece() != null) {
+                    if (board.getTiles().get(col - offset).get(row + offset).getPiece().getIsWhite() != isWhite) {
+                        moves.add(new Move(this, col - offset, row + offset, board));
                     }
                     break;
                 } else {
-                    moves.add(new Move(this, xord / size - offset, yord / size + offset, board));
+                    moves.add(new Move(this, col - offset, row + offset, board));
                 }
             }
 
-            for (int offset = 1; -offset + xord / size >= 0 && -offset + yord / size >= 0; offset += 1) {
-                if (board.getTiles().get(xord / size - offset).get(yord / size - offset).getPiece() != null) {
-                    if (board.getTiles().get(xord / size - offset).get(yord / size - offset).getPiece().getIsWhite() != isWhite) {
-                        moves.add(new Move(this, xord / size - offset, yord / size - offset, board));
+            for (int offset = 1; -offset + col >= 0 && -offset + row >= 0; offset += 1) {
+                if (board.getTiles().get(col - offset).get(row - offset).getPiece() != null) {
+                    if (board.getTiles().get(col - offset).get(row - offset).getPiece().getIsWhite() != isWhite) {
+                        moves.add(new Move(this, col - offset, row - offset, board));
                     }
                     break;
                 } else {
-                    moves.add(new Move(this, xord / size - offset, yord / size - offset, board));
+                    moves.add(new Move(this, col - offset, row - offset, board));
                 }
             }
 

@@ -1,6 +1,7 @@
-package io.github.chess_sequel.engine.perftChecker;
+package io.github.chess_sequel.engine.player;
 
-import io.github.chess_sequel.engine.location.Board;
+import io.github.chess_sequel.engine.location.board.Board;
+import io.github.chess_sequel.engine.location.board.MatchBoard;
 
 import io.github.chess_sequel.engine.pieces.Piece;
 

@@ -1,22 +1,23 @@
-package io.github.chess_sequel.engine.perftChecker;
+package io.github.chess_sequel.engine.player;
 
-import io.github.chess_sequel.engine.location.Board;
+import io.github.chess_sequel.engine.location.board.Board;
+import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.Piece;
 
 import java.util.ArrayList;
 
-public class BotPlayer {
+public class BotPlayer extends Player{
 
     private int skillLevel;
-    private Board board;
 
-    public BotPlayer(int skillLevel, Board board){
+
+    public BotPlayer(int skillLevel){
         this.skillLevel = skillLevel;
-        this.board = board;
     }
 
-    public void takeTurn(){
+    @Override
+    public void takeTurn(Board board){
         Move move = findBestMove(board, skillLevel);
         move.execute();
     }

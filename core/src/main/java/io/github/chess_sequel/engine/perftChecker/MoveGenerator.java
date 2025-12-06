@@ -2,7 +2,7 @@ package io.github.chess_sequel.engine.perftChecker;
 
 
 
-import io.github.chess_sequel.engine.location.Board;
+import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.Piece;
 
@@ -11,11 +11,11 @@ import java.util.HashMap;
 
 public class MoveGenerator {
 
-    private Board board;
+    private MatchBoard board;
     HashMap<Integer, Character> map;
     HashMap<Integer, Integer> map2;
 
-    public MoveGenerator(Board board){
+    public MoveGenerator(MatchBoard board){
         this.board = board;
         HashMap<Integer, Character> map = new HashMap<>();
 

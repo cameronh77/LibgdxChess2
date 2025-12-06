@@ -4,12 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.ScreenUtils;
-import io.github.chess_sequel.GameInstance;
+import io.github.chess_sequel.ProjectName;
 
 public class MenuScreen implements Screen {
 
-    GameInstance game;
-    public MenuScreen(GameInstance gameEntry){
+    ProjectName game;
+    public MenuScreen(ProjectName gameEntry){
         this.game = gameEntry;
     }
 

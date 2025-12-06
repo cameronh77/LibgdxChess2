@@ -1,15 +1,16 @@
 package io.github.chess_sequel.engine.pieces;
 
 
-import io.github.chess_sequel.engine.location.Board;
+import io.github.chess_sequel.engine.location.board.Board;
+import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Move;
 
 import java.util.ArrayList;
 
 public class Horse extends Piece {
 
-    public Horse(int x, int y, boolean isWhite, int size){
-        super(x, y, isWhite, "horse", size);
+    public Horse(int x, int y, boolean isWhite){
+        super(x, y, isWhite, "horse");
         pieceType = PieceType.HORSE;
 
     }
@@ -20,15 +21,15 @@ public class Horse extends Piece {
         ArrayList<Move> moves = new ArrayList<>();
 
         if(isWhite == board.getWhiteToMove()) {
-            moves.add(new Move(this, xord / size + 1, yord / size + 2, board));
-            moves.add(new Move(this, xord / size + 1, yord / size - 2, board));
-            moves.add(new Move(this, xord / size - 1, yord / size + 2, board));
-            moves.add(new Move(this, xord / size - 1, yord / size - 2, board));
+            moves.add(new Move(this, col + 1, row + 2, board));
+            moves.add(new Move(this, col + 1, row - 2, board));
+            moves.add(new Move(this, col - 1, row + 2, board));
+            moves.add(new Move(this, col - 1, row - 2, board));
 
-            moves.add(new Move(this, xord / size + 2, yord / size + 1, board));
-            moves.add(new Move(this, xord / size + 2, yord / size - 1, board));
-            moves.add(new Move(this, xord / size - 2, yord / size + 1, board));
-            moves.add(new Move(this, xord / size - 2, yord / size - 1, board));
+            moves.add(new Move(this, col + 2, row + 1, board));
+            moves.add(new Move(this, col + 2, row - 1, board));
+            moves.add(new Move(this, col - 2, row + 1, board));
+            moves.add(new Move(this, col - 2, row - 1, board));
 
             ArrayList<Move> trueMoves = new ArrayList<>();
 

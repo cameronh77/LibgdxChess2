@@ -3,7 +3,7 @@ package io.github.chess_sequel.engine.player;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Move;
-import io.github.chess_sequel.engine.pieces.Piece;
+import io.github.chess_sequel.engine.pieces.*;
 
 import java.util.ArrayList;
 
@@ -14,6 +14,7 @@ public class BotPlayer extends Player{
 
     public BotPlayer(int skillLevel){
         this.skillLevel = skillLevel;
+        //this.createPieceList();
     }
 
     @Override
@@ -105,6 +106,29 @@ public class BotPlayer extends Player{
 
             return minEval;
         }
+    }
+
+    @Override
+    public void createPieceList(){
+
+        pieces.add(new Pawn(0, 6, true));
+        pieces.add(new Pawn(1, 6, true));
+        pieces.add(new Pawn(2, 6, true));
+        pieces.add(new Pawn(3, 6, true));
+        pieces.add(new Pawn(4, 6, true));
+        pieces.add(new Pawn(5, 6, true));
+        pieces.add(new Pawn(6, 6, true));
+        pieces.add(new Pawn(7, 6, true));
+
+        pieces.add(new Castle(0, 7, true));
+        pieces.add(new Horse(1, 7, true));
+        pieces.add(new Bishop(2, 7, true));
+        pieces.add(new Queen(3, 7, true));
+        leadPiece = new King(4, 7, true);
+        pieces.add(leadPiece);
+        pieces.add(new Bishop(5, 7, true));
+        pieces.add(new Horse(6, 7, true));
+        pieces.add(new Castle(7, 7, true));
     }
 
 }

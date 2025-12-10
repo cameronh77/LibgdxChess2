@@ -3,8 +3,6 @@ package io.github.chess_sequel.gui;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.chess_sequel.engine.Game;
-import io.github.chess_sequel.engine.location.board.Board;
-import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.Piece;
 
@@ -45,7 +43,6 @@ public class GameBoard {
                     piece.getRow() * TILE_SIZE,
                     TILE_SIZE, TILE_SIZE);
             }
-
         }
 
         if(game.getCurrentBoard().getSelectedPiece() != null && !game.getCurrentBoard().getValidMoves().isEmpty()){

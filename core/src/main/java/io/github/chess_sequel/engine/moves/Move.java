@@ -58,7 +58,9 @@ public class Move {
         }
 
         //Flip the turn
-        board.setWhiteToMove(!board.getWhiteToMove());
+        if(board instanceof MatchBoard){
+            board.setWhiteToMove(!board.getWhiteToMove());
+        }
     }
 
 
@@ -85,7 +87,10 @@ public class Move {
         board.setEnPassantTile(enPassantTile);
 
         //Flip the turn
-        board.setWhiteToMove(!board.getWhiteToMove());
+        if(board instanceof MatchBoard){
+            board.setWhiteToMove(!board.getWhiteToMove());
+        }
+
     }
 
     public Piece getMovingPiece(){

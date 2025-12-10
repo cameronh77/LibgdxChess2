@@ -95,7 +95,9 @@ public class BoardInput extends InputAdapter {
                     System.out.println("Action executed");
                     move.execute();
                     executed = true;
-                    inputBoard.getBotPlayer().takeTurn(inputBoard);
+                    if(inputBoard instanceof MatchBoard){
+                        inputBoard.getBotPlayer().takeTurn(inputBoard);
+                    }
                     break;
                 }
             }

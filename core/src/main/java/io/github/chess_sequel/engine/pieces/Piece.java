@@ -1,7 +1,7 @@
 package io.github.chess_sequel.engine.pieces;
 
+import io.github.chess_sequel.engine.interactables.Interactable;
 import io.github.chess_sequel.engine.location.board.Board;
-import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Move;
 
 import java.util.ArrayList;
@@ -17,18 +17,18 @@ public abstract class Piece {
     }
 
     protected int col, row; // 0-7
+    protected int trueCol, trueRow;
     protected boolean isWhite;
-    protected int size;
 
     protected PieceType pieceType;
 
     Piece(int x, int y, boolean isWhite, String name){
-        this.col = x;
-        this.row = y;
+        this.trueCol = x;
+        this.trueRow = y;
 
         this.isWhite = isWhite;
         this.name = name;
-        this.size = size;
+
         this.filePath = "pieces/"+(isWhite?"black":"white")+"-"+name+".png";
     }
 
@@ -64,6 +64,12 @@ public abstract class Piece {
         return row;
     }
 
+    public void setStartCords(){
+        System.out.println("THIS is the true row: "+trueRow + " THis is the true col: "+ trueCol);
+        this.row = trueRow;
+        this.col = trueCol;
+    }
+
     public String getName(){
         return name;
     }
@@ -75,4 +81,5 @@ public abstract class Piece {
     public PieceType getPieceType(){
         return pieceType;
     }
+
 }

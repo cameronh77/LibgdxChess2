@@ -15,17 +15,18 @@ public class MatchBoard extends Board{
 
 
 
-    public MatchBoard(int boardX, int boardY, Player opponent){
-        super(boardX, boardY, opponent);
+    public MatchBoard(int boardX, int boardY, Player player, Player opponent){
+        super(boardX, boardY, player, opponent);
+
+        botPlayer = opponent;
+        for(Piece piece: player.getPieces()){
+            addToBoard(piece);
+        }
+
+        for(Piece piece: botPlayer.getPieces()){
+            addToBoard(piece);
+        }
     }
-
-
-    public void addToBoard(Piece piece){
-        pieces.add(piece);
-        tiles.get(piece.getCol()).get(piece.getRow()).setPiece(piece);
-    }
-
-
 
 
 

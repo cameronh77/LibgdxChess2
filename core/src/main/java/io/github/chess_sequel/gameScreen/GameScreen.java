@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.chess_sequel.ProjectName;
 import io.github.chess_sequel.engine.Game;
+import io.github.chess_sequel.engine.player.Player;
 import io.github.chess_sequel.gui.BoardInput;
 import io.github.chess_sequel.gui.GameBoard;
 
@@ -50,7 +51,7 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
 
-        gameInstance = new Game();
+        gameInstance = new Game(new Player());
         board = new GameBoard(gameInstance);
         OrthographicCamera camera = new OrthographicCamera();
         camera.setToOrtho(false, board.game.getCurrentBoard().boardX, board.game.getCurrentBoard().boardY);

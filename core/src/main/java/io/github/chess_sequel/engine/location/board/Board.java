@@ -24,7 +24,7 @@ public abstract class Board {
     protected Boolean whiteToMove = false;
     protected Player botPlayer;
 
-    public Board(int boardX, int boardY, Player opponent){
+    public Board(int boardX, int boardY, Player player, Player opponent){
         this.boardX = boardX;
         this.boardY = boardY;
         for(int c=0; c < boardX; c ++){
@@ -35,9 +35,10 @@ public abstract class Board {
             tiles.add(c, col);
         }
 
-        botPlayer = opponent;
 
-        addTestPieces();
+
+
+        //addTestPieces();
     }
 
     public void addTestPieces(){
@@ -82,6 +83,7 @@ public abstract class Board {
 
     public void addToBoard(Piece piece){
         pieces.add(piece);
+        piece.setStartCords();
         tiles.get(piece.getCol()).get(piece.getRow()).setPiece(piece);
     }
 

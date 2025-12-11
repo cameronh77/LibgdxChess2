@@ -6,6 +6,7 @@ import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.player.BotPlayer;
 import io.github.chess_sequel.engine.player.Player;
 
+
 import java.util.Stack;
 
 public class Game {
@@ -15,8 +16,8 @@ public class Game {
 
     public Game(Player player){
         this.player = player;
-        addMatchBoard(new BotPlayer(3));
-        //addMapBoard();
+        //addMatchBoard(new BotPlayer(3));
+        addMapBoard();
     }
 
     public void addMatchBoard(BotPlayer opponent){
@@ -27,9 +28,9 @@ public class Game {
 
     }
 
-    //public void addMapBoard(){
-    //    gameBoards.push(new MapBoard(8, 8, player));
-    //}
+    public void addMapBoard(){
+        gameBoards.push(new MapBoard(this, 8, 8, player, "e00 e06"));
+    }
 
     public Board getCurrentBoard(){
         return gameBoards.peek();

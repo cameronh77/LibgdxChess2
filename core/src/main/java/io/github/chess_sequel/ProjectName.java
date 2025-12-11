@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import io.github.chess_sequel.gameScreen.MenuScreen;
+import io.github.chess_sequel.gui.gameScreen.MenuScreen;
 
 public class ProjectName extends Game {
 

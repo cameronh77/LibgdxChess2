@@ -7,16 +7,19 @@ import io.github.chess_sequel.engine.player.BotPlayer;
 public class NPCPiece extends Interactable{
 
     private Boolean hostile = true;
-    private PieceType displayPiece;
+
     private Game game;
     private BotPlayer botPlayer;
 
     private int col, row;
 
-    public NPCPiece(BotPlayer botPlayer, Game game, PieceType displayPiece){
+    public NPCPiece(BotPlayer botPlayer, Game game, int col, int row){
         this.botPlayer = botPlayer;
         this.game = game;
-        this.displayPiece = displayPiece;
+        this.col = col;
+        this.row = row;
+        this.filePath = botPlayer.getLeadPiece().getFilePath();
+
     }
 
     public int getCol(){
@@ -34,6 +37,7 @@ public class NPCPiece extends Interactable{
     public void setRow(int row){
         this.row = row;
     }
+
 
     @Override
     public void interaction(){

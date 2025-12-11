@@ -1,4 +1,4 @@
-package io.github.chess_sequel.gameScreen;
+package io.github.chess_sequel.gui.gameScreen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -55,7 +55,7 @@ public class GameScreen implements Screen {
         board = new GameBoard(gameInstance);
         OrthographicCamera camera = new OrthographicCamera();
         camera.setToOrtho(false, board.game.getCurrentBoard().boardX, board.game.getCurrentBoard().boardY);
-        this.input = new BoardInput(camera, board, board.game.getCurrentBoard());
+        this.input = new BoardInput(camera, board, board.game);
 
         Gdx.input.setInputProcessor(input);
     }

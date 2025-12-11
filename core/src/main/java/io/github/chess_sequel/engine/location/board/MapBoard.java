@@ -1,7 +1,10 @@
 package io.github.chess_sequel.engine.location.board;
 
+import io.github.chess_sequel.engine.Game;
 import io.github.chess_sequel.engine.interactables.Interactable;
+import io.github.chess_sequel.engine.interactables.NPCPiece;
 import io.github.chess_sequel.engine.pieces.*;
+import io.github.chess_sequel.engine.player.BotPlayer;
 import io.github.chess_sequel.engine.player.Player;
 
 import java.util.ArrayList;
@@ -11,11 +14,10 @@ public class MapBoard extends Board{
 
     private ArrayList<Interactable> locations = new ArrayList<>();
 
-    public MapBoard(int boardX, int boardY, Player player, String boardLayout){
+    public MapBoard(Game game, int boardX, int boardY, Player player, String boardLayout){
         super(boardX, boardY, player, null);
-
+        populateBoard(boardLayout, game);
         addToBoard(player.getLeadPiece());
-        populateBoard(boardLayout);
     }
 
     public void addLocation(Interactable location){
@@ -23,10 +25,19 @@ public class MapBoard extends Board{
         tiles.get(location.getCol()).get(location.getRow()).setInteractable(location);
     }
 
-    public void populateBoard(String boardLayout){
+    public void populateBoard(String boardLayout, Game game){
         pieces.clear();
         String[] parts = boardLayout.split(" ");
 
+        for(String part: parts){
+            System.out.println(part);
+            switch(part.charAt(0)){
+                case ('e'):
+                    addLocation(new NPCPiece(new BotPlayer(3), game, Character.getNumericValue(part.charAt(1)), Character.getNumericValue(part.charAt(2))));
+                    break;
+            }
+        }
+        /**
         //set up pieces
         String position = parts[0];
         int row = 0;
@@ -74,7 +85,13 @@ public class MapBoard extends Board{
                 }
                 col++;
             }
+
         }
+         */
+    }
+
+    public ArrayList<Interactable> getLocations(){
+        return locations;
     }
 
 }

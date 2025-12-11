@@ -1,4 +1,4 @@
-package io.github.chess_sequel.gameScreen;
+package io.github.chess_sequel.gui.gameScreen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;

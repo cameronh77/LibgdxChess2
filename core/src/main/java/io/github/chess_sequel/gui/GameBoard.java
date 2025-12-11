@@ -3,6 +3,8 @@ package io.github.chess_sequel.gui;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.chess_sequel.engine.Game;
+import io.github.chess_sequel.engine.interactables.Interactable;
+import io.github.chess_sequel.engine.location.board.MapBoard;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.Piece;
 
@@ -32,12 +34,13 @@ public class GameBoard {
                 batch.draw(tileTex, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
         }
-
+        //System.out.println(game.getCurrentBoard().getPieces());
         for (Piece piece : game.getCurrentBoard().getPieces()) {
             Texture tex = TextureCache.get(piece.getFilePath());
             if(piece == game.getCurrentBoard().getSelectedPiece()){
                 batch.draw(tex, input.getDragX(), input.getDragY(), TILE_SIZE, TILE_SIZE);
             } else{
+
                 batch.draw(tex,
                     piece.getCol() * TILE_SIZE,
                     piece.getRow() * TILE_SIZE,
@@ -61,6 +64,15 @@ public class GameBoard {
                 batch.setColor(1f, 1f, 1f, 1f); // reset to fully opaque for next draw
             }
         }
+
+        if(game.getCurrentBoard() instanceof MapBoard){
+            MapBoard currentBoard = (MapBoard) game.getCurrentBoard();
+            for(Interactable interactable: currentBoard.getLocations()){
+                Texture tex = TextureCache.get(interactable.getFilePath());
+                batch.draw(tex, interactable.getCol() * TILE_SIZE, interactable.getRow() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            }
+        }
+
 
     }
 

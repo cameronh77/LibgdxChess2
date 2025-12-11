@@ -3,6 +3,7 @@ package io.github.chess_sequel.engine.interactables;
 public abstract class Interactable {
 
     protected int col, row;
+    protected String filePath;
     public abstract void interaction();
 
     public void setCol(int col){
@@ -19,4 +20,6 @@ public abstract class Interactable {
     public int getRow(){
         return row;
     }
+
+    public String getFilePath(){return filePath;}
 }

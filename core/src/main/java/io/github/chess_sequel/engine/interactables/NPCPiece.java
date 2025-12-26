@@ -14,12 +14,12 @@ public class NPCPiece extends Interactable{
     private int col, row;
 
     public NPCPiece(BotPlayer botPlayer, Game game, int col, int row){
+        System.out.println("test");
         this.botPlayer = botPlayer;
         this.game = game;
         this.col = col;
         this.row = row;
         this.filePath = botPlayer.getLeadPiece().getFilePath();
-
     }
 
     public int getCol(){
@@ -38,6 +38,9 @@ public class NPCPiece extends Interactable{
         this.row = row;
     }
 
+    public void createArmy(){
+
+    }
 
     @Override
     public void interaction(){

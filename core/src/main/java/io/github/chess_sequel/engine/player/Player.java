@@ -11,7 +11,7 @@ public class Player {
     protected Piece leadPiece;
 
     public Player(){
-        createPieceList();
+
     }
 
     public void takeTurn(Board board){

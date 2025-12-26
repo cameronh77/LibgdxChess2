@@ -3,7 +3,6 @@ package io.github.chess_sequel.engine.location.board;
 import io.github.chess_sequel.engine.Game;
 import io.github.chess_sequel.engine.interactables.Interactable;
 import io.github.chess_sequel.engine.interactables.NPCPiece;
-import io.github.chess_sequel.engine.pieces.*;
 import io.github.chess_sequel.engine.player.BotPlayer;
 import io.github.chess_sequel.engine.player.Player;
 
@@ -14,9 +13,9 @@ public class MapBoard extends Board{
 
     private ArrayList<Interactable> locations = new ArrayList<>();
 
-    public MapBoard(Game game, int boardX, int boardY, Player player, String boardLayout){
+    public MapBoard(Game game, int boardX, int boardY, Player player, String boardLayout, String internalLayouts){
         super(boardX, boardY, player, null);
-        populateBoard(boardLayout, game);
+        populateBoard(boardLayout, game, internalLayouts);
         addToBoard(player.getLeadPiece());
     }
 
@@ -25,15 +24,17 @@ public class MapBoard extends Board{
         tiles.get(location.getCol()).get(location.getRow()).setInteractable(location);
     }
 
-    public void populateBoard(String boardLayout, Game game){
+    public void populateBoard(String boardLayout, Game game, String internalLayouts){
         pieces.clear();
         String[] parts = boardLayout.split(" ");
+        String[] internals = internalLayouts.split(" ");
 
-        for(String part: parts){
-            System.out.println(part);
-            switch(part.charAt(0)){
+        for(int index = 0; index< parts.length;index++){
+            System.out.println(parts[index]);
+            switch(parts[index].charAt(0)){
                 case ('e'):
-                    addLocation(new NPCPiece(new BotPlayer(3), game, Character.getNumericValue(part.charAt(1)), Character.getNumericValue(part.charAt(2))));
+                    BotPlayer botPlayer = new BotPlayer(3, game.getJsonLoader().getEnemyData(game.getCurrentMap(), internals[index]).enemyLayout);
+                    addLocation(new NPCPiece(botPlayer, game, Character.getNumericValue(parts[index].charAt(1)), Character.getNumericValue(parts[index].charAt(2))));
                     break;
             }
         }

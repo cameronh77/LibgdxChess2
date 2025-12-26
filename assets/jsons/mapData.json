@@ -1,0 +1,27 @@
+[
+  {
+    "mapName": "classic",
+    "mapLayouts": [
+      "e00 e06",
+      "e01 e05"
+    ],
+    "locationInternals": [
+      "classic1 classic2",
+      "classic2 classic1"
+    ]
+  },
+  {
+    "mapName": "second",
+    "mapLayouts": [
+      "e11 e12",
+      "e13 e14"
+    ],
+    "locationInternals": [
+      "random random",
+      "random random"
+    ]
+  }
+]
+
+
+

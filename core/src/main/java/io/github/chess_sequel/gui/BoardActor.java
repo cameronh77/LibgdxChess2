@@ -19,8 +19,6 @@ public class BoardActor extends Actor {
         this.input = input;
 
         setSize(board.getPixelWidth(), board.getPixelHeight());
-
-
     }
 
     @Override
@@ -43,5 +41,10 @@ public class BoardActor extends Actor {
         batch.setTransformMatrix(batch.getTransformMatrix().idt());
         batch.setColor(1, 1, 1, 1);
     }
+
+    public GameBoard getGameBoard(){
+        return board;
+    }
+
 }
 

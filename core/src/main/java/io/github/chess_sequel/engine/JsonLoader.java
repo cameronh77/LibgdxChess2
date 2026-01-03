@@ -17,6 +17,8 @@ public class JsonLoader {
     ObjectMap<String, MapData> currentMap;
     ObjectMap<String, MapEnemies> currentEnemies;
 
+    private int mapSizeX, mapSizeY;
+
     public JsonLoader() {
 
     }
@@ -53,6 +55,18 @@ public class JsonLoader {
 
     public MapData getMapData(String map){
         return currentMap.get(map);
+    }
+    public void setMapSizeXY(String map){
+        this.mapSizeX = currentMap.get(map).mapX;
+        this.mapSizeY = currentMap.get(map).mapY;
+    };
+
+    public int getMapSizeX(){
+        return mapSizeX;
+    }
+
+    public int getMapSizeY(){
+        return mapSizeY;
     }
 
     public EnemyData getEnemyData(String map, String enemy){

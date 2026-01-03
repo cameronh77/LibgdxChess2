@@ -21,6 +21,7 @@ public class MapBoard extends Board{
 
     public void addLocation(Interactable location){
         locations.add(location);
+        System.out.println("This is the col: " + location.getCol() + " This is the row: " + location.getRow());
         tiles.get(location.getCol()).get(location.getRow()).setInteractable(location);
     }
 
@@ -33,7 +34,7 @@ public class MapBoard extends Board{
             System.out.println(parts[index]);
             switch(parts[index].charAt(0)){
                 case ('e'):
-                    BotPlayer botPlayer = new BotPlayer(3, game.getJsonLoader().getEnemyData(game.getCurrentMap(), internals[index]).enemyLayout);
+                    BotPlayer botPlayer = new BotPlayer(game, 3, game.getJsonLoader().getEnemyData(game.getCurrentMap(), internals[index]).enemyLayout, game.getJsonLoader().getEnemyData(game.getCurrentMap(), internals[index]).rewards);
                     addLocation(new NPCPiece(botPlayer, game, Character.getNumericValue(parts[index].charAt(1)), Character.getNumericValue(parts[index].charAt(2))));
                     break;
             }

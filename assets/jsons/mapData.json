@@ -1,6 +1,8 @@
 [
   {
-    "mapName": "classic",
+    "mapName": "classic8",
+    "mapX": 8,
+    "mapY": 8,
     "mapLayouts": [
       "e00 e06",
       "e01 e05"
@@ -11,7 +13,9 @@
     ]
   },
   {
-    "mapName": "second",
+    "mapName": "classic6",
+    "mapX": 6,
+    "mapY": 6,
     "mapLayouts": [
       "e11 e12",
       "e13 e14"
@@ -22,7 +26,9 @@
     ]
   },
   {
-    "mapName": "fourfourtest",
+    "mapName": "classic4",
+    "mapX": 4,
+    "mapY": 4,
     "mapLayouts": [
       "e00 e22",
       "e33 e31"

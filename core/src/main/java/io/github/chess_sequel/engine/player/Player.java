@@ -9,6 +9,7 @@ public class Player {
 
     protected ArrayList<Piece> pieces = new ArrayList<>();
     protected Piece leadPiece;
+    private int leadPieceX, leadPieceY;
 
     public Player(){
 
@@ -17,6 +18,8 @@ public class Player {
     public void takeTurn(Board board){
 
     }
+
+
 
     public void createPieceList(){
         pieces.add(new Castle(0, 0, false));
@@ -54,4 +57,19 @@ public class Player {
     }
 
 
+    public int getLeadPieceX() {
+        return leadPieceX;
+    }
+
+    public void setLeadPieceX(int x){
+        this.leadPieceX = x;
+    }
+
+    public int getLeadPieceY() {
+        return leadPieceY;
+    }
+
+    public void setLeadPieceY(int y){
+        this.leadPieceY = y;
+    }
 }

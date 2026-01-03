@@ -1,6 +1,6 @@
 [
   {
-    "mapName": "classic",
+    "mapName": "classic8",
     "enemies": [
       {
         "enemyId": "classic1",
@@ -18,7 +18,7 @@
     ]
   },
   {
-    "mapName": "second",
+    "mapName": "classic6",
     "enemies": [
       {
         "enemyId": "classic1",
@@ -36,17 +36,39 @@
     ]
   },
   {
-    "mapName": "fourfourtest",
+    "mapName": "classic4",
     "enemies": [
       {
         "enemyId": "classic1",
         "enemyLayout": "b01 p22",
-        "dialogue": null
+        "dialogue": null,
+        "rewards": {
+          "portals": ["classic6", "classic8"],
+          "portalLocations": [{
+            "x": 0,
+            "y": 3
+          },
+            {
+              "x": 1,
+              "y": 3
+            }]
+        }
       },
       {
         "enemyId": "classic2",
         "enemyLayout": "h32 p33",
-        "dialogue": null
+        "dialogue": null,
+        "rewards": {
+          "portals": ["classic6", "classic8"],
+          "portalLocations": [{
+            "x": 0,
+            "y": 3
+          },
+            {
+              "x": 1,
+              "y": 3
+            }]
+        }
       }
     ],
     "randomEnemies": [

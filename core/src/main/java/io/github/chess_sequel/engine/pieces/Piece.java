@@ -18,6 +18,7 @@ public abstract class Piece {
 
     protected int col, row; // 0-7
     protected int trueCol, trueRow;
+    protected int mapCol, mapRow;
     protected boolean isWhite;
 
     protected PieceType pieceType;
@@ -65,7 +66,7 @@ public abstract class Piece {
     }
 
     public void setStartCords(){
-        System.out.println("THIS is the true row: "+trueRow + " THis is the true col: "+ trueCol);
+        //System.out.println("THIS is the true row: "+trueRow + " THis is the true col: "+ trueCol);
         this.row = trueRow;
         this.col = trueCol;
     }

@@ -1,6 +1,8 @@
 package io.github.chess_sequel.engine.player;
 
+import io.github.chess_sequel.engine.Game;
 import io.github.chess_sequel.engine.interactables.NPCPiece;
+import io.github.chess_sequel.engine.jsonTypes.Rewards;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Move;
@@ -12,18 +14,33 @@ public class BotPlayer extends Player{
 
     private int skillLevel;
     private String army;
+    private boolean defeated = false;
+    private Game game;
+    private Rewards rewards;
 
-    public BotPlayer(int skillLevel, String army){
+    public BotPlayer(Game game, int skillLevel, String army, Rewards rewards){
         this.skillLevel = skillLevel;
         this.army = army;
         this.createPieceList();
+        this.game = game;
+        this.rewards = rewards;
 
     }
 
     @Override
     public void takeTurn(Board board){
         Move move = findBestMove(board, skillLevel);
-        move.execute();
+        if(move != null){
+            move.execute();
+        } else{
+            this.defeated = true;
+            game.popBoard();
+            if(rewards != null){
+                game.handleRewards(rewards);
+            }
+            System.out.println("Bot player has no moves left");
+        }
+
     }
 
     public static Move findBestMove(Board board, int depth) {
@@ -38,7 +55,7 @@ public class BotPlayer extends Player{
         }
 
         for (Move move : moves) {
-
+            System.out.println("This is a move: x "+move.getNewX() + "  y  " + move.getNewY());
             move.execute();
             int moveVal = minimax(board, depth - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
             move.undo();
@@ -185,5 +202,11 @@ public class BotPlayer extends Player{
         pieces.add(new Castle(7, 7, true));
          */
     }
+
+    public boolean getDefeated(){
+        return defeated;
+    }
+
+
 
 }

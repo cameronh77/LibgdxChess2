@@ -44,7 +44,7 @@ public class NPCPiece extends Interactable{
 
     @Override
     public void interaction(){
-        if(hostile){
+        if(hostile && !botPlayer.getDefeated()){
             game.addMatchBoard(botPlayer);
         }
 

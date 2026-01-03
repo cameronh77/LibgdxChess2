@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.chess_sequel.ProjectName;
 import io.github.chess_sequel.engine.Game;
+import io.github.chess_sequel.engine.GameState;
 import io.github.chess_sequel.engine.player.Player;
 import io.github.chess_sequel.gui.BoardInput;
 import io.github.chess_sequel.gui.GameBoard;
@@ -99,6 +100,13 @@ public class GameScreen implements Screen {
         //batch.begin();
         //board.render(batch, input);
         //batch.end();
+
+        if(
+            boardActor.getGameBoard().getGame().getGameState() == GameState.CHANGING_MAP
+        ){
+            boardActor.setSize(boardActor.getGameBoard().getPixelWidth(), boardActor.getGameBoard().getPixelHeight());
+            boardActor.getGameBoard().getGame().setGameState(GameState.NEUTRAL);
+        }
 
         uiStage.act(delta);
         uiStage.draw();

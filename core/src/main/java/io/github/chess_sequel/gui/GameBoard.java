@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.chess_sequel.engine.Game;
 import io.github.chess_sequel.engine.interactables.Interactable;
+import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MapBoard;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.Piece;
@@ -88,5 +89,9 @@ public class GameBoard {
 
     public int getPixelHeight(){
         return TILE_SIZE*game.getCurrentBoard().getTiles().size();
+    }
+
+    public Game getGame(){
+        return game;
     }
 }

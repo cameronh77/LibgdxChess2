@@ -21,12 +21,12 @@ public class Game {
         this.player = player;
         jsonLoader.loadMapData();
         jsonLoader.loadEnemyData();
-        this.currentMap = "second";
+        this.currentMap = "fourfourtest";
         addMapBoard();
     }
 
     public void addMatchBoard(BotPlayer opponent){
-        gameBoards.push(new MatchBoard(8, 8, player, opponent));
+        gameBoards.push(new MatchBoard(4, 4, player, opponent));
     }
 
     public void addShopBoard(){
@@ -39,7 +39,7 @@ public class Game {
         int randomIndex = (int)(Math.random() * layouts.size());
         String layout = layouts.get(randomIndex);
         String internalLayout = internalLayouts.get(randomIndex);
-        gameBoards.push(new MapBoard(this, 8, 8, player, layout, internalLayout));
+        gameBoards.push(new MapBoard(this, 4, 4, player, layout, internalLayout));
     }
 
     public Board getCurrentBoard(){

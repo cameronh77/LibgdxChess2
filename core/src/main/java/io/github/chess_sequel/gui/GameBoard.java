@@ -14,7 +14,7 @@ public class GameBoard {
     private static Texture lightTexture;
     private static Texture darkTexture;
 
-    public int TILE_SIZE = 1;
+    public int TILE_SIZE = 64;
 
     public Game game;
 
@@ -28,10 +28,11 @@ public class GameBoard {
 
     public void render(SpriteBatch batch, BoardInput input){
 
+
         for (int x = 0; x < game.getCurrentBoard().boardX; x++) {
             for (int y = 0; y < game.getCurrentBoard().boardY; y++) {
                 Texture tileTex = (x + y) % 2 == 0 ? lightTexture : darkTexture;
-                batch.draw(tileTex, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                batch.draw(tileTex, + x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
         }
         //System.out.println(game.getCurrentBoard().getPieces());
@@ -72,12 +73,20 @@ public class GameBoard {
                 batch.draw(tex, interactable.getCol() * TILE_SIZE, interactable.getRow() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
         }
-
+        //batch.draw(TextureCache.get("tiles/highlight.png"), 500, 500, 64, 64);
 
     }
 
     public void dispose(){
         lightTexture.dispose();
         darkTexture.dispose();
+    }
+
+    public int getPixelWidth(){
+        return TILE_SIZE*game.getCurrentBoard().getTiles().size();
+    }
+
+    public int getPixelHeight(){
+        return TILE_SIZE*game.getCurrentBoard().getTiles().size();
     }
 }

@@ -1,6 +1,7 @@
 package io.github.chess_sequel.gui.gameScreen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -14,7 +15,7 @@ import io.github.chess_sequel.engine.Game;
 import io.github.chess_sequel.engine.player.Player;
 import io.github.chess_sequel.gui.BoardInput;
 import io.github.chess_sequel.gui.GameBoard;
-
+import io.github.chess_sequel.gui.gameScreen.BoardActor;
 
 
 public class GameScreen implements Screen {
@@ -27,11 +28,18 @@ public class GameScreen implements Screen {
 
     private Stage uiStage;
     private Table rootTable;
+
+    private Table leftMenu;
+    private Table rightMenu;
+    private Table centerContainer;
+    private Table bottomMenu;
+    private BoardActor boardActor;
+
+    private OrthographicCamera camera;
     BoardInput input;
 
     public GameScreen(ProjectName game){
         batch = game.batch;
-
 
         game.viewport.apply();
         batch.setProjectionMatrix(game.viewport.getCamera().combined);
@@ -41,9 +49,28 @@ public class GameScreen implements Screen {
         rootTable.setFillParent(true);
         uiStage.addActor(rootTable);
 
+        Player player = new Player();
+        player.createPieceList();
+        gameInstance = new Game(player);
+        board = new GameBoard(gameInstance);
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, board.game.getCurrentBoard().boardX, board.game.getCurrentBoard().boardY);
+        this.input = new BoardInput(camera, board, board.game);
+        boardActor = new BoardActor(board, input);
+
+        //This is awful practice must find a way to fix at some point
+        this.input.setBoardActor(boardActor);
+
+
+
+        InputMultiplexer mux = new InputMultiplexer();
+        mux.addProcessor(uiStage);
+        mux.addProcessor(input);
+        Gdx.input.setInputProcessor(mux);
 
 
         this.game = game;
+        buildUILayout();
 
 
     }
@@ -51,6 +78,7 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
 
+        /**
         Player player = new Player();
         player.createPieceList();
         gameInstance = new Game(player);
@@ -60,6 +88,7 @@ public class GameScreen implements Screen {
         this.input = new BoardInput(camera, board, board.game);
 
         Gdx.input.setInputProcessor(input);
+        */
     }
 
     @Override
@@ -67,9 +96,12 @@ public class GameScreen implements Screen {
 
         ScreenUtils.clear(Color.BLACK);
 
-        batch.begin();
-        board.render(batch, input);
-        batch.end();
+        //batch.begin();
+        //board.render(batch, input);
+        //batch.end();
+
+        uiStage.act(delta);
+        uiStage.draw();
 
     }
 
@@ -97,4 +129,31 @@ public class GameScreen implements Screen {
     public void dispose() {
 
     }
+
+    private void buildUILayout() {
+
+        leftMenu = new Table();
+        rightMenu = new Table();
+        centerContainer = new Table();
+        bottomMenu = new Table();
+
+        // Debug borders so you can SEE the layout
+        leftMenu.setDebug(true);
+        rightMenu.setDebug(true);
+        centerContainer.setDebug(true);
+        bottomMenu.setDebug(true);
+        //boardActor.setDebug(true);
+
+        // Add to root table (3 columns)
+        rootTable.add(leftMenu).width(220).growY();
+        rootTable.add(centerContainer).grow();
+        rootTable.add(rightMenu).width(220).growY();
+
+        // Bottom menu sits inside center column
+        centerContainer.row();
+        centerContainer.add(boardActor).grow(); // space for board rendering
+        centerContainer.row();
+        centerContainer.add(bottomMenu).height(160).growX();
+    }
+
 }

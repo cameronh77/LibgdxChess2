@@ -20,6 +20,17 @@
       "random random",
       "random random"
     ]
+  },
+  {
+    "mapName": "fourfourtest",
+    "mapLayouts": [
+      "e00 e22",
+      "e33 e31"
+    ],
+    "locationInternals": [
+      "random random",
+      "random random"
+    ]
   }
 ]
 

@@ -34,5 +34,23 @@
     "randomEnemies": [
       "classic1", "classic2"
     ]
+  },
+  {
+    "mapName": "fourfourtest",
+    "enemies": [
+      {
+        "enemyId": "classic1",
+        "enemyLayout": "b01 p22",
+        "dialogue": null
+      },
+      {
+        "enemyId": "classic2",
+        "enemyLayout": "h32 p33",
+        "dialogue": null
+      }
+    ],
+    "randomEnemies": [
+      "classic1", "classic2"
+    ]
   }
 ]

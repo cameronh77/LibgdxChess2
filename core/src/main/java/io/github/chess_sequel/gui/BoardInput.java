@@ -3,6 +3,7 @@ package io.github.chess_sequel.gui;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import io.github.chess_sequel.engine.Game;
 import io.github.chess_sequel.engine.location.board.Board;
@@ -11,6 +12,7 @@ import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.location.Tile;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.Piece;
+import io.github.chess_sequel.gui.gameScreen.BoardActor;
 
 public class BoardInput extends InputAdapter {
 
@@ -21,18 +23,45 @@ public class BoardInput extends InputAdapter {
 
     private Piece draggingPiece = null;
     private float dragX, dragY;
+    private BoardActor boardActor;
 
     public BoardInput(OrthographicCamera camera, GameBoard board, Game game) {
         this.camera = camera;
         this.game = game;
         this.board = board;
+
     }
 
+    public void setBoardActor(BoardActor boardActor){
+        this.boardActor = boardActor;
+    }
+    private Vector3 screenToBoard(int screenX, int screenY) {
+
+        // 1. Screen → Stage
+        Vector2 stageCoords = new Vector2(screenX, screenY);
+        boardActor.getStage().screenToStageCoordinates(stageCoords);
+
+        // 2. Stage → BoardActor local
+        Vector2 localCoords = boardActor.stageToLocalCoordinates(stageCoords);
+
+        // 3. Local → Board world
+        Vector3 world = new Vector3(localCoords.x, localCoords.y, 0);
+
+
+        return world;
+    }
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+
         if (button != Input.Buttons.LEFT) return false;
-        Vector3 mouse = new Vector3(screenX, screenY, 0);
-        camera.unproject(mouse);
+        Vector3 mouse = screenToBoard(screenX, screenY);
+        System.out.println(mouse.x);
+        System.out.println(mouse.y);
+        if (mouse.x < 0 || mouse.y < 0 ||
+            mouse.x >= board.getPixelWidth() ||
+            mouse.y >= board.getPixelHeight()) {
+            return false;
+        }
         int row = (int) mouse.y / board.TILE_SIZE;
         int col = (int) mouse.x / board.TILE_SIZE;
         System.out.println("Clicked");
@@ -60,8 +89,7 @@ public class BoardInput extends InputAdapter {
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         if(game.getCurrentBoard().getSelectedPiece() != null){
-            Vector3 worldCoords = new Vector3(screenX, screenY, 0);
-            camera.unproject(worldCoords);
+            Vector3 worldCoords = screenToBoard(screenX, screenY);
 
             // smooth follow with offset
             this.dragX = (worldCoords.x - board.TILE_SIZE/2f);
@@ -76,8 +104,7 @@ public class BoardInput extends InputAdapter {
 
         if(game.getCurrentBoard().getSelectedPiece() != null){
 
-            Vector3 mouse = new Vector3(screenX, screenY, 0);
-            camera.unproject(mouse);
+            Vector3 mouse = screenToBoard(screenX, screenY);
 
             int row = (int) mouse.y / board.TILE_SIZE;
             int col = (int) mouse.x / board.TILE_SIZE;
@@ -86,7 +113,7 @@ public class BoardInput extends InputAdapter {
             System.out.println("Tile X: " + tile.getXord() + " Tile Y: " + tile.getYord());
             System.out.println(tile.getPiece() == null?"It contains no piece":"At this instance it contains piece: " + tile.getPiece().getName());
 
-            Move attemptedMove = new Move(game.getCurrentBoard().getSelectedPiece(), (int) mouse.x, (int) mouse.y, board.game.getCurrentBoard());
+            Move attemptedMove = new Move(game.getCurrentBoard().getSelectedPiece(), col, row, board.game.getCurrentBoard());
             Boolean executed = false;
             for(Move move: game.getCurrentBoard().getValidMoves()){
                 System.out.println("Move new X: "+move.getNewX() + " Move new Y: " + move.getNewY());
@@ -126,5 +153,6 @@ public class BoardInput extends InputAdapter {
 
     public float getDragX() { return dragX; }
     public float getDragY() { return dragY; }
+
 }
 

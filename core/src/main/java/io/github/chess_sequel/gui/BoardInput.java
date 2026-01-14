@@ -5,19 +5,18 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import io.github.chess_sequel.engine.Game;
-import io.github.chess_sequel.engine.location.board.Board;
+import io.github.chess_sequel.engine.GameRun;
 import io.github.chess_sequel.engine.location.board.MapBoard;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.location.Tile;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.Piece;
-import io.github.chess_sequel.gui.gameScreen.BoardActor;
+
 
 public class BoardInput extends InputAdapter {
 
     private final GameBoard board;
-    private Game game;
+    private GameRun gameRun;
 
     private OrthographicCamera camera;
 
@@ -25,9 +24,9 @@ public class BoardInput extends InputAdapter {
     private float dragX, dragY;
     private BoardActor boardActor;
 
-    public BoardInput(OrthographicCamera camera, GameBoard board, Game game) {
+    public BoardInput(OrthographicCamera camera, GameBoard board, GameRun gameRun) {
         this.camera = camera;
-        this.game = game;
+        this.gameRun = gameRun;
         this.board = board;
 
     }
@@ -66,15 +65,15 @@ public class BoardInput extends InputAdapter {
         int col = (int) mouse.x / board.TILE_SIZE;
         System.out.println("Clicked");
 
-        Tile tile = game.getCurrentBoard().getTiles().get(col).get(row);
+        Tile tile = gameRun.getCurrentBoard().getTiles().get(col).get(row);
         System.out.println("Col clicked: "+ col + " Row clicked: " + row);
         System.out.println("Tile X: " + tile.getXord() + " Tile Y: " + tile.getYord());
         System.out.println(tile.getPiece() == null?"It contains no piece":"At this instance it contains piece: " + tile.getPiece().getName());
 
         if(tile.getPiece() != null){
-            game.getCurrentBoard().setSelectedPiece(tile.getPiece());
+            gameRun.getCurrentBoard().setSelectedPiece(tile.getPiece());
             System.out.println("Piece " + tile.getPiece().getName() + " has been selected from col: "+ tile.getPiece().getCol() + " row: " + tile.getPiece().getRow());
-            game.getCurrentBoard().generatePieceMoves();
+            gameRun.getCurrentBoard().generatePieceMoves();
         }
 
         // Store drag pixel offsets for smooth dragging
@@ -88,7 +87,7 @@ public class BoardInput extends InputAdapter {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        if(game.getCurrentBoard().getSelectedPiece() != null){
+        if(gameRun.getCurrentBoard().getSelectedPiece() != null){
             Vector3 worldCoords = screenToBoard(screenX, screenY);
 
             // smooth follow with offset
@@ -102,32 +101,32 @@ public class BoardInput extends InputAdapter {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 
-        if(game.getCurrentBoard().getSelectedPiece() != null){
+        if(gameRun.getCurrentBoard().getSelectedPiece() != null){
 
             Vector3 mouse = screenToBoard(screenX, screenY);
 
             int row = (int) mouse.y / board.TILE_SIZE;
             int col = (int) mouse.x / board.TILE_SIZE;
-            Tile tile = game.getCurrentBoard().getTiles().get(col).get(row);
+            Tile tile = gameRun.getCurrentBoard().getTiles().get(col).get(row);
             System.out.println("Col unClicked: "+ col + " Row unClicked: " + row);
             System.out.println("Tile X: " + tile.getXord() + " Tile Y: " + tile.getYord());
             System.out.println(tile.getPiece() == null?"It contains no piece":"At this instance it contains piece: " + tile.getPiece().getName());
 
-            Move attemptedMove = new Move(game.getCurrentBoard().getSelectedPiece(), col, row, board.game.getCurrentBoard());
+            Move attemptedMove = new Move(gameRun.getCurrentBoard().getSelectedPiece(), col, row, board.gameRun.getCurrentBoard());
             Boolean executed = false;
-            for(Move move: game.getCurrentBoard().getValidMoves()){
+            for(Move move: gameRun.getCurrentBoard().getValidMoves()){
                 System.out.println("Move new X: "+move.getNewX() + " Move new Y: " + move.getNewY());
             }
-            for(Move move: game.getCurrentBoard().getValidMoves()){
+            for(Move move: gameRun.getCurrentBoard().getValidMoves()){
                 if(move.getNewX() == attemptedMove.getNewX() && move.getNewY() == attemptedMove.getNewY() && move.getMovingPiece() == attemptedMove.getMovingPiece()){
                     System.out.println("Action executed");
                     move.execute();
-                    if(game.getCurrentBoard() instanceof MatchBoard){
-                        game.getCurrentBoard().getBotPlayer().takeTurn(game.getCurrentBoard());
+                    if(gameRun.getCurrentBoard() instanceof MatchBoard){
+                        gameRun.getCurrentBoard().getBotPlayer().takeTurn(gameRun.getCurrentBoard());
                     }
-                    if(game.getCurrentBoard() instanceof MapBoard){
-                        if(game.getCurrentBoard().getTiles().get(move.getNewX()).get(move.getNewY()).getInteractable() != null){
-                            game.getCurrentBoard().getTiles().get(move.getNewX()).get(move.getNewY()).getInteractable().interaction();
+                    if(gameRun.getCurrentBoard() instanceof MapBoard){
+                        if(gameRun.getCurrentBoard().getTiles().get(move.getNewX()).get(move.getNewY()).getInteractable() != null){
+                            gameRun.getCurrentBoard().getTiles().get(move.getNewX()).get(move.getNewY()).getInteractable().interaction();
                         }
                     }
                     executed = true;
@@ -136,12 +135,12 @@ public class BoardInput extends InputAdapter {
                 }
             }
             if(!executed){
-                game.getCurrentBoard().getSelectedPiece().setCol(game.getCurrentBoard().getSelectedPiece().getCol());
-                game.getCurrentBoard().getSelectedPiece().setRow(game.getCurrentBoard().getSelectedPiece().getRow());
+                gameRun.getCurrentBoard().getSelectedPiece().setCol(gameRun.getCurrentBoard().getSelectedPiece().getCol());
+                gameRun.getCurrentBoard().getSelectedPiece().setRow(gameRun.getCurrentBoard().getSelectedPiece().getRow());
                 System.out.println("Invalid action");
             }
-            game.getCurrentBoard().setSelectedPiece(null);
-            game.getCurrentBoard().resetValidMoves();
+            gameRun.getCurrentBoard().setSelectedPiece(null);
+            gameRun.getCurrentBoard().resetValidMoves();
 
         }
         return true;

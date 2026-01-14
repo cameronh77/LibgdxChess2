@@ -1,16 +1,15 @@
 package io.github.chess_sequel.engine.interactables;
 
-import io.github.chess_sequel.engine.Game;
-import io.github.chess_sequel.engine.player.BotPlayer;
+import io.github.chess_sequel.engine.GameRun;
 
 public class LevelPortal extends Interactable{
 
     private String level;
-    private Game game;
+    private GameRun gameRun;
 
-    public LevelPortal(String level, Game game, int col, int row){
+    public LevelPortal(String level, GameRun gameRun, int col, int row){
         this.level = level;
-        this.game = game;
+        this.gameRun = gameRun;
         this.col = col;
         this.row = row;
         this.filePath = "level-portal.png";
@@ -18,7 +17,7 @@ public class LevelPortal extends Interactable{
 
 
     public void interaction(){
-        game.progressGame(level);
+        gameRun.progressGame(level);
     };
 
 }

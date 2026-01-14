@@ -1,22 +1,21 @@
 package io.github.chess_sequel.engine.interactables;
 
-import io.github.chess_sequel.engine.Game;
-import io.github.chess_sequel.engine.pieces.PieceType;
+import io.github.chess_sequel.engine.GameRun;
 import io.github.chess_sequel.engine.player.BotPlayer;
 
 public class NPCPiece extends Interactable{
 
     private Boolean hostile = true;
 
-    private Game game;
+    private GameRun gameRun;
     private BotPlayer botPlayer;
 
     private int col, row;
 
-    public NPCPiece(BotPlayer botPlayer, Game game, int col, int row){
+    public NPCPiece(BotPlayer botPlayer, GameRun gameRun, int col, int row){
         System.out.println("test");
         this.botPlayer = botPlayer;
-        this.game = game;
+        this.gameRun = gameRun;
         this.col = col;
         this.row = row;
         this.filePath = botPlayer.getLeadPiece().getFilePath();
@@ -45,7 +44,7 @@ public class NPCPiece extends Interactable{
     @Override
     public void interaction(){
         if(hostile && !botPlayer.getDefeated()){
-            game.addMatchBoard(botPlayer);
+            gameRun.addMatchBoard(botPlayer);
         }
 
     }

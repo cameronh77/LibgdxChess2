@@ -1,6 +1,5 @@
 package io.github.chess_sequel.engine;
 
-import io.github.chess_sequel.engine.interactables.Level;
 import io.github.chess_sequel.engine.interactables.LevelPortal;
 import io.github.chess_sequel.engine.jsonTypes.Rewards;
 import io.github.chess_sequel.engine.location.board.Board;
@@ -13,7 +12,7 @@ import io.github.chess_sequel.engine.player.Player;
 import java.util.ArrayList;
 import java.util.Stack;
 
-public class Game {
+public class GameRun {
 
     private Stack<Board> gameBoards = new Stack<>();
     private Player player;
@@ -21,7 +20,7 @@ public class Game {
     private String currentMap;
     private GameState gameState = GameState.NEUTRAL;
 
-    public Game(Player player){
+    public GameRun(Player player){
         this.player = player;
         jsonLoader.loadMapData();
         jsonLoader.loadEnemyData();

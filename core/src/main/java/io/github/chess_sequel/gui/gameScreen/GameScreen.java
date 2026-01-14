@@ -11,19 +11,19 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.chess_sequel.ProjectName;
-import io.github.chess_sequel.engine.Game;
+import io.github.chess_sequel.engine.GameRun;
 import io.github.chess_sequel.engine.GameState;
 import io.github.chess_sequel.engine.player.Player;
 import io.github.chess_sequel.gui.BoardInput;
 import io.github.chess_sequel.gui.GameBoard;
-import io.github.chess_sequel.gui.gameScreen.BoardActor;
+import io.github.chess_sequel.gui.BoardActor;
 
 
 public class GameScreen implements Screen {
 
     final ProjectName game;
 
-    Game gameInstance;
+    GameRun gameRunInstance;
     private SpriteBatch batch;
     private GameBoard board;
 
@@ -52,11 +52,11 @@ public class GameScreen implements Screen {
 
         Player player = new Player();
         player.createPieceList();
-        gameInstance = new Game(player);
-        board = new GameBoard(gameInstance);
+        gameRunInstance = new GameRun(player);
+        board = new GameBoard(gameRunInstance);
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, board.game.getCurrentBoard().boardX, board.game.getCurrentBoard().boardY);
-        this.input = new BoardInput(camera, board, board.game);
+        camera.setToOrtho(false, board.gameRun.getCurrentBoard().boardX, board.gameRun.getCurrentBoard().boardY);
+        this.input = new BoardInput(camera, board, board.gameRun);
         boardActor = new BoardActor(board, input);
 
         //This is awful practice must find a way to fix at some point
@@ -115,7 +115,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-
+        uiStage.getViewport().update(width, height);
     }
 
     @Override

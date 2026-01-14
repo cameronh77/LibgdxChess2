@@ -1,4 +1,4 @@
-package io.github.chess_sequel.gui.gameScreen;
+package io.github.chess_sequel.gui;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;

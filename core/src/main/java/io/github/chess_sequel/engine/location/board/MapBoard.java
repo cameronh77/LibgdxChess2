@@ -1,6 +1,6 @@
 package io.github.chess_sequel.engine.location.board;
 
-import io.github.chess_sequel.engine.Game;
+import io.github.chess_sequel.engine.GameRun;
 import io.github.chess_sequel.engine.interactables.Interactable;
 import io.github.chess_sequel.engine.interactables.NPCPiece;
 import io.github.chess_sequel.engine.player.BotPlayer;
@@ -13,9 +13,9 @@ public class MapBoard extends Board{
 
     private ArrayList<Interactable> locations = new ArrayList<>();
 
-    public MapBoard(Game game, int boardX, int boardY, Player player, String boardLayout, String internalLayouts){
+    public MapBoard(GameRun gameRun, int boardX, int boardY, Player player, String boardLayout, String internalLayouts){
         super(boardX, boardY, player, null);
-        populateBoard(boardLayout, game, internalLayouts);
+        populateBoard(boardLayout, gameRun, internalLayouts);
         addToBoard(player.getLeadPiece());
     }
 
@@ -25,7 +25,7 @@ public class MapBoard extends Board{
         tiles.get(location.getCol()).get(location.getRow()).setInteractable(location);
     }
 
-    public void populateBoard(String boardLayout, Game game, String internalLayouts){
+    public void populateBoard(String boardLayout, GameRun gameRun, String internalLayouts){
         pieces.clear();
         String[] parts = boardLayout.split(" ");
         String[] internals = internalLayouts.split(" ");
@@ -34,8 +34,8 @@ public class MapBoard extends Board{
             System.out.println(parts[index]);
             switch(parts[index].charAt(0)){
                 case ('e'):
-                    BotPlayer botPlayer = new BotPlayer(game, 3, game.getJsonLoader().getEnemyData(game.getCurrentMap(), internals[index]).enemyLayout, game.getJsonLoader().getEnemyData(game.getCurrentMap(), internals[index]).rewards);
-                    addLocation(new NPCPiece(botPlayer, game, Character.getNumericValue(parts[index].charAt(1)), Character.getNumericValue(parts[index].charAt(2))));
+                    BotPlayer botPlayer = new BotPlayer(gameRun, 3, gameRun.getJsonLoader().getEnemyData(gameRun.getCurrentMap(), internals[index]).enemyLayout, gameRun.getJsonLoader().getEnemyData(gameRun.getCurrentMap(), internals[index]).rewards);
+                    addLocation(new NPCPiece(botPlayer, gameRun, Character.getNumericValue(parts[index].charAt(1)), Character.getNumericValue(parts[index].charAt(2))));
                     break;
             }
         }

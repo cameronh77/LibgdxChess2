@@ -1,10 +1,8 @@
 package io.github.chess_sequel.engine.player;
 
-import io.github.chess_sequel.engine.Game;
-import io.github.chess_sequel.engine.interactables.NPCPiece;
+import io.github.chess_sequel.engine.GameRun;
 import io.github.chess_sequel.engine.jsonTypes.Rewards;
 import io.github.chess_sequel.engine.location.board.Board;
-import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.*;
 
@@ -15,14 +13,14 @@ public class BotPlayer extends Player{
     private int skillLevel;
     private String army;
     private boolean defeated = false;
-    private Game game;
+    private GameRun gameRun;
     private Rewards rewards;
 
-    public BotPlayer(Game game, int skillLevel, String army, Rewards rewards){
+    public BotPlayer(GameRun gameRun, int skillLevel, String army, Rewards rewards){
         this.skillLevel = skillLevel;
         this.army = army;
         this.createPieceList();
-        this.game = game;
+        this.gameRun = gameRun;
         this.rewards = rewards;
 
     }
@@ -34,9 +32,9 @@ public class BotPlayer extends Player{
             move.execute();
         } else{
             this.defeated = true;
-            game.popBoard();
+            gameRun.popBoard();
             if(rewards != null){
-                game.handleRewards(rewards);
+                gameRun.handleRewards(rewards);
             }
             System.out.println("Bot player has no moves left");
         }

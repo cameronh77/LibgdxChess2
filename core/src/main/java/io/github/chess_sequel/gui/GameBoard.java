@@ -2,9 +2,8 @@ package io.github.chess_sequel.gui;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import io.github.chess_sequel.engine.Game;
+import io.github.chess_sequel.engine.GameRun;
 import io.github.chess_sequel.engine.interactables.Interactable;
-import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MapBoard;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.Piece;
@@ -17,29 +16,29 @@ public class GameBoard {
 
     public int TILE_SIZE = 64;
 
-    public Game game;
+    public GameRun gameRun;
 
-    public GameBoard (Game game){
+    public GameBoard (GameRun gameRun){
         lightTexture = new Texture("tiles/caramel-tile.png");
         darkTexture = new Texture("tiles/brown-tile.png");
 
-        this.game = game;
+        this.gameRun = gameRun;
     }
 
 
     public void render(SpriteBatch batch, BoardInput input){
 
 
-        for (int x = 0; x < game.getCurrentBoard().boardX; x++) {
-            for (int y = 0; y < game.getCurrentBoard().boardY; y++) {
+        for (int x = 0; x < gameRun.getCurrentBoard().boardX; x++) {
+            for (int y = 0; y < gameRun.getCurrentBoard().boardY; y++) {
                 Texture tileTex = (x + y) % 2 == 0 ? lightTexture : darkTexture;
                 batch.draw(tileTex, + x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
         }
         //System.out.println(game.getCurrentBoard().getPieces());
-        for (Piece piece : game.getCurrentBoard().getPieces()) {
+        for (Piece piece : gameRun.getCurrentBoard().getPieces()) {
             Texture tex = TextureCache.get(piece.getFilePath());
-            if(piece == game.getCurrentBoard().getSelectedPiece()){
+            if(piece == gameRun.getCurrentBoard().getSelectedPiece()){
                 batch.draw(tex, input.getDragX(), input.getDragY(), TILE_SIZE, TILE_SIZE);
             } else{
 
@@ -50,14 +49,14 @@ public class GameBoard {
             }
         }
 
-        if(game.getCurrentBoard().getSelectedPiece() != null && !game.getCurrentBoard().getValidMoves().isEmpty()){
+        if(gameRun.getCurrentBoard().getSelectedPiece() != null && !gameRun.getCurrentBoard().getValidMoves().isEmpty()){
             // calculate pulsing alpha
             float time = (float)(System.currentTimeMillis() % 1000) / 1000f; // cycles every 1 sec
             float alpha = 0.5f + 0.5f * (float)Math.sin(time * Math.PI * 2); // 0->1->0
 
             Texture highlightTex = TextureCache.get("tiles/highlight.png"); // white square texture
 
-            for(Move move: game.getCurrentBoard().getValidMoves()){
+            for(Move move: gameRun.getCurrentBoard().getValidMoves()){
                 int col = move.getNewX();
                 int row = move.getNewY();
 
@@ -67,8 +66,8 @@ public class GameBoard {
             }
         }
 
-        if(game.getCurrentBoard() instanceof MapBoard){
-            MapBoard currentBoard = (MapBoard) game.getCurrentBoard();
+        if(gameRun.getCurrentBoard() instanceof MapBoard){
+            MapBoard currentBoard = (MapBoard) gameRun.getCurrentBoard();
             for(Interactable interactable: currentBoard.getLocations()){
                 Texture tex = TextureCache.get(interactable.getFilePath());
                 batch.draw(tex, interactable.getCol() * TILE_SIZE, interactable.getRow() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
@@ -84,14 +83,14 @@ public class GameBoard {
     }
 
     public int getPixelWidth(){
-        return TILE_SIZE*game.getCurrentBoard().getTiles().size();
+        return TILE_SIZE* gameRun.getCurrentBoard().getTiles().size();
     }
 
     public int getPixelHeight(){
-        return TILE_SIZE*game.getCurrentBoard().getTiles().size();
+        return TILE_SIZE* gameRun.getCurrentBoard().getTiles().size();
     }
 
-    public Game getGame(){
-        return game;
+    public GameRun getGame(){
+        return gameRun;
     }
 }

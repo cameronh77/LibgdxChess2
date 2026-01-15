@@ -22,12 +22,12 @@
     "enemies": [
       {
         "enemyId": "classic1",
-        "enemyLayout": "b07 p57",
+        "enemyLayout": "b04 p54",
         "dialogue": null
       },
       {
         "enemyId": "classic2",
-        "enemyLayout": "h06 p66",
+        "enemyLayout": "h04 p44",
         "dialogue": null
       }
     ],

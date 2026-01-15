@@ -24,7 +24,6 @@ public class GameScreen implements Screen {
     final ProjectName game;
 
     GameRun gameRunInstance;
-    private SpriteBatch batch;
     private GameBoard board;
 
     private Stage uiStage;
@@ -40,14 +39,14 @@ public class GameScreen implements Screen {
     BoardInput input;
 
     public GameScreen(ProjectName game){
-        batch = game.batch;
 
         game.viewport.apply();
-        batch.setProjectionMatrix(game.viewport.getCamera().combined);
-        uiStage = new Stage(new ScreenViewport());
+        //batch.setProjectionMatrix(game.viewport.getCamera().combined);
+        uiStage = new Stage();
 
         rootTable = new Table();
         rootTable.setFillParent(true);
+
         uiStage.addActor(rootTable);
 
         Player player = new Player();
@@ -55,8 +54,9 @@ public class GameScreen implements Screen {
         gameRunInstance = new GameRun(player);
         board = new GameBoard(gameRunInstance);
         camera = new OrthographicCamera();
+
         camera.setToOrtho(false, board.gameRun.getCurrentBoard().boardX, board.gameRun.getCurrentBoard().boardY);
-        this.input = new BoardInput(camera, board, board.gameRun);
+        this.input = new BoardInput(board, board.gameRun);
         boardActor = new BoardActor(board, input);
 
         //This is awful practice must find a way to fix at some point
@@ -65,7 +65,7 @@ public class GameScreen implements Screen {
 
 
         InputMultiplexer mux = new InputMultiplexer();
-        mux.addProcessor(uiStage);
+        //mux.addProcessor(uiStage);
         mux.addProcessor(input);
         Gdx.input.setInputProcessor(mux);
 
@@ -97,25 +97,25 @@ public class GameScreen implements Screen {
 
         ScreenUtils.clear(Color.BLACK);
 
-        //batch.begin();
-        //board.render(batch, input);
-        //batch.end();
-
         if(
             boardActor.getGameBoard().getGame().getGameState() == GameState.CHANGING_MAP
         ){
             boardActor.setSize(boardActor.getGameBoard().getPixelWidth(), boardActor.getGameBoard().getPixelHeight());
             boardActor.getGameBoard().getGame().setGameState(GameState.NEUTRAL);
+
+            centerContainer.invalidateHierarchy();
         }
 
         uiStage.act(delta);
         uiStage.draw();
 
+
+
     }
 
     @Override
     public void resize(int width, int height) {
-        uiStage.getViewport().update(width, height);
+        uiStage.getViewport().update(width, height, true);
     }
 
     @Override
@@ -149,6 +149,7 @@ public class GameScreen implements Screen {
         leftMenu.setDebug(true);
         rightMenu.setDebug(true);
         centerContainer.setDebug(true);
+        centerContainer.setTransform(true);
         bottomMenu.setDebug(true);
         //boardActor.setDebug(true);
 

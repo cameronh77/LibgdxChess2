@@ -18,14 +18,12 @@ public class BoardInput extends InputAdapter {
     private final GameBoard board;
     private GameRun gameRun;
 
-    private OrthographicCamera camera;
-
     private Piece draggingPiece = null;
     private float dragX, dragY;
     private BoardActor boardActor;
 
-    public BoardInput(OrthographicCamera camera, GameBoard board, GameRun gameRun) {
-        this.camera = camera;
+    public BoardInput(GameBoard board, GameRun gameRun) {
+
         this.gameRun = gameRun;
         this.board = board;
 
@@ -107,6 +105,16 @@ public class BoardInput extends InputAdapter {
 
             int row = (int) mouse.y / board.TILE_SIZE;
             int col = (int) mouse.x / board.TILE_SIZE;
+            if (mouse.x < 0 || mouse.y < 0 ||
+                mouse.x >= board.getPixelWidth() ||
+                mouse.y >= board.getPixelHeight()) {
+                gameRun.getCurrentBoard().getSelectedPiece().setCol(gameRun.getCurrentBoard().getSelectedPiece().getCol());
+                gameRun.getCurrentBoard().getSelectedPiece().setRow(gameRun.getCurrentBoard().getSelectedPiece().getRow());
+                System.out.println("Invalid action");
+                gameRun.getCurrentBoard().setSelectedPiece(null);
+                gameRun.getCurrentBoard().resetValidMoves();
+                return true;
+            }
             Tile tile = gameRun.getCurrentBoard().getTiles().get(col).get(row);
             System.out.println("Col unClicked: "+ col + " Row unClicked: " + row);
             System.out.println("Tile X: " + tile.getXord() + " Tile Y: " + tile.getYord());

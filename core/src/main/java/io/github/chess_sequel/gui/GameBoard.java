@@ -1,6 +1,7 @@
 package io.github.chess_sequel.gui;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.chess_sequel.engine.GameRun;
 import io.github.chess_sequel.engine.interactables.Interactable;
@@ -26,25 +27,26 @@ public class GameBoard {
     }
 
 
-    public void render(SpriteBatch batch, BoardInput input){
+    public void render(Batch batch, float xorigin, float yorigin, BoardInput input){
 
 
         for (int x = 0; x < gameRun.getCurrentBoard().boardX; x++) {
             for (int y = 0; y < gameRun.getCurrentBoard().boardY; y++) {
                 Texture tileTex = (x + y) % 2 == 0 ? lightTexture : darkTexture;
-                batch.draw(tileTex, + x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                batch.draw(tileTex, xorigin+x * TILE_SIZE, yorigin+y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+
             }
         }
         //System.out.println(game.getCurrentBoard().getPieces());
         for (Piece piece : gameRun.getCurrentBoard().getPieces()) {
             Texture tex = TextureCache.get(piece.getFilePath());
             if(piece == gameRun.getCurrentBoard().getSelectedPiece()){
-                batch.draw(tex, input.getDragX(), input.getDragY(), TILE_SIZE, TILE_SIZE);
+                batch.draw(tex, xorigin + input.getDragX(), yorigin+input.getDragY(), TILE_SIZE, TILE_SIZE);
             } else{
 
                 batch.draw(tex,
-                    piece.getCol() * TILE_SIZE,
-                    piece.getRow() * TILE_SIZE,
+                    xorigin + piece.getCol() * TILE_SIZE,
+                    yorigin + piece.getRow() * TILE_SIZE,
                     TILE_SIZE, TILE_SIZE);
             }
         }
@@ -61,7 +63,7 @@ public class GameBoard {
                 int row = move.getNewY();
 
                 batch.setColor(1f, 1f, 1f, alpha); // set alpha for pulsing
-                batch.draw(highlightTex, col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                batch.draw(highlightTex, xorigin+col * TILE_SIZE, yorigin+row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                 batch.setColor(1f, 1f, 1f, 1f); // reset to fully opaque for next draw
             }
         }
@@ -70,7 +72,7 @@ public class GameBoard {
             MapBoard currentBoard = (MapBoard) gameRun.getCurrentBoard();
             for(Interactable interactable: currentBoard.getLocations()){
                 Texture tex = TextureCache.get(interactable.getFilePath());
-                batch.draw(tex, interactable.getCol() * TILE_SIZE, interactable.getRow() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                batch.draw(tex, xorigin+interactable.getCol() * TILE_SIZE, yorigin+interactable.getRow() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
         }
         //batch.draw(TextureCache.get("tiles/highlight.png"), 500, 500, 64, 64);

@@ -1,7 +1,9 @@
 package io.github.chess_sequel.engine.pieces;
 
 import io.github.chess_sequel.engine.interactables.Interactable;
+import io.github.chess_sequel.engine.location.board.AlterLayoutBoard;
 import io.github.chess_sequel.engine.location.board.Board;
+import io.github.chess_sequel.engine.moves.AlterLayoutMove;
 import io.github.chess_sequel.engine.moves.Move;
 
 import java.util.ArrayList;
@@ -38,6 +40,18 @@ public abstract class Piece {
         return null;
     }
 
+    public ArrayList<Move> generateAlterLayoutMoves(Board board){
+        ArrayList<Move> moves = new ArrayList<>();
+        for(int x = 0; x< board.boardX;x++){
+            for(int y = 0; y < board.boardY/2;y++){
+                if(board.getTiles().get(x).get(y).getPiece() == null){
+                    moves.add(new AlterLayoutMove(this, x, y, board));
+                }
+            }
+        }
+        return moves;
+    }
+
     public void setIsFirstMove(Boolean state){
         isFirstMove = state;
     }
@@ -71,6 +85,11 @@ public abstract class Piece {
         this.col = trueCol;
     }
 
+    public void updateStartCords(){
+        this.trueRow = row;
+        this.trueCol = col;
+    }
+
     public String getName(){
         return name;
     }
@@ -81,6 +100,14 @@ public abstract class Piece {
 
     public PieceType getPieceType(){
         return pieceType;
+    }
+
+    public int getTrueCol(){
+        return trueCol;
+    }
+
+    public int getTrueRow(){
+        return trueRow;
     }
 
 }

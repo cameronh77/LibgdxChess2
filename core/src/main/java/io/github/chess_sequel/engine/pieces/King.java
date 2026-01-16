@@ -1,6 +1,7 @@
 package io.github.chess_sequel.engine.pieces;
 
 
+import io.github.chess_sequel.engine.location.board.AlterLayoutBoard;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Castling;
@@ -18,6 +19,9 @@ public class King extends Piece {
 
     @Override
     public ArrayList<Move> generateMoves(Board board, Boolean ignoreCheck){
+        if(board instanceof AlterLayoutBoard){
+            return generateAlterLayoutMoves(board);
+        }
         ArrayList<Move> moves = new ArrayList<>();
         if(isWhite == board.getWhiteToMove()) {
             //Currently no moves are showing and this setup also means king can take pieces of its own colour

@@ -1,6 +1,7 @@
 package io.github.chess_sequel.engine.pieces;
 
 
+import io.github.chess_sequel.engine.location.board.AlterLayoutBoard;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.EnPassant;
@@ -19,6 +20,9 @@ public class Pawn extends Piece{
 
     @Override
     public ArrayList<Move> generateMoves(Board board, Boolean ignoreCheck){
+        if(board instanceof AlterLayoutBoard){
+            return generateAlterLayoutMoves(board);
+        }
         ArrayList<Move> moves = new ArrayList<>();
         if(isWhite == board.getWhiteToMove()) {
             int offset = isWhite ? -1 : 1; //Set offset

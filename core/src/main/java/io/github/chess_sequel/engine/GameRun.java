@@ -2,6 +2,7 @@ package io.github.chess_sequel.engine;
 
 import io.github.chess_sequel.engine.interactables.LevelPortal;
 import io.github.chess_sequel.engine.jsonTypes.Rewards;
+import io.github.chess_sequel.engine.location.board.AlterLayoutBoard;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MapBoard;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
@@ -74,6 +75,19 @@ public class GameRun {
         gameBoards.pop();
         player.getLeadPiece().setCol(player.getLeadPieceX());
         player.getLeadPiece().setRow(player.getLeadPieceY());
+    }
+
+    public void alterLayout(){
+        if(gameBoards.peek() instanceof AlterLayoutBoard){
+            popBoard();
+            player.getLeadPiece().setCol(player.getLeadPieceX());
+            player.getLeadPiece().setRow(player.getLeadPieceY());
+        }
+        else{
+            player.setLeadPieceX(player.getLeadPiece().getCol());
+            player.setLeadPieceY(player.getLeadPiece().getRow());
+            gameBoards.push(new AlterLayoutBoard(this, jsonLoader.getMapSizeX(), jsonLoader.getMapSizeY(), player));
+        }
     }
 
     public String getCurrentMap(){

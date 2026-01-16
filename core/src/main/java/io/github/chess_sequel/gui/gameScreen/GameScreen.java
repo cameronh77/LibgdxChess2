@@ -6,8 +6,11 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.chess_sequel.ProjectName;
@@ -65,7 +68,7 @@ public class GameScreen implements Screen {
 
 
         InputMultiplexer mux = new InputMultiplexer();
-        //mux.addProcessor(uiStage);
+        mux.addProcessor(uiStage);
         mux.addProcessor(input);
         Gdx.input.setInputProcessor(mux);
 
@@ -97,6 +100,7 @@ public class GameScreen implements Screen {
 
         ScreenUtils.clear(Color.BLACK);
 
+        //Change height
         if(
             boardActor.getGameBoard().getGame().getGameState() == GameState.CHANGING_MAP
         ){
@@ -108,9 +112,6 @@ public class GameScreen implements Screen {
 
         uiStage.act(delta);
         uiStage.draw();
-
-
-
     }
 
     @Override
@@ -140,29 +141,42 @@ public class GameScreen implements Screen {
 
     private void buildUILayout() {
 
+
+
         leftMenu = new Table();
         rightMenu = new Table();
         centerContainer = new Table();
         bottomMenu = new Table();
 
-        // Debug borders so you can SEE the layout
-        leftMenu.setDebug(true);
-        rightMenu.setDebug(true);
-        centerContainer.setDebug(true);
-        centerContainer.setTransform(true);
-        bottomMenu.setDebug(true);
-        //boardActor.setDebug(true);
+        ImageButton btn = new ImageButton(game.skin.getDrawable("change"));
+        btn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                gameRunInstance.alterLayout();
+            }
+        });
 
-        // Add to root table (3 columns)
+        leftMenu.setBackground(game.skin.getDrawable("blue"));
+        rightMenu.setBackground(game.skin.getDrawable("red"));
+        bottomMenu.setBackground(game.skin.getDrawable("yellow"));
+
+        leftMenu.row();
+        leftMenu.add(btn).size(100).pad(10).center();
+
+        // --- TOP ROW ---
         rootTable.add(leftMenu).width(220).growY();
         rootTable.add(centerContainer).grow();
         rootTable.add(rightMenu).width(220).growY();
 
-        // Bottom menu sits inside center column
-        centerContainer.row();
-        centerContainer.add(boardActor).grow(); // space for board rendering
-        centerContainer.row();
-        centerContainer.add(bottomMenu).height(160).growX();
+        // --- BOTTOM ROW ---
+        rootTable.row();
+        rootTable.add(bottomMenu)
+            .colspan(3)
+            .height(160)
+            .growX();
+
+        // Board goes inside center
+        centerContainer.add(boardActor).grow();
     }
 
 }

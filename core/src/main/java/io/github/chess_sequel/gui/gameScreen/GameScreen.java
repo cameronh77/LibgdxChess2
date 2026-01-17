@@ -1,0 +1,182 @@
+package io.github.chess_sequel.gui.gameScreen;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import io.github.chess_sequel.ProjectName;
+import io.github.chess_sequel.engine.GameRun;
+import io.github.chess_sequel.engine.GameState;
+import io.github.chess_sequel.engine.player.Player;
+import io.github.chess_sequel.gui.BoardInput;
+import io.github.chess_sequel.gui.GameBoard;
+import io.github.chess_sequel.gui.BoardActor;
+
+
+public class GameScreen implements Screen {
+
+    final ProjectName game;
+
+    GameRun gameRunInstance;
+    private GameBoard board;
+
+    private Stage uiStage;
+    private Table rootTable;
+
+    private Table leftMenu;
+    private Table rightMenu;
+    private Table centerContainer;
+    private Table bottomMenu;
+    private BoardActor boardActor;
+
+    private OrthographicCamera camera;
+    BoardInput input;
+
+    public GameScreen(ProjectName game){
+
+        game.viewport.apply();
+        //batch.setProjectionMatrix(game.viewport.getCamera().combined);
+        uiStage = new Stage();
+
+        rootTable = new Table();
+        rootTable.setFillParent(true);
+
+        uiStage.addActor(rootTable);
+
+        Player player = new Player();
+        player.createPieceList();
+        gameRunInstance = new GameRun(player);
+        board = new GameBoard(gameRunInstance);
+        camera = new OrthographicCamera();
+
+        camera.setToOrtho(false, board.gameRun.getCurrentBoard().boardX, board.gameRun.getCurrentBoard().boardY);
+        this.input = new BoardInput(board, board.gameRun);
+        boardActor = new BoardActor(board, input);
+
+        //This is awful practice must find a way to fix at some point
+        this.input.setBoardActor(boardActor);
+
+
+
+        InputMultiplexer mux = new InputMultiplexer();
+        mux.addProcessor(uiStage);
+        mux.addProcessor(input);
+        Gdx.input.setInputProcessor(mux);
+
+
+        this.game = game;
+        buildUILayout();
+
+
+    }
+
+    @Override
+    public void show() {
+
+        /**
+        Player player = new Player();
+        player.createPieceList();
+        gameInstance = new Game(player);
+        board = new GameBoard(gameInstance);
+        OrthographicCamera camera = new OrthographicCamera();
+        camera.setToOrtho(false, board.game.getCurrentBoard().boardX, board.game.getCurrentBoard().boardY);
+        this.input = new BoardInput(camera, board, board.game);
+
+        Gdx.input.setInputProcessor(input);
+        */
+    }
+
+    @Override
+    public void render(float delta) {
+
+        ScreenUtils.clear(Color.BLACK);
+
+        //Change height
+        if(
+            boardActor.getGameBoard().getGame().getGameState() == GameState.CHANGING_MAP
+        ){
+            boardActor.setSize(boardActor.getGameBoard().getPixelWidth(), boardActor.getGameBoard().getPixelHeight());
+            boardActor.getGameBoard().getGame().setGameState(GameState.NEUTRAL);
+
+            centerContainer.invalidateHierarchy();
+        }
+
+        uiStage.act(delta);
+        uiStage.draw();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        uiStage.getViewport().update(width, height, true);
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
+    public void dispose() {
+
+    }
+
+    private void buildUILayout() {
+
+
+
+        leftMenu = new Table();
+        rightMenu = new Table();
+        centerContainer = new Table();
+        bottomMenu = new Table();
+
+        ImageButton btn = new ImageButton(game.skin.getDrawable("change"));
+        btn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                gameRunInstance.alterLayout();
+            }
+        });
+
+        leftMenu.setBackground(game.skin.getDrawable("blue"));
+        rightMenu.setBackground(game.skin.getDrawable("red"));
+        bottomMenu.setBackground(game.skin.getDrawable("yellow"));
+
+        leftMenu.row();
+        leftMenu.add(btn).size(100).pad(10).center();
+
+        // --- TOP ROW ---
+        rootTable.add(leftMenu).width(220).growY();
+        rootTable.add(centerContainer).grow();
+        rootTable.add(rightMenu).width(220).growY();
+
+        // --- BOTTOM ROW ---
+        rootTable.row();
+        rootTable.add(bottomMenu)
+            .colspan(3)
+            .height(160)
+            .growX();
+
+        // Board goes inside center
+        centerContainer.add(boardActor).grow();
+    }
+
+}

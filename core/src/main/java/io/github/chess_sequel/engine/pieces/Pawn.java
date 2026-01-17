@@ -1,6 +1,7 @@
 package io.github.chess_sequel.engine.pieces;
 
 
+import io.github.chess_sequel.engine.location.board.AlterLayoutBoard;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.EnPassant;
@@ -19,6 +20,9 @@ public class Pawn extends Piece{
 
     @Override
     public ArrayList<Move> generateMoves(Board board, Boolean ignoreCheck){
+        if(board instanceof AlterLayoutBoard){
+            return generateAlterLayoutMoves(board);
+        }
         ArrayList<Move> moves = new ArrayList<>();
         if(isWhite == board.getWhiteToMove()) {
             int offset = isWhite ? -1 : 1; //Set offset
@@ -29,7 +33,11 @@ public class Pawn extends Piece{
                 }
             }
             //Generate single moves
-            if (board.getTiles().get(col).get(row + (offset)).getPiece() == null) {
+            System.out.println("I'm a pawn");
+            System.out.println(col);
+            System.out.println(row + offset);
+            if ((row+offset) > 0 && row + offset < board.boardY && board.getTiles().get(col).get(row + (offset)).getPiece() == null) {
+
                 if (row + (offset) == (isWhite ? 0 : board.boardX - 1)) {
                     moves.add(new Promotion(this, col, row + (offset), board, PieceType.QUEEN));
                     moves.add(new Promotion(this, col, row + (offset), board, PieceType.BISHOP));
@@ -41,7 +49,7 @@ public class Pawn extends Piece{
             }
 
             //Generate left takes (This could probably be more efficient)
-            if (col - 1 >= 0 && board.getTiles().get(col - 1).get(row + (offset)).getPiece() != null && board.getTiles().get(col - 1).get(row + (offset)).getPiece().getIsWhite() != isWhite) {
+            if ((row+offset) > 0 && row + offset < board.boardY && col - 1 >= 0 && board.getTiles().get(col - 1).get(row + (offset)).getPiece() != null && board.getTiles().get(col - 1).get(row + (offset)).getPiece().getIsWhite() != isWhite) {
                 if (row + (offset) == (isWhite ? 0 : board.boardX - 1)) {
                     moves.add(new Promotion(this, col-1, row + (offset), board, PieceType.QUEEN));
                     moves.add(new Promotion(this, col-1, row + (offset), board, PieceType.BISHOP));
@@ -53,7 +61,7 @@ public class Pawn extends Piece{
             }
 
             //Generate right takes
-            if (col + 1 < board.boardX && board.getTiles().get(col + 1).get(row + (offset)).getPiece() != null && board.getTiles().get(col + 1).get(row + (offset)).getPiece().getIsWhite() != isWhite) {
+            if ((row+offset) > 0 && row + offset < board.boardY && col + 1 < board.boardX && board.getTiles().get(col + 1).get(row + (offset)).getPiece() != null && board.getTiles().get(col + 1).get(row + (offset)).getPiece().getIsWhite() != isWhite) {
                 if (row + (offset) == (isWhite ? 0 : board.boardX - 1)) {
                     moves.add(new Promotion(this, col+1, row + (offset), board, PieceType.QUEEN));
                     moves.add(new Promotion(this, col+1, row + (offset), board, PieceType.BISHOP));
@@ -75,6 +83,7 @@ public class Pawn extends Piece{
                     moves.add(new EnPassant(this, col + 1, row + (offset), board));
                 }
             }
+            //System.out.println(moves);
             if(!ignoreCheck){
                 //Ignore the naming convention for now
                 ArrayList<Move> trueMoves = new ArrayList<>();

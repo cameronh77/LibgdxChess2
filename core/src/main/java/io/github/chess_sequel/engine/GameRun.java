@@ -1,0 +1,108 @@
+package io.github.chess_sequel.engine;
+
+import io.github.chess_sequel.engine.interactables.LevelPortal;
+import io.github.chess_sequel.engine.jsonTypes.Rewards;
+import io.github.chess_sequel.engine.location.board.AlterLayoutBoard;
+import io.github.chess_sequel.engine.location.board.Board;
+import io.github.chess_sequel.engine.location.board.MapBoard;
+import io.github.chess_sequel.engine.location.board.MatchBoard;
+import io.github.chess_sequel.engine.player.BotPlayer;
+import io.github.chess_sequel.engine.player.Player;
+
+
+import java.util.ArrayList;
+import java.util.Stack;
+
+public class GameRun {
+
+    private Stack<Board> gameBoards = new Stack<>();
+    private Player player;
+    private JsonLoader jsonLoader = new JsonLoader();
+    private String currentMap;
+    private GameState gameState = GameState.NEUTRAL;
+
+    public GameRun(Player player){
+        this.player = player;
+        jsonLoader.loadMapData();
+        jsonLoader.loadEnemyData();
+        this.currentMap = "classic4";
+        jsonLoader.setMapSizeXY(currentMap);
+        addMapBoard();
+    }
+
+    public void addMatchBoard(BotPlayer opponent){
+        System.out.println("Adding match board");
+        player.setLeadPieceX(player.getLeadPiece().getCol());
+        player.setLeadPieceY(player.getLeadPiece().getRow());
+        gameBoards.push(new MatchBoard(jsonLoader.getMapSizeX(), jsonLoader.getMapSizeY(), player, opponent));
+    }
+
+    public void addShopBoard(){
+
+    }
+
+    public void handleRewards(Rewards rewards){
+        MapBoard mapBoard = (MapBoard) getCurrentBoard();
+        if(rewards.portals != null){
+            for(int p = 0; p<rewards.portals.size();p++){
+                mapBoard.addLocation(new LevelPortal(rewards.portals.get(p), this, rewards.portalLocations.get(p).x, rewards.portalLocations.get(p).y));
+            }
+        }
+    }
+
+    public void progressGame(String level){
+        //this.currentMap = level.getLevel();
+        gameState = GameState.CHANGING_MAP;
+        this.currentMap = level;
+        jsonLoader.setMapSizeXY(currentMap);
+        popBoard();
+        addMapBoard();
+    }
+
+    public void addMapBoard(){
+        ArrayList<String> layouts = jsonLoader.getMapData(currentMap).mapLayouts;
+        ArrayList<String> internalLayouts = jsonLoader.getMapData(currentMap).locationInternals;
+        int randomIndex = (int)(Math.random() * layouts.size());
+        String layout = layouts.get(randomIndex);
+        String internalLayout = internalLayouts.get(randomIndex);
+        gameBoards.push(new MapBoard(this, jsonLoader.getMapSizeX(), jsonLoader.getMapSizeY(), player, layout, internalLayout));
+    }
+
+    public Board getCurrentBoard(){
+        return gameBoards.peek();
+    }
+    public void popBoard(){
+        gameBoards.pop();
+        player.getLeadPiece().setCol(player.getLeadPieceX());
+        player.getLeadPiece().setRow(player.getLeadPieceY());
+    }
+
+    public void alterLayout(){
+        if(gameBoards.peek() instanceof AlterLayoutBoard){
+            popBoard();
+            player.getLeadPiece().setCol(player.getLeadPieceX());
+            player.getLeadPiece().setRow(player.getLeadPieceY());
+        }
+        else{
+            player.setLeadPieceX(player.getLeadPiece().getCol());
+            player.setLeadPieceY(player.getLeadPiece().getRow());
+            gameBoards.push(new AlterLayoutBoard(this, jsonLoader.getMapSizeX(), jsonLoader.getMapSizeY(), player));
+        }
+    }
+
+    public String getCurrentMap(){
+        return currentMap;
+    }
+
+    public JsonLoader getJsonLoader(){
+        return jsonLoader;
+    }
+
+    public void setGameState(GameState gameState){
+        this.gameState = gameState;
+    }
+
+    public GameState getGameState(){
+        return gameState;
+    }
+}

@@ -9,16 +9,24 @@ public class Player {
 
     protected ArrayList<Piece> pieces = new ArrayList<>();
     protected Piece leadPiece;
+    private int leadPieceX, leadPieceY;
 
     public Player(){
-        createPieceList();
+
     }
 
     public void takeTurn(Board board){
 
     }
 
+
+
     public void createPieceList(){
+        pieces.add(new Castle(0, 0, false));
+        pieces.add(new Queen(3, 0, false));
+        leadPiece = new King(1, 0, false);
+        pieces.add(leadPiece);
+        /**
         pieces.add(new Castle(0, 0, false));
         pieces.add(new Horse(1, 0, false));
         pieces.add(new Bishop(2, 0, false));
@@ -37,6 +45,7 @@ public class Player {
         pieces.add(new Pawn(5, 1, false));
         pieces.add(new Pawn(6, 1, false));
         pieces.add(new Pawn(7, 1, false));
+         */
     }
 
     public ArrayList<Piece> getPieces(){
@@ -48,4 +57,19 @@ public class Player {
     }
 
 
+    public int getLeadPieceX() {
+        return leadPieceX;
+    }
+
+    public void setLeadPieceX(int x){
+        this.leadPieceX = x;
+    }
+
+    public int getLeadPieceY() {
+        return leadPieceY;
+    }
+
+    public void setLeadPieceY(int y){
+        this.leadPieceY = y;
+    }
 }

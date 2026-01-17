@@ -1,0 +1,78 @@
+[
+  {
+    "mapName": "classic8",
+    "enemies": [
+      {
+        "enemyId": "classic1",
+        "enemyLayout": "b07 p57",
+        "dialogue": null
+      },
+      {
+        "enemyId": "classic2",
+        "enemyLayout": "h06 p66",
+        "dialogue": null
+      }
+    ],
+    "randomEnemies": [
+      "classic1", "classic2"
+    ]
+  },
+  {
+    "mapName": "classic6",
+    "enemies": [
+      {
+        "enemyId": "classic1",
+        "enemyLayout": "b04 p54",
+        "dialogue": null
+      },
+      {
+        "enemyId": "classic2",
+        "enemyLayout": "h04 p44",
+        "dialogue": null
+      }
+    ],
+    "randomEnemies": [
+      "classic1", "classic2"
+    ]
+  },
+  {
+    "mapName": "classic4",
+    "enemies": [
+      {
+        "enemyId": "classic1",
+        "enemyLayout": "b01 p22",
+        "dialogue": null,
+        "rewards": {
+          "portals": ["classic6", "classic8"],
+          "portalLocations": [{
+            "x": 0,
+            "y": 3
+          },
+            {
+              "x": 1,
+              "y": 3
+            }]
+        }
+      },
+      {
+        "enemyId": "classic2",
+        "enemyLayout": "h32 p33",
+        "dialogue": null,
+        "rewards": {
+          "portals": ["classic6", "classic8"],
+          "portalLocations": [{
+            "x": 0,
+            "y": 3
+          },
+            {
+              "x": 1,
+              "y": 3
+            }]
+        }
+      }
+    ],
+    "randomEnemies": [
+      "classic1", "classic2"
+    ]
+  }
+]

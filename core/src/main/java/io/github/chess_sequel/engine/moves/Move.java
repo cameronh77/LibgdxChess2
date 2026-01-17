@@ -1,6 +1,7 @@
 package io.github.chess_sequel.engine.moves;
 
 import io.github.chess_sequel.engine.location.board.Board;
+import io.github.chess_sequel.engine.location.board.MapBoard;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.pieces.Piece;
 
@@ -61,6 +62,7 @@ public class Move {
         if(board instanceof MatchBoard){
             board.setWhiteToMove(!board.getWhiteToMove());
         }
+
     }
 
 
@@ -90,6 +92,7 @@ public class Move {
         if(board instanceof MatchBoard){
             board.setWhiteToMove(!board.getWhiteToMove());
         }
+
 
     }
 

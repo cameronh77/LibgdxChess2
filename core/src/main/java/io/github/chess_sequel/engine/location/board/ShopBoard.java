@@ -6,4 +6,6 @@ public class ShopBoard extends Board{
     public ShopBoard(int boardX, int boardY, Player player){
         super(boardX, boardY, player, null);
     }
+
+
 }

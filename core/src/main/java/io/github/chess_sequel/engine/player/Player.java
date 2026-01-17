@@ -11,8 +11,10 @@ public class Player {
     protected Piece leadPiece;
     private int leadPieceX, leadPieceY;
 
-    public Player(){
+    private int currency;
 
+    public Player(){
+        this.currency = 0;
     }
 
     public void takeTurn(Board board){
@@ -71,5 +73,21 @@ public class Player {
 
     public void setLeadPieceY(int y){
         this.leadPieceY = y;
+    }
+
+    public int getCurrency(){
+        return currency;
+    }
+
+    public void setCurrency(int currency){
+        this.currency = currency;
+    }
+
+    public void incrementCurrency(int currency){
+        this.currency += currency;
+    }
+
+    public void decrementCurrency(int currency){
+        this.currency -= currency;
     }
 }

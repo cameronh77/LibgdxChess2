@@ -10,6 +10,16 @@
     "locationInternals": [
       "classic1 classic2",
       "classic2 classic1"
+    ],
+    "startingPositions": [
+      {
+        "x": 1,
+        "y": 1
+      },
+      {
+        "x": 1,
+        "y": 1
+      }
     ]
   },
   {
@@ -17,12 +27,22 @@
     "mapX": 6,
     "mapY": 6,
     "mapLayouts": [
-      "e11 e12",
+      "e01 e12",
       "e13 e14"
     ],
     "locationInternals": [
       "random random",
       "random random"
+    ],
+    "startingPositions": [
+      {
+        "x": 1,
+        "y": 1
+      },
+      {
+        "x": 1,
+        "y": 1
+      }
     ]
   },
   {
@@ -36,6 +56,16 @@
     "locationInternals": [
       "random random",
       "random random"
+    ],
+    "startingPositions": [
+      {
+        "x": 1,
+        "y": 1
+      },
+      {
+        "x": 1,
+        "y": 1
+      }
     ]
   }
 ]

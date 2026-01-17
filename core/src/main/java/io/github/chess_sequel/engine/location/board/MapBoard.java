@@ -16,7 +16,12 @@ public class MapBoard extends Board{
     public MapBoard(GameRun gameRun, int boardX, int boardY, Player player, String boardLayout, String internalLayouts){
         super(boardX, boardY, player, null);
         populateBoard(boardLayout, gameRun, internalLayouts);
-        addToBoard(player.getLeadPiece());
+        //addToBoard(player.getLeadPiece());
+
+        pieces.add(player.getLeadPiece());
+        player.getLeadPiece().setCol(player.getLeadPieceX());
+        player.getLeadPiece().setRow(player.getLeadPieceY());
+        tiles.get(player.getLeadPieceX()).get(player.getLeadPieceY()).setPiece(player.getLeadPiece());
     }
 
     public void addLocation(Interactable location){

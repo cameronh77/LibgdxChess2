@@ -48,6 +48,9 @@ public class GameRun {
                 mapBoard.addLocation(new LevelPortal(rewards.portals.get(p), this, rewards.portalLocations.get(p).x, rewards.portalLocations.get(p).y));
             }
         }
+        if(rewards.currency != null){
+            player.incrementCurrency(rewards.currency);
+        }
     }
 
     public void progressGame(String level){
@@ -65,6 +68,12 @@ public class GameRun {
         int randomIndex = (int)(Math.random() * layouts.size());
         String layout = layouts.get(randomIndex);
         String internalLayout = internalLayouts.get(randomIndex);
+        player.setLeadPieceX(jsonLoader.getMapData(currentMap).startingPositions.get(randomIndex).x);
+        player.setLeadPieceY(jsonLoader.getMapData(currentMap).startingPositions.get(randomIndex).y);
+
+        //player.getLeadPiece().setCol(player.getLeadPieceX());
+        //player.getLeadPiece().setRow(player.getLeadPieceY());
+
         gameBoards.push(new MapBoard(this, jsonLoader.getMapSizeX(), jsonLoader.getMapSizeY(), player, layout, internalLayout));
     }
 
@@ -104,5 +113,9 @@ public class GameRun {
 
     public GameState getGameState(){
         return gameState;
+    }
+
+    public Player getPlayer(){
+        return player;
     }
 }

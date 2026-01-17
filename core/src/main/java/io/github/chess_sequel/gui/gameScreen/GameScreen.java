@@ -5,10 +5,13 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -39,6 +42,8 @@ public class GameScreen implements Screen {
     private BoardActor boardActor;
 
     private OrthographicCamera camera;
+
+    private Label goldLabel;
     BoardInput input;
 
     public GameScreen(ProjectName game){
@@ -110,6 +115,8 @@ public class GameScreen implements Screen {
             centerContainer.invalidateHierarchy();
         }
 
+        goldLabel.setText(String.valueOf(gameRunInstance.getPlayer().getCurrency()));
+
         uiStage.act(delta);
         uiStage.draw();
     }
@@ -141,12 +148,27 @@ public class GameScreen implements Screen {
 
     private void buildUILayout() {
 
+        Table moneyBar = new Table();
+        moneyBar.setBackground(game.skin.getDrawable("white"));
+        moneyBar.pad(8);
+        moneyBar.left();
 
+        //Image goldIcon = new Image(game.skin.getDrawable("icon-gold"));
+        BitmapFont font = new BitmapFont(); // default font
+        Label.LabelStyle style = new Label.LabelStyle(font, Color.BLACK);
+        goldLabel = new Label("0", style);
+
+        //moneyBar.add(goldIcon).size(20).padRight(6);
+        moneyBar.add(goldLabel).expandX().left();
 
         leftMenu = new Table();
         rightMenu = new Table();
         centerContainer = new Table();
         bottomMenu = new Table();
+
+        rightMenu.add(moneyBar)
+            .growX()
+            .height(40).expand().top();
 
         ImageButton btn = new ImageButton(game.skin.getDrawable("change"));
         btn.addListener(new ChangeListener() {

@@ -27,6 +27,7 @@ public class ProjectName extends Game {
         skin.add("yellow", new Texture("ui/yellow.png"));
         skin.add("red", new Texture("ui/red.png"));
         skin.add("change", new Texture("ui/change-layout.png"));
+        skin.add("white", new Texture("ui/white.png"));
 
         font.setUseIntegerPositions(false);
         font.getData().setScale(viewport.getWorldHeight()/ Gdx.graphics.getHeight());

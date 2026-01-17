@@ -8,5 +8,7 @@ public class MapData {
     public int mapY;
     public ArrayList<String> mapLayouts;
     public ArrayList<String> locationInternals;
+
+    public ArrayList<coordinates> startingPositions;
 }
 

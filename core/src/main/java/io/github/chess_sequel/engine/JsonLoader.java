@@ -4,9 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
-import io.github.chess_sequel.engine.jsonTypes.EnemyData;
-import io.github.chess_sequel.engine.jsonTypes.MapData;
-import io.github.chess_sequel.engine.jsonTypes.MapEnemies;
+import io.github.chess_sequel.engine.jsonTypes.*;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -16,6 +14,7 @@ public class JsonLoader {
     Json json = new Json();
     ObjectMap<String, MapData> currentMap;
     ObjectMap<String, MapEnemies> currentEnemies;
+    ObjectMap<String, MapShops> currentShops;
 
     private int mapSizeX, mapSizeY;
 
@@ -49,6 +48,21 @@ public class JsonLoader {
         }
 
         currentEnemies = enemyByMap;
+
+        return null;
+    }
+
+    public String loadShopData(){
+        Json json = new Json();
+        ArrayList<MapShops> shops = json.fromJson(ArrayList.class, MapShops.class, Gdx.files.internal("jsons/shopdata.json"));
+
+        ObjectMap<String, MapShops> shopByMap = new ObjectMap<>();
+
+        for (MapShops shop:shops){
+            shopByMap.put(shop.mapName, shop);
+        }
+
+        currentShops = shopByMap;
 
         return null;
     }
@@ -87,6 +101,25 @@ public class JsonLoader {
 
         return null;
     }
+
+    public ShopData getShopData(String map, String shop){
+        String chosenShop = shop;
+
+        if(shop.equals("random")){
+            chosenShop = currentShops.get(map).randomShops.get((int) (Math.random() * currentShops.get(map).randomShops.size()));
+        }
+
+        ArrayList<ShopData> shopData = currentShops.get(map).shops;
+
+        for(ShopData shopCheck: shopData){
+            if (shopCheck.shopId.equals(chosenShop)){
+                return shopCheck;
+            }
+        }
+
+        return null;
+    }
+
 
 
 }

@@ -9,6 +9,7 @@ import io.github.chess_sequel.engine.GameRun;
 import io.github.chess_sequel.engine.location.board.MapBoard;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.location.Tile;
+import io.github.chess_sequel.engine.location.board.ShopBoard;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.Piece;
 
@@ -133,6 +134,11 @@ public class BoardInput extends InputAdapter {
                         gameRun.getCurrentBoard().getBotPlayer().takeTurn(gameRun.getCurrentBoard());
                     }
                     if(gameRun.getCurrentBoard() instanceof MapBoard){
+                        if(gameRun.getCurrentBoard().getTiles().get(move.getNewX()).get(move.getNewY()).getInteractable() != null){
+                            gameRun.getCurrentBoard().getTiles().get(move.getNewX()).get(move.getNewY()).getInteractable().interaction();
+                        }
+                    }
+                    if(gameRun.getCurrentBoard() instanceof ShopBoard){
                         if(gameRun.getCurrentBoard().getTiles().get(move.getNewX()).get(move.getNewY()).getInteractable() != null){
                             gameRun.getCurrentBoard().getTiles().get(move.getNewX()).get(move.getNewY()).getInteractable().interaction();
                         }

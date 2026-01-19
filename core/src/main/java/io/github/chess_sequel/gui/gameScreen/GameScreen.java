@@ -60,7 +60,7 @@ public class GameScreen implements Screen {
         Player player = new Player();
         player.createPieceList();
         gameRunInstance = new GameRun(player);
-        board = new GameBoard(gameRunInstance);
+        board = new GameBoard(gameRunInstance, game);
         camera = new OrthographicCamera();
 
         camera.setToOrtho(false, board.gameRun.getCurrentBoard().boardX, board.gameRun.getCurrentBoard().boardY);

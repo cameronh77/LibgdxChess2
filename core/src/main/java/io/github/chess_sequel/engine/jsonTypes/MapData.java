@@ -9,6 +9,6 @@ public class MapData {
     public ArrayList<String> mapLayouts;
     public ArrayList<String> locationInternals;
 
-    public ArrayList<coordinates> startingPositions;
+    public ArrayList<Coordinates> startingPositions;
 }
 

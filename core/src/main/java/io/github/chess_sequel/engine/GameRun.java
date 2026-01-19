@@ -1,11 +1,10 @@
 package io.github.chess_sequel.engine;
 
+import io.github.chess_sequel.engine.interactables.Exit;
 import io.github.chess_sequel.engine.interactables.LevelPortal;
+import io.github.chess_sequel.engine.interactables.ShopItem;
 import io.github.chess_sequel.engine.jsonTypes.Rewards;
-import io.github.chess_sequel.engine.location.board.AlterLayoutBoard;
-import io.github.chess_sequel.engine.location.board.Board;
-import io.github.chess_sequel.engine.location.board.MapBoard;
-import io.github.chess_sequel.engine.location.board.MatchBoard;
+import io.github.chess_sequel.engine.location.board.*;
 import io.github.chess_sequel.engine.player.BotPlayer;
 import io.github.chess_sequel.engine.player.Player;
 
@@ -25,6 +24,7 @@ public class GameRun {
         this.player = player;
         jsonLoader.loadMapData();
         jsonLoader.loadEnemyData();
+        jsonLoader.loadShopData();
         this.currentMap = "classic4";
         jsonLoader.setMapSizeXY(currentMap);
         addMapBoard();
@@ -37,7 +37,18 @@ public class GameRun {
         gameBoards.push(new MatchBoard(jsonLoader.getMapSizeX(), jsonLoader.getMapSizeY(), player, opponent));
     }
 
-    public void addShopBoard(){
+    public void addShopBoard(ArrayList<ShopItem> wares, int xOrd, int yOrd){
+        System.out.println("Adding shop board");
+        player.setLeadPieceX(player.getLeadPiece().getCol());
+        player.setLeadPieceY(player.getLeadPiece().getRow());
+
+        player.getLeadPiece().setCol(xOrd);
+        player.getLeadPiece().setRow(yOrd);
+
+
+        ShopBoard shopBoard = new ShopBoard(jsonLoader.getMapSizeX(), jsonLoader.getMapSizeY(), player, wares);
+        shopBoard.addLocation(new Exit(xOrd, yOrd, this));
+        gameBoards.push(shopBoard);
 
     }
 

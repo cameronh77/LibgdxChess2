@@ -1,0 +1,186 @@
+[
+  {
+    "mapName": "classic8",
+    "shops": [
+      {
+        "shopId": "shop1",
+        "shopLayout": [
+          {
+            "ware": "p",
+            "price": 4,
+            "location": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ware": "p",
+            "price": 5,
+            "location": {
+              "x": 0,
+              "y": 1
+            }
+          }
+        ],
+        "startingCoords":
+          {
+            "x": 2,
+            "y": 0
+          }
+      },
+      {
+        "shopId": "shop2",
+        "shopLayout": [
+          {
+            "ware": "p",
+            "price": 4,
+            "location": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ware": "p",
+            "price": 5,
+            "location": {
+              "x": 0,
+              "y": 1
+            }
+          }
+        ],
+        "startingCoords":
+          {
+            "x": 2,
+            "y": 0
+          }
+      }
+    ],
+    "randomShops": [
+      "shop1", "shop2"
+    ]
+  },
+  {
+    "mapName": "classic6",
+    "shops": [
+      {
+        "shopId": "shop1",
+        "shopLayout": [
+          {
+            "ware": "p",
+            "price": 4,
+            "location": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ware": "p",
+            "price": 5,
+            "location": {
+              "x": 0,
+              "y": 1
+            }
+          }
+        ],
+        "startingCoords":
+          {
+            "x": 2,
+            "y": 0
+          }
+
+      },
+      {
+        "shopId": "shop2",
+        "shopLayout": [
+          {
+            "ware": "p",
+            "price": 4,
+            "location": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ware": "p",
+            "price": 5,
+            "location": {
+              "x": 0,
+              "y": 1
+            }
+          }
+        ],
+        "startingCoords":
+          {
+            "x": 2,
+            "y": 0
+          }
+
+      }
+    ],
+    "randomShops": [
+      "shop1", "shop2"
+    ]
+  },
+  {
+    "mapName": "classic4",
+    "shops": [
+      {
+        "shopId": "shop1",
+        "shopLayout": [
+          {
+            "ware": "p",
+            "price": 4,
+            "location": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ware": "p",
+            "price": 5,
+            "location": {
+              "x": 0,
+              "y": 1
+            }
+          }
+        ],
+        "startingCoords":
+          {
+            "x": 2,
+            "y": 0
+          }
+
+      },
+      {
+        "shopId": "shop2",
+        "shopLayout": [
+          {
+            "ware": "p",
+            "price": 4,
+            "location": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "ware": "p",
+            "price": 5,
+            "location": {
+              "x": 0,
+              "y": 1
+            }
+          }
+        ],
+        "startingCoords":
+          {
+            "x": 2,
+            "y": 0
+          }
+
+      }
+    ],
+    "randomShops": [
+      "shop1", "shop2"
+    ]
+  }
+]

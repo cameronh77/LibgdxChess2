@@ -3,6 +3,7 @@ package io.github.chess_sequel.engine.location.board;
 import io.github.chess_sequel.engine.GameRun;
 import io.github.chess_sequel.engine.interactables.Interactable;
 import io.github.chess_sequel.engine.interactables.NPCPiece;
+import io.github.chess_sequel.engine.interactables.Shop;
 import io.github.chess_sequel.engine.player.BotPlayer;
 import io.github.chess_sequel.engine.player.Player;
 
@@ -42,7 +43,13 @@ public class MapBoard extends Board{
                     BotPlayer botPlayer = new BotPlayer(gameRun, 3, gameRun.getJsonLoader().getEnemyData(gameRun.getCurrentMap(), internals[index]).enemyLayout, gameRun.getJsonLoader().getEnemyData(gameRun.getCurrentMap(), internals[index]).rewards);
                     addLocation(new NPCPiece(botPlayer, gameRun, Character.getNumericValue(parts[index].charAt(1)), Character.getNumericValue(parts[index].charAt(2))));
                     break;
+                case ('s'):
+
+                    Shop shop = new Shop(gameRun, Character.getNumericValue(parts[index].charAt(1)), Character.getNumericValue(parts[index].charAt(2)), gameRun.getJsonLoader().getShopData(gameRun.getCurrentMap(), internals[index]).shopLayout, gameRun.getJsonLoader().getShopData(gameRun.getCurrentMap(), internals[index]).startingCoords);
+                    addLocation(shop);
+                    break;
             }
+
         }
         /**
         //set up pieces

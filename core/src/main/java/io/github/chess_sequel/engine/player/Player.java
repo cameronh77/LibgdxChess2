@@ -12,9 +12,10 @@ public class Player {
     private int leadPieceX, leadPieceY;
 
     private int currency;
+    private ArrayList<Piece> pieceInventory = new ArrayList<>();
 
     public Player(){
-        this.currency = 0;
+        this.currency = 30;
     }
 
     public void takeTurn(Board board){
@@ -89,5 +90,9 @@ public class Player {
 
     public void decrementCurrency(int currency){
         this.currency -= currency;
+    }
+
+    public ArrayList<Piece> getPieceInventory(){
+        return pieceInventory;
     }
 }

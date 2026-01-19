@@ -1,11 +1,15 @@
 package io.github.chess_sequel.gui;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import io.github.chess_sequel.ProjectName;
 import io.github.chess_sequel.engine.GameRun;
 import io.github.chess_sequel.engine.interactables.Interactable;
+import io.github.chess_sequel.engine.interactables.ShopItem;
 import io.github.chess_sequel.engine.location.board.MapBoard;
+import io.github.chess_sequel.engine.location.board.ShopBoard;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.Piece;
 
@@ -18,12 +22,14 @@ public class GameBoard {
     public int TILE_SIZE = 64;
 
     public GameRun gameRun;
+    private ProjectName game;
 
-    public GameBoard (GameRun gameRun){
+    public GameBoard (GameRun gameRun, ProjectName game){
         lightTexture = new Texture("tiles/caramel-tile.png");
         darkTexture = new Texture("tiles/brown-tile.png");
 
         this.gameRun = gameRun;
+        this.game = game;
     }
 
 
@@ -73,6 +79,24 @@ public class GameBoard {
             for(Interactable interactable: currentBoard.getLocations()){
                 Texture tex = TextureCache.get(interactable.getFilePath());
                 batch.draw(tex, xorigin+interactable.getCol() * TILE_SIZE, yorigin+interactable.getRow() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            }
+        }
+
+        if(gameRun.getCurrentBoard() instanceof ShopBoard){
+            ShopBoard currentBoard = (ShopBoard) gameRun.getCurrentBoard();
+            for(Interactable interactable: currentBoard.getWares()){
+                if(interactable instanceof ShopItem){
+                    Texture tex = TextureCache.get(interactable.getFilePath());
+                    batch.draw(tex, (xorigin+interactable.getCol() * TILE_SIZE) + TILE_SIZE/4, (yorigin+interactable.getRow() * TILE_SIZE) + TILE_SIZE/2, TILE_SIZE/2, TILE_SIZE/2);
+                    ShopItem shopItem = (ShopItem) interactable;
+                    game.font.getData().setScale(2f);
+                    game.font.draw(batch, String.valueOf(shopItem.getPrice()), (xorigin+interactable.getCol() * TILE_SIZE) + TILE_SIZE/3, (yorigin+interactable.getRow() * TILE_SIZE) + TILE_SIZE/2);
+
+                } else{
+                    Texture tex = TextureCache.get(interactable.getFilePath());
+                    batch.draw(tex, xorigin+interactable.getCol() * TILE_SIZE, yorigin+interactable.getRow() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                }
+
             }
         }
         //batch.draw(TextureCache.get("tiles/highlight.png"), 500, 500, 64, 64);

@@ -13,7 +13,6 @@ public class NPCPiece extends Interactable{
     private int col, row;
 
     public NPCPiece(BotPlayer botPlayer, GameRun gameRun, int col, int row){
-        System.out.println("test");
         this.botPlayer = botPlayer;
         this.gameRun = gameRun;
         this.col = col;

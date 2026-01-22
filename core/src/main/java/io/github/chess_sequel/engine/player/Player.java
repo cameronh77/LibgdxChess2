@@ -16,7 +16,7 @@ public class Player {
 
     public Player(){
         this.currency = 30;
-        //pieceInventory.add(new Pawn(-1, -1, false));
+
     }
 
     public void takeTurn(Board board){

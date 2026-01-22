@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import io.github.chess_sequel.engine.GameRun;
+import io.github.chess_sequel.engine.GameState;
+import io.github.chess_sequel.engine.location.board.AlterLayoutBoard;
 import io.github.chess_sequel.engine.location.board.MapBoard;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.location.Tile;
@@ -107,12 +109,21 @@ public class BoardInput extends InputAdapter {
             int row = (int) mouse.y / board.TILE_SIZE;
             int col = (int) mouse.x / board.TILE_SIZE;
 
+
             if (mouse.x < 0 || mouse.y < 0 ||
                 mouse.x >= board.getPixelWidth() ||
                 mouse.y >= board.getPixelHeight()) {
-                gameRun.getCurrentBoard().getSelectedPiece().setCol(gameRun.getCurrentBoard().getSelectedPiece().getCol());
-                gameRun.getCurrentBoard().getSelectedPiece().setRow(gameRun.getCurrentBoard().getSelectedPiece().getRow());
-                System.out.println("Invalid action");
+                if(gameRun.getCurrentBoard() instanceof AlterLayoutBoard && gameRun.getCurrentBoard().getSelectedPiece() != gameRun.getPlayer().getLeadPiece()){
+                    gameRun.getPlayer().getPieceInventory().add(gameRun.getCurrentBoard().getSelectedPiece());
+                    gameRun.getPlayer().getPieces().remove(gameRun.getCurrentBoard().getSelectedPiece());
+                    gameRun.getCurrentBoard().getTiles().get(gameRun.getCurrentBoard().getSelectedPiece().getCol()).get(gameRun.getCurrentBoard().getSelectedPiece().getRow()).setPiece(null);
+                    gameRun.getCurrentBoard().getPieces().remove(gameRun.getCurrentBoard().getSelectedPiece());
+                    gameRun.setGameState(GameState.CHANGING_INVENTORY);
+                } else {
+                    gameRun.getCurrentBoard().getSelectedPiece().setCol(gameRun.getCurrentBoard().getSelectedPiece().getCol());
+                    gameRun.getCurrentBoard().getSelectedPiece().setRow(gameRun.getCurrentBoard().getSelectedPiece().getRow());
+                    System.out.println("Invalid action");
+                }
                 gameRun.getCurrentBoard().setSelectedPiece(null);
                 gameRun.getCurrentBoard().resetValidMoves();
                 return true;

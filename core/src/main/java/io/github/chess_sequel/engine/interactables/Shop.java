@@ -28,7 +28,7 @@ public class Shop extends Interactable{
 
     @Override
     public void interaction(){
-        game.addShopBoard(wares, entranceX, entranceY);
+        game.addShopBoard(this, entranceX, entranceY);
     }
 
     public ArrayList<ShopItem> getWares(){

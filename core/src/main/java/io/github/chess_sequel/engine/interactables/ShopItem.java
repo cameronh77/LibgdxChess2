@@ -29,6 +29,7 @@ public class ShopItem extends Interactable{
             board.getTiles().get(col).get(row).setInteractable(null);
             board.getWares().remove(this);
             game.getPlayer().decrementCurrency(price);
+            board.getShop().getWares().remove(this);
             game.setGameState(GameState.CHANGING_INVENTORY);
         }
     }

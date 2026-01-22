@@ -1,6 +1,7 @@
 package io.github.chess_sequel.engine.location.board;
 
 import io.github.chess_sequel.engine.interactables.Interactable;
+import io.github.chess_sequel.engine.interactables.Shop;
 import io.github.chess_sequel.engine.interactables.ShopItem;
 import io.github.chess_sequel.engine.pieces.Piece;
 import io.github.chess_sequel.engine.player.Player;
@@ -9,11 +10,12 @@ import java.util.ArrayList;
 
 public class ShopBoard extends Board{
 
+    private Shop shop;
     private ArrayList<Interactable> locations = new ArrayList<>();
-    public ShopBoard(int boardX, int boardY, Player player, ArrayList<ShopItem> wares){
+    public ShopBoard(int boardX, int boardY, Player player, Shop shop){
         super(boardX, boardY, player, null);
-
-        fillShop(wares);
+        this.shop = shop;
+        fillShop(shop.getWares());
         pieces.add(player.getLeadPiece());
 
         addToBoard(player.getLeadPiece());
@@ -39,6 +41,10 @@ public class ShopBoard extends Board{
     public void addToBoard(Piece piece){
         pieces.add(piece);
         tiles.get(piece.getCol()).get(piece.getRow()).setPiece(piece);
+    }
+
+    public Shop getShop(){
+        return shop;
     }
 
 

@@ -13,6 +13,10 @@ public class AlterLayoutMove extends Move{
 
     @Override
     public void execute() {
+
+        if(!board.getPieces().contains(movingPiece)){
+            board.getPieces().add(movingPiece);
+        }
         //Vacate old piece
         board.getTiles().get(oldX).get(oldY).setPiece(null);
 

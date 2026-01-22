@@ -106,6 +106,7 @@ public class BoardInput extends InputAdapter {
 
             int row = (int) mouse.y / board.TILE_SIZE;
             int col = (int) mouse.x / board.TILE_SIZE;
+
             if (mouse.x < 0 || mouse.y < 0 ||
                 mouse.x >= board.getPixelWidth() ||
                 mouse.y >= board.getPixelHeight()) {

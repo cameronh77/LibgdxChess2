@@ -1,6 +1,7 @@
 package io.github.chess_sequel.engine.interactables;
 
 import io.github.chess_sequel.engine.GameRun;
+import io.github.chess_sequel.engine.GameState;
 import io.github.chess_sequel.engine.location.board.ShopBoard;
 import io.github.chess_sequel.engine.pieces.Piece;
 import io.github.chess_sequel.engine.player.Player;
@@ -28,6 +29,7 @@ public class ShopItem extends Interactable{
             board.getTiles().get(col).get(row).setInteractable(null);
             board.getWares().remove(this);
             game.getPlayer().decrementCurrency(price);
+            game.setGameState(GameState.CHANGING_INVENTORY);
         }
     }
 

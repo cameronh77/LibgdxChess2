@@ -11,9 +11,8 @@ import java.util.ArrayList;
 public class Horse extends Piece {
 
     public Horse(int x, int y, boolean isWhite){
-        super(x, y, isWhite, "horse");
+        super(x, y, isWhite, "horse", ChessClass.CLASSIC);
         pieceType = PieceType.HORSE;
-
     }
 
     @Override

@@ -12,9 +12,8 @@ import java.util.ArrayList;
 public class King extends Piece {
 
     public King(int x, int y, boolean isWhite){
-        super(x, y, isWhite, "king");
+        super(x, y, isWhite, "king", ChessClass.CLASSIC);
         pieceType = PieceType.KING;
-
     }
 
     @Override

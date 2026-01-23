@@ -10,9 +10,8 @@ import java.util.ArrayList;
 public class Castle extends Piece {
 
     public Castle(int x, int y, boolean isWhite){
-        super(x, y, isWhite, "castle");
+        super(x, y, isWhite, "castle", ChessClass.CLASSIC);
         pieceType = PieceType.CASTLE;
-
     }
 
     @Override

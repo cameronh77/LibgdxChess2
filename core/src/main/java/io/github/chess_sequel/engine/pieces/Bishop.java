@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Bishop extends Piece{
 
     public Bishop(int x, int y, boolean isWhite){
-        super(x, y, isWhite, "bishop");
+        super(x, y, isWhite, "bishop", ChessClass.CLASSIC);
         pieceType = PieceType.BISHOP;
 
     }

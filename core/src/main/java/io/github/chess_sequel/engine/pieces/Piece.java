@@ -24,15 +24,16 @@ public abstract class Piece {
     protected boolean isWhite;
 
     protected PieceType pieceType;
+    protected ChessClass chessClass;
 
-    Piece(int x, int y, boolean isWhite, String name){
+    Piece(int x, int y, boolean isWhite, String name, ChessClass chessClass){
         this.trueCol = x;
         this.trueRow = y;
 
         this.isWhite = isWhite;
         this.name = name;
-
-        this.filePath = "pieces/"+(isWhite?"black":"white")+"-"+name+".png";
+        this.chessClass = chessClass;
+        this.filePath = "pieces/"+chessClass.getType()+"/"+(isWhite?"black":"white")+"-"+name+".png";
     }
 
 

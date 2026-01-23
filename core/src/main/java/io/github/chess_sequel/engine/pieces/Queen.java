@@ -11,9 +11,8 @@ import java.util.ArrayList;
 public class Queen extends Piece {
 
     public Queen(int x, int y, boolean isWhite){
-        super(x, y, isWhite, "queen");
+        super(x, y, isWhite, "queen", ChessClass.CLASSIC);
         pieceType = PieceType.QUEEN;
-
     }
 
     @Override

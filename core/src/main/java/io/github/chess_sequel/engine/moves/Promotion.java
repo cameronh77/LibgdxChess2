@@ -2,8 +2,11 @@ package io.github.chess_sequel.engine.moves;
 
 
 import io.github.chess_sequel.engine.location.board.Board;
-import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.pieces.*;
+import io.github.chess_sequel.engine.pieces.classic.Bishop;
+import io.github.chess_sequel.engine.pieces.classic.Castle;
+import io.github.chess_sequel.engine.pieces.classic.Horse;
+import io.github.chess_sequel.engine.pieces.classic.Queen;
 
 public class Promotion extends Move{
 
@@ -39,6 +42,8 @@ public class Promotion extends Move{
         promotionPiece.setIsFirstMove(false);
 
         board.setWhiteToMove(!board.getWhiteToMove());
+
+        board.tick();
     }
 
     @Override
@@ -58,5 +63,7 @@ public class Promotion extends Move{
         board.getTiles().get(newX).get(newY).setPiece(capturedPiece);
 
         board.setWhiteToMove(!board.getWhiteToMove());
+
+        board.untick();
     }
 }

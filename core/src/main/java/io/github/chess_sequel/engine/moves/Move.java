@@ -63,7 +63,16 @@ public class Move {
             board.setWhiteToMove(!board.getWhiteToMove());
         }
 
+        if(capturedPiece != null){
+            capturedPiece.onCapture(movingPiece);
+            //System.out.println(movingPiece + " captured " + capturedPiece);
+        }
+
+        board.tick();
+
     }
+
+
 
 
     public void undo(){
@@ -91,6 +100,12 @@ public class Move {
         //Flip the turn
         if(board instanceof MatchBoard){
             board.setWhiteToMove(!board.getWhiteToMove());
+        }
+
+        board.untick();
+
+        if(capturedPiece != null){
+            capturedPiece.undoOnCapture(movingPiece);
         }
 
 

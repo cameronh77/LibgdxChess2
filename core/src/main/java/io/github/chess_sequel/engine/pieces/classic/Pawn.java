@@ -1,4 +1,4 @@
-package io.github.chess_sequel.engine.pieces;
+package io.github.chess_sequel.engine.pieces.classic;
 
 
 import io.github.chess_sequel.engine.location.board.AlterLayoutBoard;
@@ -7,18 +7,26 @@ import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.EnPassant;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.moves.Promotion;
+import io.github.chess_sequel.engine.pieces.ChessClass;
+import io.github.chess_sequel.engine.pieces.Piece;
+import io.github.chess_sequel.engine.pieces.PieceType;
 
 import java.util.ArrayList;
 
-public class Pawn extends Piece{
+public class Pawn extends Piece {
 
     public Pawn(int x, int y, boolean isWhite){
         super(x, y, isWhite, "pawn", ChessClass.CLASSIC);
         pieceType = PieceType.PAWN;
     }
 
+    public Pawn(int x, int y, boolean isWhite, String name, ChessClass chessClass){
+        super(x, y, isWhite, name, chessClass);
+        pieceType = PieceType.PAWN;
+    }
+
     @Override
-    public ArrayList<Move> generateMoves(Board board, Boolean ignoreCheck){
+    public ArrayList<Move> generateBaseMoves(Board board, Boolean ignoreCheck){
         if(board instanceof AlterLayoutBoard){
             return generateAlterLayoutMoves(board);
         }
@@ -26,15 +34,12 @@ public class Pawn extends Piece{
         if(isWhite == board.getWhiteToMove()) {
             int offset = isWhite ? -1 : 1; //Set offset
             //Generate moves for first turn not considering promotion on first turn, can revisit
-            if (this.isFirstMove) {
+            if (this.isFirstMove && row + 2*offset > 0 && row+2*offset < board.boardX) {
                 if (board.getTiles().get(col).get(row + (2 * offset)).getPiece() == null && board.getTiles().get(col).get(row + (offset)).getPiece() == null) {
                     moves.add(new Move(this, col, row + (2 * offset), board));
                 }
             }
             //Generate single moves
-            System.out.println("I'm a pawn");
-            System.out.println(col);
-            System.out.println(row + offset);
             if ((row+offset) > 0 && row + offset < board.boardY && board.getTiles().get(col).get(row + (offset)).getPiece() == null) {
 
                 if (row + (offset) == (isWhite ? 0 : board.boardX - 1)) {

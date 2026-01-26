@@ -2,6 +2,12 @@ package io.github.chess_sequel.engine.player;
 
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.pieces.*;
+import io.github.chess_sequel.engine.pieces.classic.Castle;
+import io.github.chess_sequel.engine.pieces.classic.King;
+import io.github.chess_sequel.engine.pieces.classic.Pawn;
+import io.github.chess_sequel.engine.pieces.classic.Queen;
+import io.github.chess_sequel.engine.pieces.goblin.Goblin;
+import io.github.chess_sequel.engine.pieces.goblin.GoblinDrill;
 
 import java.util.ArrayList;
 
@@ -27,7 +33,8 @@ public class Player {
 
     public void createPieceList(){
         pieces.add(new Castle(0, 0, false));
-        pieces.add(new Queen(3, 0, false));
+        pieces.add(new Queen(2, 0, false));
+        pieces.add(new GoblinDrill(3, 0, false));
         leadPiece = new King(1, 0, false);
         pieces.add(leadPiece);
         /**

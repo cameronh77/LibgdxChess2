@@ -28,6 +28,8 @@ public class EnPassant extends Move{
         board.setEnPassantTile(null);
 
         board.setWhiteToMove(!board.getWhiteToMove());
+
+        board.tick();
     }
 
     @Override
@@ -53,5 +55,7 @@ public class EnPassant extends Move{
         board.setEnPassantTile(enPassantTile);
 
         board.setWhiteToMove(!board.getWhiteToMove());
+
+        board.untick();
     }
 }

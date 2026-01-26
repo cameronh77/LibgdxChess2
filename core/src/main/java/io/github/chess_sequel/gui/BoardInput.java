@@ -75,6 +75,10 @@ public class BoardInput extends InputAdapter {
             gameRun.getCurrentBoard().setSelectedPiece(tile.getPiece());
             System.out.println("Piece " + tile.getPiece().getName() + " has been selected from col: "+ tile.getPiece().getCol() + " row: " + tile.getPiece().getRow());
             gameRun.getCurrentBoard().generatePieceMoves();
+            if(gameRun.getCurrentBoard().getSelectedPiece().getAlterMovePowers().size()>0){
+                System.out.println(gameRun.getCurrentBoard().getSelectedPiece().getAlterMovePowers().get(0).getDuration());
+            }
+            //System.out.println(gameRun.getCurrentBoard().getSelectedPiece().getAlterMovePowers());
         }
 
         // Store drag pixel offsets for smooth dragging

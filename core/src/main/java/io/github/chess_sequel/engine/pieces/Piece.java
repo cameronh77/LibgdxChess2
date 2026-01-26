@@ -1,10 +1,12 @@
 package io.github.chess_sequel.engine.pieces;
 
+import io.github.chess_sequel.engine.auras.Aura;
 import io.github.chess_sequel.engine.interactables.Interactable;
 import io.github.chess_sequel.engine.location.board.AlterLayoutBoard;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.moves.AlterLayoutMove;
 import io.github.chess_sequel.engine.moves.Move;
+import io.github.chess_sequel.engine.powers.pieceAltering.AlterMovePower;
 
 import java.util.ArrayList;
 
@@ -12,7 +14,7 @@ public abstract class Piece {
     protected String name;
     protected String filePath;
     protected Boolean isFirstMove = true;
-
+    protected ArrayList<AlterMovePower> alterMovePowers = new ArrayList<>();
 
     public boolean isWhite() {
         return isWhite;
@@ -26,7 +28,7 @@ public abstract class Piece {
     protected PieceType pieceType;
     protected ChessClass chessClass;
 
-    Piece(int x, int y, boolean isWhite, String name, ChessClass chessClass){
+    public Piece(int x, int y, boolean isWhite, String name, ChessClass chessClass){
         this.trueCol = x;
         this.trueRow = y;
 
@@ -38,8 +40,18 @@ public abstract class Piece {
 
 
     public ArrayList<Move> generateMoves(Board board, Boolean ignoreCheck){
-        return null;
+        ArrayList<Move> moves = generateBaseMoves(board, ignoreCheck);
+
+        for(AlterMovePower power: alterMovePowers){
+            moves = power.alterMoves(moves, board, ignoreCheck);
+        }
+        for(Aura aura: board.getTiles().get(col).get(row).getAuras()){
+            moves = aura.alterMoves(this, moves, board, ignoreCheck);
+        }
+        return moves;
     }
+
+    public abstract ArrayList<Move> generateBaseMoves(Board board, Boolean ignoreCheck);
 
     public ArrayList<Move> generateAlterLayoutMoves(Board board){
         ArrayList<Move> moves = new ArrayList<>();
@@ -111,4 +123,34 @@ public abstract class Piece {
         return trueRow;
     }
 
+    public void onCapture(Piece piece){
+
+    }
+
+    public void undoOnCapture(Piece piece){
+
+    }
+
+    public ArrayList<AlterMovePower> getAlterMovePowers(){
+        return alterMovePowers;
+    }
+
+    public void tick(){
+        for(AlterMovePower alterMovePower: alterMovePowers){
+            alterMovePower.tick();
+        }
+    }
+
+    public void untick(){
+        for(AlterMovePower alterMovePower: alterMovePowers){
+            alterMovePower.untick();
+        }
+    }
+
+    /**
+     * If the piece needs to do anything at the start of the match
+     */
+    public void onStart(Board board){
+
+    }
 }

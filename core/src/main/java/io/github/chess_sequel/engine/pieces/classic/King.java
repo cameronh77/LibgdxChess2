@@ -1,4 +1,4 @@
-package io.github.chess_sequel.engine.pieces;
+package io.github.chess_sequel.engine.pieces.classic;
 
 
 import io.github.chess_sequel.engine.location.board.AlterLayoutBoard;
@@ -6,6 +6,9 @@ import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Castling;
 import io.github.chess_sequel.engine.moves.Move;
+import io.github.chess_sequel.engine.pieces.ChessClass;
+import io.github.chess_sequel.engine.pieces.Piece;
+import io.github.chess_sequel.engine.pieces.PieceType;
 
 import java.util.ArrayList;
 
@@ -16,8 +19,13 @@ public class King extends Piece {
         pieceType = PieceType.KING;
     }
 
+    public King(int x, int y, boolean isWhite, String name, ChessClass chessClass){
+        super(x, y, isWhite, name, chessClass);
+        pieceType = PieceType.KING;
+    }
+
     @Override
-    public ArrayList<Move> generateMoves(Board board, Boolean ignoreCheck){
+    public ArrayList<Move> generateBaseMoves(Board board, Boolean ignoreCheck){
         if(board instanceof AlterLayoutBoard){
             return generateAlterLayoutMoves(board);
         }

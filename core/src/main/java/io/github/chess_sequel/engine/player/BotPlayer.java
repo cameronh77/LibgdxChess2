@@ -5,6 +5,10 @@ import io.github.chess_sequel.engine.jsonTypes.Rewards;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.*;
+import io.github.chess_sequel.engine.pieces.classic.*;
+import io.github.chess_sequel.engine.pieces.factories.PieceFactory;
+import io.github.chess_sequel.engine.pieces.goblin.Goblin;
+import io.github.chess_sequel.engine.pieces.goblin.GoblinQueen;
 
 import java.util.ArrayList;
 
@@ -30,7 +34,8 @@ public class BotPlayer extends Player{
         Move move = findBestMove(board, skillLevel);
         if(move != null){
             move.execute();
-        } else{
+        }
+        else{
             this.defeated = true;
             gameRun.popBoard();
             if(rewards != null){
@@ -83,6 +88,9 @@ public class BotPlayer extends Player{
             for(Piece piece: pieces) {
                 moves.addAll(piece.generateMoves(board, false));
             }
+            if(moves.size()==0){
+                return BoardEvaluator.evaluatePosition(board, board.getWhiteToMove());
+            }
             for (Move move : moves) {
 
                 move.execute();
@@ -109,6 +117,9 @@ public class BotPlayer extends Player{
             for(Piece piece: pieces) {
                 moves.addAll(piece.generateMoves(board, false));
             }
+            if(moves.size()==0){
+                return BoardEvaluator.evaluatePosition(board, board.getWhiteToMove());
+            }
             for (Move move : moves) {
 
                 move.execute();
@@ -133,72 +144,13 @@ public class BotPlayer extends Player{
         String[] parts = army.split(" ");
 
         for(String part: parts){
-            System.out.println(part);
-            switch(part.charAt(0)){
-                case ('p'):
-                    Piece pawn = new Pawn(Character.getNumericValue(part.charAt(1)), Character.getNumericValue(part.charAt(2)), true);
-                    if(leadPiece == null){
-                        leadPiece = pawn;
-                    }
-                    pieces.add(pawn);
-                    break;
-                case ('k'):
-                    Piece king = new King(Character.getNumericValue(part.charAt(1)), Character.getNumericValue(part.charAt(2)), true);
-                    if(leadPiece == null){
-                        leadPiece = king;
-                    }
-                    pieces.add(king);
-                    break;
-                case ('c'):
-                    Piece castle = new Castle(Character.getNumericValue(part.charAt(1)), Character.getNumericValue(part.charAt(2)), true);
-                    if(leadPiece == null){
-                        leadPiece = castle;
-                    }
-                    pieces.add(castle);
-                    break;
-                case ('h'):
-                    Piece horse = new Horse(Character.getNumericValue(part.charAt(1)), Character.getNumericValue(part.charAt(2)), true);
-                    if(leadPiece == null){
-                        leadPiece = horse;
-                    }
-                    pieces.add(horse);
-                    break;
-                case ('b'):
-                    Piece bishop = new Bishop(Character.getNumericValue(part.charAt(1)), Character.getNumericValue(part.charAt(2)), true);
-                    if(leadPiece == null){
-                        leadPiece = bishop;
-                    }
-                    pieces.add(bishop);
-                    break;
-                case ('q'):
-                    Piece queen = new Queen(Character.getNumericValue(part.charAt(1)), Character.getNumericValue(part.charAt(2)), true);
-                    if(leadPiece == null){
-                        leadPiece = queen;
-                    }
-                    pieces.add(queen);
-                    break;
+            Piece piece = PieceFactory.generatePiece(part);
+            if(leadPiece == null){
+                leadPiece = piece;
             }
+            pieces.add(piece);
         }
-        /**
-        pieces.add(new Pawn(0, 6, true));
-        pieces.add(new Pawn(1, 6, true));
-        pieces.add(new Pawn(2, 6, true));
-        pieces.add(new Pawn(3, 6, true));
-        pieces.add(new Pawn(4, 6, true));
-        pieces.add(new Pawn(5, 6, true));
-        pieces.add(new Pawn(6, 6, true));
-        pieces.add(new Pawn(7, 6, true));
 
-        pieces.add(new Castle(0, 7, true));
-        pieces.add(new Horse(1, 7, true));
-        pieces.add(new Bishop(2, 7, true));
-        pieces.add(new Queen(3, 7, true));
-        leadPiece = new King(4, 7, true);
-        pieces.add(leadPiece);
-        pieces.add(new Bishop(5, 7, true));
-        pieces.add(new Horse(6, 7, true));
-        pieces.add(new Castle(7, 7, true));
-         */
     }
 
     public boolean getDefeated(){

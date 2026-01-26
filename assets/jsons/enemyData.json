@@ -4,12 +4,12 @@
     "enemies": [
       {
         "enemyId": "classic1",
-        "enemyLayout": "b07 p57",
+        "enemyLayout": "cb07 cp57",
         "dialogue": null
       },
       {
         "enemyId": "classic2",
-        "enemyLayout": "h06 p66",
+        "enemyLayout": "ch06 cp66",
         "dialogue": null
       }
     ],
@@ -22,12 +22,12 @@
     "enemies": [
       {
         "enemyId": "classic1",
-        "enemyLayout": "b04 p54",
+        "enemyLayout": "cb04 cp54",
         "dialogue": null
       },
       {
         "enemyId": "classic2",
-        "enemyLayout": "h04 p44",
+        "enemyLayout": "ch04 cp44",
         "dialogue": null
       }
     ],
@@ -40,7 +40,7 @@
     "enemies": [
       {
         "enemyId": "classic1",
-        "enemyLayout": "b01 p22",
+        "enemyLayout": "cp33",
         "dialogue": null,
         "rewards": {
           "portals": ["classic6", "classic8"],
@@ -57,7 +57,7 @@
       },
       {
         "enemyId": "classic2",
-        "enemyLayout": "h32 p33",
+        "enemyLayout": "cp33 cp23 cp13 gp03 gp32 gp22 gp12 gp02",
         "dialogue": null,
         "rewards": {
           "portals": ["classic6", "classic8"],

@@ -3,7 +3,7 @@ package io.github.chess_sequel.engine.location.board;
 import io.github.chess_sequel.engine.location.Tile;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.*;
-import io.github.chess_sequel.engine.player.BotPlayer;
+import io.github.chess_sequel.engine.pieces.classic.*;
 import io.github.chess_sequel.engine.player.Player;
 
 
@@ -169,6 +169,28 @@ public abstract class Board {
         }
         whiteToMove = !whiteToMove;
         return isTileChecked;
+    }
+
+    public void tick(){
+        for(Piece piece: pieces){
+            piece.tick();
+        }
+    }
+
+    public void untick(){
+        for(Piece piece: pieces){
+            piece.untick();
+        }
+    }
+
+    public int getTeamPieces(boolean isWhite){
+        int value = 0;
+        for(Piece piece: pieces){
+            if (piece.isWhite()){
+                value += 1;
+            }
+        }
+        return value;
     }
 
 }

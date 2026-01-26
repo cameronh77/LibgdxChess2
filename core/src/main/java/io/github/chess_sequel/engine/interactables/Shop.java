@@ -3,8 +3,7 @@ package io.github.chess_sequel.engine.interactables;
 import io.github.chess_sequel.engine.GameRun;
 import io.github.chess_sequel.engine.jsonTypes.Coordinates;
 import io.github.chess_sequel.engine.jsonTypes.IndividualWare;
-import io.github.chess_sequel.engine.pieces.Pawn;
-import io.github.chess_sequel.engine.player.BotPlayer;
+import io.github.chess_sequel.engine.pieces.classic.Pawn;
 
 import java.util.ArrayList;
 

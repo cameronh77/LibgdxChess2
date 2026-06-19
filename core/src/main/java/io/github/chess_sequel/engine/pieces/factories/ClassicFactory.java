@@ -6,26 +6,26 @@ import io.github.chess_sequel.engine.pieces.classic.*;
 
 public class ClassicFactory {
 
-    public static Piece createPiece(Character pieceType, int col, int row){
+    public static Piece createPiece(Character pieceType, int col, int row, boolean isShop){
         Piece piece = null;
         switch (pieceType) {
             case 'p':
-                piece = new Pawn(col, row, true);
+                piece = new Pawn(col, row, !isShop);
                 break;
             case 'b':
-                piece = new Bishop(col, row, true);
+                piece = new Bishop(col, row, !isShop);
                 break;
             case 'h':
-                piece = new Horse(col, row, true);
+                piece = new Horse(col, row, !isShop);
                 break;
             case 'q':
-                piece = new Queen(col, row, true);
+                piece = new Queen(col, row, !isShop);
                 break;
             case 'k':
-                piece = new King(col, row, true);
+                piece = new King(col, row, !isShop);
                 break;
             case 'c':
-                piece = new Castle(col, row, true);
+                piece = new Castle(col, row, !isShop);
                 break;
         }
         return piece;

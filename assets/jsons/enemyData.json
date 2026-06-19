@@ -40,7 +40,7 @@
     "enemies": [
       {
         "enemyId": "classic1",
-        "enemyLayout": "cp33",
+        "enemyLayout": "gq33",
         "dialogue": null,
         "rewards": {
           "portals": ["classic6", "classic8"],
@@ -57,7 +57,7 @@
       },
       {
         "enemyId": "classic2",
-        "enemyLayout": "cp33 cp23 cp13 gp03 gp32 gp22 gp12 gp02",
+        "enemyLayout": "gq00",
         "dialogue": null,
         "rewards": {
           "portals": ["classic6", "classic8"],

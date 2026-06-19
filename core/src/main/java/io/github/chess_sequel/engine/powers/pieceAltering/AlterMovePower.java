@@ -10,6 +10,7 @@ public abstract class AlterMovePower {
 
     protected ArrayList<PieceType> inheritors; //The pieces that can receive this power
     protected int duration;
+    protected boolean removeAtGameEnd;
 
     public AlterMovePower(ArrayList<PieceType> inheritors, int duration){
         this.inheritors = inheritors;
@@ -28,5 +29,9 @@ public abstract class AlterMovePower {
 
     public int getDuration() {
         return duration;
+    }
+
+    public boolean getRemoveAtGameEnd(){
+        return removeAtGameEnd;
     }
 }

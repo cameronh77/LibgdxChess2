@@ -4,6 +4,7 @@ import io.github.chess_sequel.engine.GameRun;
 import io.github.chess_sequel.engine.jsonTypes.Coordinates;
 import io.github.chess_sequel.engine.jsonTypes.IndividualWare;
 import io.github.chess_sequel.engine.pieces.classic.Pawn;
+import io.github.chess_sequel.engine.pieces.factories.ShopFactory;
 
 import java.util.ArrayList;
 
@@ -40,10 +41,7 @@ public class Shop extends Interactable{
 
     public void processWares(ArrayList<IndividualWare> waresArray){
         for(IndividualWare ware: waresArray){
-            switch(ware.ware){
-                case('p'):
-                    wares.add(new ShopItem(ware.location.x, ware.location.y, Integer.valueOf(ware.price), new Pawn(-1, -1,  false), game));
-            }
+            wares.add(ShopFactory.createShopItem(ware, game));
 
         }
     }

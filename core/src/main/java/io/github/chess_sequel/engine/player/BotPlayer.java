@@ -3,6 +3,7 @@ package io.github.chess_sequel.engine.player;
 import io.github.chess_sequel.engine.GameRun;
 import io.github.chess_sequel.engine.jsonTypes.Rewards;
 import io.github.chess_sequel.engine.location.board.Board;
+import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.*;
 import io.github.chess_sequel.engine.pieces.classic.*;
@@ -37,6 +38,9 @@ public class BotPlayer extends Player{
         }
         else{
             this.defeated = true;
+            if(board instanceof MatchBoard){
+                ((MatchBoard) board).clearEndMatchEffect();
+            }
             gameRun.popBoard();
             if(rewards != null){
                 gameRun.handleRewards(rewards);
@@ -144,7 +148,7 @@ public class BotPlayer extends Player{
         String[] parts = army.split(" ");
 
         for(String part: parts){
-            Piece piece = PieceFactory.generatePiece(part);
+            Piece piece = PieceFactory.generatePiece(part, false);
             if(leadPiece == null){
                 leadPiece = piece;
             }

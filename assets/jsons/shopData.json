@@ -6,7 +6,7 @@
         "shopId": "shop1",
         "shopLayout": [
           {
-            "ware": "p",
+            "ware": "cp",
             "price": 4,
             "location": {
               "x": 0,
@@ -14,7 +14,7 @@
             }
           },
           {
-            "ware": "p",
+            "ware": "gp",
             "price": 5,
             "location": {
               "x": 0,
@@ -32,7 +32,7 @@
         "shopId": "shop2",
         "shopLayout": [
           {
-            "ware": "p",
+            "ware": "cp",
             "price": 4,
             "location": {
               "x": 0,
@@ -40,7 +40,7 @@
             }
           },
           {
-            "ware": "p",
+            "ware": "gp",
             "price": 5,
             "location": {
               "x": 0,
@@ -66,7 +66,7 @@
         "shopId": "shop1",
         "shopLayout": [
           {
-            "ware": "p",
+            "ware": "cp",
             "price": 4,
             "location": {
               "x": 0,
@@ -74,7 +74,7 @@
             }
           },
           {
-            "ware": "p",
+            "ware": "gp",
             "price": 5,
             "location": {
               "x": 0,
@@ -93,7 +93,7 @@
         "shopId": "shop2",
         "shopLayout": [
           {
-            "ware": "p",
+            "ware": "cp",
             "price": 4,
             "location": {
               "x": 0,
@@ -101,7 +101,7 @@
             }
           },
           {
-            "ware": "p",
+            "ware": "gp",
             "price": 5,
             "location": {
               "x": 0,
@@ -128,7 +128,7 @@
         "shopId": "shop1",
         "shopLayout": [
           {
-            "ware": "p",
+            "ware": "cp",
             "price": 4,
             "location": {
               "x": 0,
@@ -136,7 +136,7 @@
             }
           },
           {
-            "ware": "p",
+            "ware": "gp",
             "price": 5,
             "location": {
               "x": 0,
@@ -155,7 +155,7 @@
         "shopId": "shop2",
         "shopLayout": [
           {
-            "ware": "p",
+            "ware": "cp",
             "price": 4,
             "location": {
               "x": 0,
@@ -163,7 +163,7 @@
             }
           },
           {
-            "ware": "p",
+            "ware": "gp",
             "price": 5,
             "location": {
               "x": 0,

@@ -9,8 +9,6 @@ import java.util.ArrayList;
 
 public class PetrifyingAura extends Aura{
 
-
-
     public PetrifyingAura(Piece owner){
         super(owner, "petrifyingAura");
     }

@@ -4,6 +4,9 @@ package io.github.chess_sequel.engine.location.board;
 import io.github.chess_sequel.engine.pieces.classic.*;
 import io.github.chess_sequel.engine.pieces.*;
 import io.github.chess_sequel.engine.player.Player;
+import io.github.chess_sequel.engine.powers.pieceAltering.AlterMovePower;
+
+import java.util.ArrayList;
 
 public class MatchBoard extends Board{
 
@@ -176,6 +179,17 @@ public class MatchBoard extends Board{
             int rank = 7 - (parts[3].charAt(1) - '1');     // row 0–7 (top-down)
             int[] enPassantArray = {rank, file};
             enPassantTile = enPassantArray;
+        }
+    }
+
+    public void clearEndMatchEffect(){
+        for(Piece piece:pieces){
+            ArrayList<AlterMovePower> tmp = (ArrayList<AlterMovePower>) piece.getAlterMovePowers().clone();
+            for(AlterMovePower alterMovePower: tmp){
+                if(alterMovePower.getRemoveAtGameEnd()){
+                    piece.getAlterMovePowers().remove(alterMovePower);
+                }
+            }
         }
     }
 

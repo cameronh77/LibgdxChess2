@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>zoneData.json Reference</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0f1117;
+      color: #c9d1d9;
+      line-height: 1.6;
+      padding: 2rem;
+    }
+
+    h1 { font-size: 1.9rem; font-weight: 700; color: #e6edf3; margin-bottom: 0.3rem; }
+    h2 { font-size: 1.25rem; font-weight: 600; color: #79c0ff; margin: 2.5rem 0 0.8rem; border-bottom: 1px solid #30363d; padding-bottom: 0.4rem; }
+    h3 { font-size: 1rem; font-weight: 600; color: #d2a8ff; margin: 1.4rem 0 0.5rem; }
+    p  { margin-bottom: 0.7rem; color: #8b949e; }
+
+    .subtitle { color: #8b949e; font-size: 0.95rem; margin-bottom: 2rem; }
+
+    /* layout */
+    .page { max-width: 900px; margin: 0 auto; }
+
+    /* cards */
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .card-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #58a6ff;
+      margin-bottom: 0.6rem;
+    }
+
+    /* schema table */
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; margin-top: 0.5rem; }
+    th {
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      background: #1c2128;
+      color: #8b949e;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid #30363d;
+    }
+    td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #21262d; vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #1c2128; }
+
+    .field  { font-family: "SFMono-Regular", Consolas, monospace; color: #79c0ff; white-space: nowrap; }
+    .type   { font-family: "SFMono-Regular", Consolas, monospace; color: #d2a8ff; font-size: 0.8rem; }
+    .req    { color: #f85149; font-size: 0.75rem; font-weight: 600; }
+    .opt    { color: #8b949e; font-size: 0.75rem; }
+
+    /* code block */
+    pre {
+      background: #1c2128;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 0.82rem;
+      line-height: 1.65;
+      margin: 0.75rem 0;
+      color: #e6edf3;
+    }
+    .json-key    { color: #79c0ff; }
+    .json-str    { color: #a5d6ff; }
+    .json-num    { color: #f9826c; }
+    .json-bool   { color: #d2a8ff; }
+    .json-null   { color: #8b949e; }
+    .json-punct  { color: #8b949e; }
+
+    /* badges */
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 99px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      vertical-align: middle;
+      margin-left: 0.4rem;
+    }
+    .badge-new    { background: #1f6feb33; color: #58a6ff; border: 1px solid #1f6feb; }
+    .badge-fixed  { background: #3fb95033; color: #56d364; border: 1px solid #3fb950; }
+    .badge-random { background: #d2a8ff33; color: #d2a8ff; border: 1px solid #8957e5; }
+
+    /* flow diagram */
+    .flow {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin: 0.75rem 0;
+      font-size: 0.85rem;
+    }
+    .flow-box {
+      background: #1c2128;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 0.35rem 0.75rem;
+      color: #e6edf3;
+    }
+    .flow-arrow { color: #30363d; font-size: 1.1rem; }
+
+    /* piece grid */
+    .piece-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 0.6rem;
+      margin-top: 0.6rem;
+    }
+    .piece-card {
+      background: #1c2128;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 0.6rem 0.85rem;
+    }
+    .piece-name  { font-family: monospace; color: #a5d6ff; font-size: 0.8rem; font-weight: 600; }
+    .piece-label { color: #8b949e; font-size: 0.75rem; margin-top: 0.15rem; }
+    .piece-card.highlight { border-color: #1f6feb; background: #1f1f3a; }
+    .piece-card.highlight .piece-name { color: #79c0ff; }
+
+    /* callout */
+    .callout {
+      border-left: 3px solid;
+      border-radius: 0 6px 6px 0;
+      padding: 0.75rem 1rem;
+      margin: 0.75rem 0;
+      font-size: 0.875rem;
+    }
+    .callout-info  { border-color: #58a6ff; background: #1f6feb1a; color: #a5d6ff; }
+    .callout-warn  { border-color: #d29922; background: #d299221a; color: #e3b341; }
+    .callout-green { border-color: #3fb950; background: #3fb9501a; color: #56d364; }
+
+    hr { border: none; border-top: 1px solid #21262d; margin: 2rem 0; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <h1>zoneData.json</h1>
+  <p class="subtitle">Reference guide for authoring zones, encounters, and shops.</p>
+
+  <!-- ─── TOP-LEVEL STRUCTURE ─── -->
+  <h2>Top-level structure</h2>
+  <p>The file is a JSON array. Each element is one <strong>zone</strong> — a named map with its own size, layout variants, enemy pool, and shop pool.</p>
+
+  <div class="flow">
+    <div class="flow-box">zoneData.json</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">ZoneData[ ]</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">variants[ ]</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">nodes[ ]</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">ZoneData fields</div>
+    <table>
+      <tr><th>Field</th><th>Type</th><th></th><th>Description</th></tr>
+      <tr><td class="field">mapName</td><td class="type">string</td><td class="req">required</td><td>Unique identifier used in code to look up this zone (e.g. <code>"classic4"</code>).</td></tr>
+      <tr><td class="field">mapX</td><td class="type">int</td><td class="req">required</td><td>Board width in tiles for the <em>map</em> screen.</td></tr>
+      <tr><td class="field">mapY</td><td class="type">int</td><td class="req">required</td><td>Board height in tiles for the <em>map</em> screen.</td></tr>
+      <tr><td class="field">variants</td><td class="type">ZoneVariant[ ]</td><td class="req">required</td><td>One is picked at random each run. Defines the map layout for that run.</td></tr>
+      <tr><td class="field">enemies</td><td class="type">EnemyData[ ]</td><td class="req">required</td><td>Pool of all possible enemy encounters for this zone.</td></tr>
+      <tr><td class="field">shops</td><td class="type">ShopData[ ]</td><td class="req">required</td><td>Pool of all possible shops for this zone. Can be empty (<code>[]</code>).</td></tr>
+    </table>
+  </div>
+
+  <!-- ─── VARIANTS ─── -->
+  <h2>Variants</h2>
+  <p>A variant is one hand-authored layout for the map. On each new run the game picks a random variant — so multiple variants give the player different map arrangements across playthroughs.</p>
+
+  <div class="card">
+    <div class="card-title">ZoneVariant fields</div>
+    <table>
+      <tr><th>Field</th><th>Type</th><th></th><th>Description</th></tr>
+      <tr><td class="field">playerStart</td><td class="type">Coordinates</td><td class="req">required</td><td>Where the player's piece spawns on the map (<code>{ "x": 1, "y": 1 }</code>).</td></tr>
+      <tr><td class="field">nodes</td><td class="type">MapNode[ ]</td><td class="req">required</td><td>All interactables placed on the map for this variant.</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">MapNode fields</div>
+    <table>
+      <tr><th>Field</th><th>Type</th><th></th><th>Description</th></tr>
+      <tr><td class="field">type</td><td class="type">string</td><td class="req">required</td><td><code>"enemy"</code> or <code>"shop"</code></td></tr>
+      <tr><td class="field">x</td><td class="type">int</td><td class="req">required</td><td>Column on the map board where this node appears.</td></tr>
+      <tr><td class="field">y</td><td class="type">int</td><td class="req">required</td><td>Row on the map board where this node appears.</td></tr>
+      <tr><td class="field">ref</td><td class="type">string</td><td class="req">required</td><td>Which encounter/shop to use. Either a specific ID or <code>"random"</code> — see below.</td></tr>
+    </table>
+  </div>
+
+  <h3>How <code>ref</code> works</h3>
+  <div class="callout callout-info">
+    <strong>Specific ID</strong> — e.g. <code>"ref": "tollgate-4x4"</code> — always loads that exact enemy or shop entry regardless of its <code>fixed</code> value.
+  </div>
+  <div class="callout callout-info">
+    <strong>"random"</strong> — picks a random entry from the zone's pool, but only from entries where <code>fixed: false</code>. Fixed entries are excluded.
+  </div>
+
+  <!-- ─── ENEMIES ─── -->
+  <h2>Enemies</h2>
+
+  <div class="card">
+    <div class="card-title">EnemyData fields</div>
+    <table>
+      <tr><th>Field</th><th>Type</th><th></th><th>Description</th></tr>
+      <tr><td class="field">enemyId</td><td class="type">string</td><td class="req">required</td><td>Unique ID within this zone. Referenced by <code>MapNode.ref</code>.</td></tr>
+      <tr><td class="field">fixed</td><td class="type">boolean</td><td class="req">required</td><td>If <code>true</code>, excluded from <code>"random"</code> picks. Only reachable via explicit ID.</td></tr>
+      <tr><td class="field">enemyLayout</td><td class="type">PiecePlacement[ ]</td><td class="req">required</td><td>The bot's starting pieces for the chess match.</td></tr>
+      <tr><td class="field">dialogue</td><td class="type">string</td><td class="opt">optional</td><td>Flavour text shown before the match. Use <code>null</code> if none.</td></tr>
+      <tr><td class="field">rewards</td><td class="type">Rewards</td><td class="opt">optional</td><td>What the player gets on winning. Omit or set <code>null</code> for no reward.</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">PiecePlacement fields</div>
+    <table>
+      <tr><th>Field</th><th>Type</th><th></th><th>Description</th></tr>
+      <tr><td class="field">piece</td><td class="type">string</td><td class="req">required</td><td>Piece identifier — see the piece table below.</td></tr>
+      <tr><td class="field">x</td><td class="type">int</td><td class="req">required</td><td>Starting column on the <em>match</em> board (0 = left).</td></tr>
+      <tr><td class="field">y</td><td class="type">int</td><td class="req">required</td><td>Starting row on the match board (0 = bottom in libGDX).</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Rewards fields</div>
+    <table>
+      <tr><th>Field</th><th>Type</th><th></th><th>Description</th></tr>
+      <tr><td class="field">portals</td><td class="type">string[ ]</td><td class="opt">optional</td><td>Zone names to unlock as portals after this fight.</td></tr>
+      <tr><td class="field">portalLocations</td><td class="type">Coordinates[ ]</td><td class="opt">optional</td><td>Map tiles where those portals appear. Must match <code>portals</code> in length.</td></tr>
+      <tr><td class="field">currency</td><td class="type">int</td><td class="opt">optional</td><td>Gold given to the player on win.</td></tr>
+    </table>
+  </div>
+
+  <!-- ─── SHOPS ─── -->
+  <h2>Shops</h2>
+
+  <div class="card">
+    <div class="card-title">ShopData fields</div>
+    <table>
+      <tr><th>Field</th><th>Type</th><th></th><th>Description</th></tr>
+      <tr><td class="field">shopId</td><td class="type">string</td><td class="req">required</td><td>Unique ID within this zone.</td></tr>
+      <tr><td class="field">fixed</td><td class="type">boolean</td><td class="req">required</td><td>Same <code>fixed</code> logic as enemies — <code>true</code> means explicit-ref only.</td></tr>
+      <tr><td class="field">shopLayout</td><td class="type">IndividualWare[ ]</td><td class="req">required</td><td>Items for sale.</td></tr>
+      <tr><td class="field">startingCoords</td><td class="type">Coordinates</td><td class="req">required</td><td>Where the player piece spawns when entering the shop board.</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">IndividualWare fields</div>
+    <table>
+      <tr><th>Field</th><th>Type</th><th></th><th>Description</th></tr>
+      <tr><td class="field">ware</td><td class="type">string</td><td class="req">required</td><td>Piece identifier for the item being sold — same names as enemy pieces.</td></tr>
+      <tr><td class="field">price</td><td class="type">string</td><td class="req">required</td><td>Cost in gold. Stored as a string.</td></tr>
+      <tr><td class="field">location</td><td class="type">Coordinates</td><td class="req">required</td><td>Tile on the shop board where this item sits.</td></tr>
+    </table>
+  </div>
+
+  <!-- ─── PIECE IDENTIFIERS ─── -->
+  <h2>Piece identifiers</h2>
+  <p>These are the string values used in <code>PiecePlacement.piece</code> and <code>IndividualWare.ware</code>. They map internally to piece classes — you don't need to know the internal letters.</p>
+
+  <h3>Classic pieces</h3>
+  <div class="piece-grid">
+    <div class="piece-card"><div class="piece-name">classic-pawn</div><div class="piece-label">Pawn</div></div>
+    <div class="piece-card"><div class="piece-name">classic-bishop</div><div class="piece-label">Bishop</div></div>
+    <div class="piece-card"><div class="piece-name">classic-horse</div><div class="piece-label">Knight</div></div>
+    <div class="piece-card"><div class="piece-name">classic-castle</div><div class="piece-label">Rook</div></div>
+    <div class="piece-card"><div class="piece-name">classic-queen</div><div class="piece-label">Queen</div></div>
+    <div class="piece-card"><div class="piece-name">classic-king</div><div class="piece-label">King</div></div>
+  </div>
+
+  <h3>Goblin pieces</h3>
+  <div class="piece-grid">
+    <div class="piece-card"><div class="piece-name">goblin-pawn</div><div class="piece-label">Goblin (pawn)</div></div>
+    <div class="piece-card"><div class="piece-name">goblin-drill</div><div class="piece-label">Goblin Drill (bishop)</div></div>
+    <div class="piece-card"><div class="piece-name">slime-steed</div><div class="piece-label">Slime Steed (knight)</div></div>
+    <div class="piece-card highlight"><div class="piece-name">toll-gate</div><div class="piece-label">Toll Gate (rook) <span class="badge badge-new">new</span></div></div>
+    <div class="piece-card"><div class="piece-name">goblin-queen</div><div class="piece-label">Goblin Queen</div></div>
+    <div class="piece-card"><div class="piece-name">goblin-king</div><div class="piece-label">Goblin King</div></div>
+  </div>
+
+  <div class="callout callout-green" style="margin-top: 1rem;">
+    <strong>Toll Gate — aura behaviour:</strong> Enemy pieces (the player's pieces) cannot cross the toll gate's row. A piece starting below the gate can move up to but not past its row. A piece starting on the exact same row is unaffected. The restriction updates live as the toll gate moves or is captured.
+  </div>
+
+  <!-- ─── FIXED vs RANDOM ─── -->
+  <h2>fixed: true vs false — at a glance</h2>
+
+  <div class="card">
+    <table>
+      <tr><th></th><th>fixed: true</th><th>fixed: false</th></tr>
+      <tr>
+        <td>Reachable via explicit <code>ref</code></td>
+        <td>✅ Yes</td>
+        <td>✅ Yes</td>
+      </tr>
+      <tr>
+        <td>Included in <code>"random"</code> pool</td>
+        <td>❌ No</td>
+        <td>✅ Yes</td>
+      </tr>
+      <tr>
+        <td>Typical use</td>
+        <td>Boss fights, unique encounters, scripted story nodes</td>
+        <td>Filler / procedural encounters</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="callout callout-warn">
+    <strong>Note:</strong> <code>fixed</code> has no effect on map layout. Node positions (<code>x</code>, <code>y</code>) are always fixed per variant — only the <em>content</em> of a node can be random.
+  </div>
+
+  <!-- ─── TEST ENCOUNTERS ─── -->
+  <h2>Test encounters added <span class="badge badge-new">new</span></h2>
+  <p>Three toll gate encounters were added, one per zone, each referenced by a dedicated variant. They are all <code>fixed: true</code> so they never appear via <code>"random"</code> — only via the new variant.</p>
+
+  <div class="card">
+    <div class="card-title">tollgate-4x4 — classic4 (4×4 board)</div>
+    <pre><span class="json-punct">{</span>
+  <span class="json-key">"enemyId"</span><span class="json-punct">:</span> <span class="json-str">"tollgate-4x4"</span><span class="json-punct">,</span>
+  <span class="json-key">"fixed"</span><span class="json-punct">:</span> <span class="json-bool">true</span><span class="json-punct">,</span>
+  <span class="json-key">"enemyLayout"</span><span class="json-punct">:</span> <span class="json-punct">[</span>
+    <span class="json-punct">{</span> <span class="json-key">"piece"</span><span class="json-punct">:</span> <span class="json-str">"toll-gate"</span><span class="json-punct">,</span>   <span class="json-key">"x"</span><span class="json-punct">:</span> <span class="json-num">2</span><span class="json-punct">,</span> <span class="json-key">"y"</span><span class="json-punct">:</span> <span class="json-num">2</span> <span class="json-punct">},</span>
+    <span class="json-punct">{</span> <span class="json-key">"piece"</span><span class="json-punct">:</span> <span class="json-str">"goblin-pawn"</span><span class="json-punct">,</span> <span class="json-key">"x"</span><span class="json-punct">:</span> <span class="json-num">0</span><span class="json-punct">,</span> <span class="json-key">"y"</span><span class="json-punct">:</span> <span class="json-num">3</span> <span class="json-punct">}</span>
+  <span class="json-punct">]</span>
+<span class="json-punct">}</span></pre>
+    <p>Toll gate at y=2. Goblin pawn at y=3 is unreachable until the gate is captured. Simplest case — good for first verification.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">tollgate-6x6 — classic6 (6×6 board)</div>
+    <pre><span class="json-punct">{</span>
+  <span class="json-key">"enemyId"</span><span class="json-punct">:</span> <span class="json-str">"tollgate-6x6"</span><span class="json-punct">,</span>
+  <span class="json-key">"fixed"</span><span class="json-punct">:</span> <span class="json-bool">true</span><span class="json-punct">,</span>
+  <span class="json-key">"enemyLayout"</span><span class="json-punct">:</span> <span class="json-punct">[</span>
+    <span class="json-punct">{</span> <span class="json-key">"piece"</span><span class="json-punct">:</span> <span class="json-str">"toll-gate"</span><span class="json-punct">,</span>   <span class="json-key">"x"</span><span class="json-punct">:</span> <span class="json-num">3</span><span class="json-punct">,</span> <span class="json-key">"y"</span><span class="json-punct">:</span> <span class="json-num">3</span> <span class="json-punct">},</span>
+    <span class="json-punct">{</span> <span class="json-key">"piece"</span><span class="json-punct">:</span> <span class="json-str">"goblin-pawn"</span><span class="json-punct">,</span> <span class="json-key">"x"</span><span class="json-punct">:</span> <span class="json-num">1</span><span class="json-punct">,</span> <span class="json-key">"y"</span><span class="json-punct">:</span> <span class="json-num">5</span> <span class="json-punct">},</span>
+    <span class="json-punct">{</span> <span class="json-key">"piece"</span><span class="json-punct">:</span> <span class="json-str">"goblin-pawn"</span><span class="json-punct">,</span> <span class="json-key">"x"</span><span class="json-punct">:</span> <span class="json-num">4</span><span class="json-punct">,</span> <span class="json-key">"y"</span><span class="json-punct">:</span> <span class="json-num">5</span> <span class="json-punct">}</span>
+  <span class="json-punct">]</span>
+<span class="json-punct">}</span></pre>
+    <p>Gate at y=3 locks off the entire top half. Both pawns at y=5 are protected. Tests the aura covering multiple pieces simultaneously.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">tollgate-8x8 — classic8 (8×8 board)</div>
+    <pre><span class="json-punct">{</span>
+  <span class="json-key">"enemyId"</span><span class="json-punct">:</span> <span class="json-str">"tollgate-8x8"</span><span class="json-punct">,</span>
+  <span class="json-key">"fixed"</span><span class="json-punct">:</span> <span class="json-bool">true</span><span class="json-punct">,</span>
+  <span class="json-key">"enemyLayout"</span><span class="json-punct">:</span> <span class="json-punct">[</span>
+    <span class="json-punct">{</span> <span class="json-key">"piece"</span><span class="json-punct">:</span> <span class="json-str">"toll-gate"</span><span class="json-punct">,</span>    <span class="json-key">"x"</span><span class="json-punct">:</span> <span class="json-num">4</span><span class="json-punct">,</span> <span class="json-key">"y"</span><span class="json-punct">:</span> <span class="json-num">4</span> <span class="json-punct">},</span>
+    <span class="json-punct">{</span> <span class="json-key">"piece"</span><span class="json-punct">:</span> <span class="json-str">"goblin-pawn"</span><span class="json-punct">,</span>  <span class="json-key">"x"</span><span class="json-punct">:</span> <span class="json-num">1</span><span class="json-punct">,</span> <span class="json-key">"y"</span><span class="json-punct">:</span> <span class="json-num">6</span> <span class="json-punct">},</span>
+    <span class="json-punct">{</span> <span class="json-key">"piece"</span><span class="json-punct">:</span> <span class="json-str">"goblin-pawn"</span><span class="json-punct">,</span>  <span class="json-key">"x"</span><span class="json-punct">:</span> <span class="json-num">6</span><span class="json-punct">,</span> <span class="json-key">"y"</span><span class="json-punct">:</span> <span class="json-num">6</span> <span class="json-punct">},</span>
+    <span class="json-punct">{</span> <span class="json-key">"piece"</span><span class="json-punct">:</span> <span class="json-str">"goblin-queen"</span><span class="json-punct">,</span> <span class="json-key">"x"</span><span class="json-punct">:</span> <span class="json-num">4</span><span class="json-punct">,</span> <span class="json-key">"y"</span><span class="json-punct">:</span> <span class="json-num">7</span> <span class="json-punct">}</span>
+  <span class="json-punct">]</span>
+<span class="json-punct">}</span></pre>
+    <p>Full board. Gate at y=4 splits the board. Goblin queen at y=7 is maximally protected. Also exercises the interaction between the toll gate aura and the goblin queen's petrifying aura.</p>
+  </div>
+
+  <hr />
+  <p style="font-size: 0.8rem; color: #484f58;">Generated for chess-sequel · zoneData.json</p>
+
+</div>
+</body>
+</html>

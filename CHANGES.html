@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>JSON Refactor — Change Summary</title>
+<style>
+  body { font-family: -apple-system, sans-serif; max-width: 860px; margin: 40px auto; padding: 0 20px; color: #222; line-height: 1.6; }
+  h1 { border-bottom: 2px solid #333; padding-bottom: 8px; }
+  h2 { margin-top: 36px; color: #444; }
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  th { background: #333; color: #fff; padding: 8px 12px; text-align: left; }
+  td { padding: 8px 12px; border-bottom: 1px solid #ddd; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8f8f8; }
+  code { background: #eee; padding: 1px 5px; border-radius: 3px; font-size: 0.9em; }
+  .new  { color: #1a7f37; font-weight: bold; }
+  .mod  { color: #0550ae; font-weight: bold; }
+  .del  { color: #cf222e; font-weight: bold; }
+  .tag  { display: inline-block; font-size: 0.75em; padding: 1px 7px; border-radius: 10px; font-weight: bold; margin-left: 6px; }
+  .tag-new { background: #d4f7dc; color: #1a7f37; }
+  .tag-mod { background: #dce9ff; color: #0550ae; }
+  .tag-del { background: #ffd8d8; color: #cf222e; }
+  pre { background: #f6f6f6; border-left: 4px solid #ccc; padding: 12px 16px; overflow-x: auto; font-size: 0.85em; margin: 0; }
+  .section { margin-top: 8px; }
+  .note { background: #fff8c5; border-left: 4px solid #e3b341; padding: 10px 14px; margin: 16px 0; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<h1>JSON Refactor — Change Summary</h1>
+
+<p>This document records every file that was created, modified, or deleted during the zone-data refactor. The goal was to merge three separate JSON files into one, eliminate parallel-array fragility, and switch piece layouts from compact single-character encoding to readable full-name strings.</p>
+
+<h2>Why it was done</h2>
+<table>
+<tr><th>Old problem</th><th>New approach</th></tr>
+<tr><td>Three separate files (<code>mapData.json</code>, <code>enemyData.json</code>, <code>shopData.json</code>) all keyed on the same map name — must stay in sync manually.</td><td>One file: <code>zoneData.json</code> — everything for a zone in one place.</td></tr>
+<tr><td>Parallel arrays (<code>mapLayouts[]</code>, <code>locationInternals[]</code>, <code>startingPositions[]</code>) linked only by array index — easy to drift out of sync.</td><td>Bundled <code>variants[]</code> objects — each variant carries its own player start and node list.</td></tr>
+<tr><td>Compact piece encoding like <code>"gq33"</code> — goblin queen at (3,3). Runs out of letters, unreadable.</td><td>Structured objects: <code>{ "piece": "goblin-queen", "x": 3, "y": 3 }</code>.</td></tr>
+<tr><td>Separate <code>randomEnemies</code> / <code>randomShops</code> lists duplicated data already in the main enemy/shop arrays.</td><td>Single <code>fixed: boolean</code> on each enemy/shop entry.</td></tr>
+</table>
+
+<h2>Files deleted</h2>
+<table>
+<tr><th>File</th><th>Reason</th></tr>
+<tr><td><code>assets/jsons/mapData.json</code></td><td rowspan="3">Merged into <code>zoneData.json</code></td></tr>
+<tr><td><code>assets/jsons/enemyData.json</code></td></tr>
+<tr><td><code>assets/jsons/shopData.json</code></td></tr>
+<tr><td><code>engine/jsonTypes/MapData.java</code></td><td rowspan="3">Replaced by new types below</td></tr>
+<tr><td><code>engine/jsonTypes/MapEnemies.java</code></td></tr>
+<tr><td><code>engine/jsonTypes/MapShops.java</code></td></tr>
+</table>
+
+<h2>Files created (JSON)</h2>
+
+<h3><code>assets/jsons/zoneData.json</code> <span class="tag tag-new">NEW</span></h3>
+<p>Top-level array of zone objects. Each zone has:</p>
+<pre>{
+  "mapName": "classic4",   // used as the lookup key
+  "mapX": 4, "mapY": 4,   // board dimensions
+  "variants": [ ... ],    // random layout selection pool
+  "enemies":  [ ... ],    // enemy definitions referenced from variants
+  "shops":    [ ... ]     // shop definitions referenced from variants
+}</pre>
+
+<p><strong>Variant structure</strong> — one variant is picked at random each time a map is entered:</p>
+<pre>"variants": [
+  {
+    "playerStart": { "x": 0, "y": 1 },
+    "nodes": [
+      { "type": "enemy", "x": 0, "y": 0, "ref": "random" },
+      { "type": "shop",  "x": 3, "y": 3, "ref": "shop1"  }
+    ]
+  }
+]</pre>
+
+<p><strong>Enemy definition</strong> — <code>fixed: true</code> means referenced only by ID; <code>false</code> means eligible for <code>"random"</code> pool:</p>
+<pre>"enemies": [
+  {
+    "enemyId": "classic1",
+    "fixed": false,
+    "enemyLayout": [
+      { "piece": "goblin-queen", "x": 3, "y": 3 }
+    ],
+    "dialogue": null,
+    "rewards": {
+      "portals": ["classic6", "classic8"],
+      "portalLocations": [{ "x": 0, "y": 3 }, { "x": 1, "y": 3 }],
+      "currency": 3
+    }
+  }
+]</pre>
+
+<h2>Files created (Java types)</h2>
+<table>
+<tr><th>File</th><th>Fields</th><th>Purpose</th></tr>
+<tr>
+  <td><code>jsonTypes/PiecePlacement.java</code> <span class="tag tag-new">NEW</span></td>
+  <td><code>String piece</code><br><code>int x, y</code></td>
+  <td>One piece in an enemy's army layout (e.g. goblin-queen at 3,3)</td>
+</tr>
+<tr>
+  <td><code>jsonTypes/MapNode.java</code> <span class="tag tag-new">NEW</span></td>
+  <td><code>String type, ref</code><br><code>int x, y</code></td>
+  <td>One node in a variant (enemy or shop tile on the map)</td>
+</tr>
+<tr>
+  <td><code>jsonTypes/ZoneVariant.java</code> <span class="tag tag-new">NEW</span></td>
+  <td><code>Coordinates playerStart</code><br><code>ArrayList&lt;MapNode&gt; nodes</code></td>
+  <td>One layout variant for a zone</td>
+</tr>
+<tr>
+  <td><code>jsonTypes/ZoneData.java</code> <span class="tag tag-new">NEW</span></td>
+  <td><code>String mapName</code><br><code>int mapX, mapY</code><br><code>ArrayList&lt;ZoneVariant&gt; variants</code><br><code>ArrayList&lt;EnemyData&gt; enemies</code><br><code>ArrayList&lt;ShopData&gt; shops</code></td>
+  <td>One complete zone (replaces the three old data types)</td>
+</tr>
+</table>
+
+<h2>Files modified</h2>
+
+<h3><code>jsonTypes/EnemyData.java</code> <span class="tag tag-mod">MODIFIED</span></h3>
+<table>
+<tr><th>Before</th><th>After</th></tr>
+<tr><td><code>String enemyLayout</code> (compact string)</td><td><code>ArrayList&lt;PiecePlacement&gt; enemyLayout</code></td></tr>
+<tr><td>(no <code>fixed</code> field)</td><td><code>boolean fixed</code></td></tr>
+</table>
+
+<h3><code>jsonTypes/ShopData.java</code> <span class="tag tag-mod">MODIFIED</span></h3>
+<table>
+<tr><th>Before</th><th>After</th></tr>
+<tr><td>(no <code>fixed</code> field)</td><td><code>boolean fixed</code></td></tr>
+</table>
+
+<h3><code>pieces/factories/PieceFactory.java</code> <span class="tag tag-mod">MODIFIED</span></h3>
+<p>Old signature: <code>generatePiece(String compactCode, boolean isShop)</code> — parsed single-char codes like <code>'g'+'q'</code>.</p>
+<p>New signature: <code>generatePiece(String pieceName, int x, int y, boolean isShop)</code> — switches on full readable names:</p>
+<pre>case "classic-bishop": return ClassicFactory.createPiece('b', x, y, isShop);
+case "goblin-queen":   return GoblinFactory.createPiece('q', x, y, isShop);
+// etc.</pre>
+
+<h3><code>pieces/factories/ShopFactory.java</code> <span class="tag tag-mod">MODIFIED</span></h3>
+<p>Updated the <code>PieceFactory.generatePiece</code> call to use the new signature (bug fix: old call was concatenating ware code + coordinates into one string).</p>
+
+<h3><code>player/BotPlayer.java</code> <span class="tag tag-mod">MODIFIED</span></h3>
+<table>
+<tr><th>Before</th><th>After</th></tr>
+<tr><td><code>String army</code> (compact string to parse)</td><td><code>ArrayList&lt;PiecePlacement&gt; army</code></td></tr>
+<tr><td><code>createPieceList()</code> parsed compact string</td><td><code>createPieceList()</code> iterates <code>PiecePlacement</code> objects directly</td></tr>
+</table>
+
+<h3><code>engine/JsonLoader.java</code> <span class="tag tag-mod">MODIFIED</span></h3>
+<p>Replaced three separate load methods (<code>loadMapData</code>, <code>loadEnemyData</code>, <code>loadShopData</code>) with one:</p>
+<pre>public void loadZoneData() {
+    // Explicit element-type hints for libGDX's JSON deserialiser:
+    json.setElementType(ZoneData.class,    "variants",        ZoneVariant.class);
+    json.setElementType(ZoneData.class,    "enemies",         EnemyData.class);
+    json.setElementType(ZoneData.class,    "shops",           ShopData.class);
+    json.setElementType(ZoneVariant.class, "nodes",           MapNode.class);
+    json.setElementType(EnemyData.class,   "enemyLayout",     PiecePlacement.class);
+    json.setElementType(Rewards.class,     "portals",         String.class);
+    json.setElementType(Rewards.class,     "portalLocations", Coordinates.class);
+    json.setElementType(ShopData.class,    "shopLayout",      IndividualWare.class);
+
+    ArrayList&lt;ZoneData&gt; zoneList = json.fromJson(ArrayList.class, ZoneData.class, ...);
+    for (ZoneData zone : zoneList) zones.put(zone.mapName, zone);
+}</pre>
+<p>Also added <code>getEnemyData(String map, String ref)</code> and <code>getShopData(String map, String ref)</code> — both support <code>ref="random"</code> (picks a non-fixed entry at random) and a named ID lookup.</p>
+
+<h3><code>location/board/MapBoard.java</code> <span class="tag tag-mod">MODIFIED</span></h3>
+<p>Constructor now accepts <code>ZoneVariant variant</code> instead of raw layout strings. <code>populateBoard()</code> iterates <code>variant.nodes</code> and switches on <code>node.type</code> ("enemy" / "shop") to populate the map.</p>
+
+<h3><code>engine/GameRun.java</code> <span class="tag tag-mod">MODIFIED</span></h3>
+<table>
+<tr><th>Before</th><th>After</th></tr>
+<tr><td><code>jsonLoader.loadMapData(); loadEnemyData(); loadShopData();</code></td><td><code>jsonLoader.loadZoneData();</code></td></tr>
+<tr><td><code>addMapBoard()</code> passed raw string arrays</td><td><code>addMapBoard()</code> picks a random <code>ZoneVariant</code> and passes it to <code>MapBoard</code></td></tr>
+</table>
+
+<h2>Outstanding issue</h2>
+<div class="note">
+  <strong>Enemy piece positions default to (0,0) in the match board.</strong><br>
+  The <code>setElementType</code> calls were added to fix a suspected libGDX JSON generic-type inference failure for <code>ArrayList&lt;PiecePlacement&gt;</code>, but the problem persists. Next steps:
+  <ul>
+    <li>Add <code>System.out.println</code> in <code>BotPlayer.createPieceList()</code> to print <code>placement.piece</code>, <code>placement.x</code>, <code>placement.y</code> — confirms whether the JSON data is reaching the code correctly.</li>
+    <li>Add a print in <code>MapBoard.populateBoard()</code> to print <code>node.x</code>, <code>node.y</code> — checks if <em>map node</em> positions are also 0 (would indicate a wider int-field deserialization failure).</li>
+    <li>If both are 0: consider switching <code>int x, int y</code> fields to <code>float x, float y</code> in <code>PiecePlacement</code> and <code>MapNode</code> (libGDX JSON stores numbers as floats internally; conversion to <code>int</code> may silently fail in some versions).</li>
+    <li>If only <code>PiecePlacement</code> is 0: try wrapping the position in a <code>Coordinates</code> object (same pattern as <code>IndividualWare.location</code>, which is known to work).</li>
+  </ul>
+</div>
+
+</body>
+</html>

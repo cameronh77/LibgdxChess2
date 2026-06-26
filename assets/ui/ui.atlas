@@ -1,0 +1,53 @@
+
+ui.png
+size: 1024, 1024
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+change-layout
+  rotate: false
+  xy: 2, 2
+  size: 1000, 1000
+  orig: 1000, 1000
+  offset: 0, 0
+  index: -1
+
+ui2.png
+size: 1024, 1024
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+blue
+  rotate: false
+  xy: 2, 2
+  size: 606, 910
+  orig: 606, 910
+  offset: 0, 0
+  index: -1
+red
+  rotate: false
+  xy: 610, 398
+  size: 302, 514
+  orig: 302, 514
+  offset: 0, 0
+  index: -1
+white
+  rotate: false
+  xy: 610, 206
+  size: 340, 190
+  orig: 340, 190
+  offset: 0, 0
+  index: -1
+
+ui3.png
+size: 512, 1024
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+yellow
+  rotate: false
+  xy: 2, 2
+  size: 496, 752
+  orig: 496, 752
+  offset: 0, 0
+  index: -1

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>UI Refactor — Panel System</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.7; padding: 40px; }
+    h1 { color: #c8a2e8; font-size: 2em; margin-bottom: 8px; }
+    h2 { color: #9ec8f5; font-size: 1.3em; margin: 36px 0 12px; border-bottom: 1px solid #333; padding-bottom: 6px; }
+    h3 { color: #7ecfb0; font-size: 1.05em; margin: 20px 0 6px; }
+    p  { margin-bottom: 12px; color: #ccc; }
+    code { background: #2a2a4a; color: #f0c080; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; font-family: 'Consolas', monospace; }
+    pre  { background: #2a2a4a; border-left: 3px solid #6a5acd; padding: 16px; border-radius: 6px; overflow-x: auto; font-family: 'Consolas', monospace; font-size: 0.88em; color: #ddd; margin: 12px 0 20px; line-height: 1.5; }
+    .tag   { display: inline-block; background: #3a3a6a; color: #aef; border-radius: 4px; padding: 1px 8px; font-size: 0.82em; margin-right: 6px; }
+    .new   { background: #1a4a2a; color: #7effa0; }
+    .mod   { background: #3a3000; color: #ffd97a; }
+    .del   { background: #4a1a1a; color: #ff8a8a; }
+    .file-row { display: flex; align-items: baseline; gap: 12px; padding: 8px 0; border-bottom: 1px solid #2a2a3a; }
+    .file-name { font-family: 'Consolas', monospace; color: #f0c080; min-width: 280px; }
+    .file-desc { color: #bbb; }
+    .diagram { background: #12122a; border: 1px solid #3a3a5a; border-radius: 8px; padding: 24px; font-family: 'Consolas', monospace; font-size: 0.88em; line-height: 1.6; margin: 16px 0; color: #cce; }
+    .before-after { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+    .ba-box { background: #1e1e38; border-radius: 6px; padding: 16px; }
+    .ba-box h4 { font-size: 0.9em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+    .before h4 { color: #ff8a8a; }
+    .after  h4 { color: #7effa0; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    th { background: #2a2a4a; color: #9ec8f5; text-align: left; padding: 8px 12px; }
+    td { padding: 8px 12px; border-bottom: 1px solid #2a2a3a; color: #ccc; }
+    td:first-child { font-family: 'Consolas', monospace; color: #f0c080; }
+    .subtitle { color: #888; font-size: 0.95em; margin-bottom: 32px; }
+  </style>
+</head>
+<body>
+
+<h1>UI Refactor — Panel System</h1>
+<p class="subtitle">Explains the changes made to how the game screen renders its three UI panels.</p>
+
+<!-- ─────────────────── WHY ─────────────────── -->
+<h2>Why This Was Changed</h2>
+<p>
+  The original <code>GameScreen</code> managed all three side panels and the bottom bar in one class.
+  As more things were added (king powers, pre-game buttons, passive display), it started accumulating
+  a growing list of individual <code>setVisible()</code> calls scattered through <code>render()</code>:
+</p>
+<pre>// OLD render() — more conditions every time something was added
+if (state == CHANGING_MAP)       { /* resize board */ }
+if (state == CHANGING_INVENTORY) { rebuildInventory(); }
+if (state == CHANGING_POWERS)    { rebuildActivePowers(); }
+alterLayoutBtn.setVisible(!(board instanceof MatchBoard));
+preGameTable.setVisible(board instanceof AlterLayoutBoard);
+inventoryTable.setVisible(board instanceof AlterLayoutBoard);</pre>
+<p>
+  Each new UI element would need its own condition. This approach doesn't scale.
+</p>
+
+<!-- ─────────────────── THE BIG IDEA ─────────────────── -->
+<h2>The New Idea: Panels Decide Their Own Content</h2>
+<p>
+  Each panel is now its own class. When the board state changes, <code>GameScreen</code> tells every
+  panel <em>"the board is now X"</em> and each panel decides what to show by itself.
+</p>
+<div class="diagram">
+┌─────────────────────────────────────────────┐
+│              GameScreen (coordinator)        │
+│                                             │
+│  "Board changed!" → leftPanel.refresh(board)│
+│                  → rightPanel.refresh(board)│
+│                  → bottomPanel.refresh(board)│
+└─────────────────────────────────────────────┘
+         │              │              │
+    LeftPanel      RightPanel     BottomPanel
+    decides        decides        decides
+    what to show   what to show   what to show
+</div>
+<p>
+  <code>GameScreen.render()</code> is now just 6 lines — it checks for a state change, calls
+  <code>refresh()</code> on each panel, and resets the state back to neutral.
+</p>
+
+<!-- ─────────────────── GAME STATE ─────────────────── -->
+<h2>GameState Simplification</h2>
+<p>
+  Previously there were three separate states to signal different kinds of UI updates:
+</p>
+<div class="before-after">
+  <div class="ba-box before">
+    <h4>Before</h4>
+    <pre>NEUTRAL
+CHANGING_MAP        // board size changed
+CHANGING_INVENTORY  // items changed
+CHANGING_POWERS     // powers changed</pre>
+  </div>
+  <div class="ba-box after">
+    <h4>After</h4>
+    <pre>NEUTRAL
+BOARD_STATE_CHANGED // anything changed</pre>
+  </div>
+</div>
+<p>
+  All three old states caused the same response — rebuild the UI. So they've been collapsed into one.
+  Anything that used to set <code>CHANGING_MAP</code>, <code>CHANGING_INVENTORY</code>, or
+  <code>CHANGING_POWERS</code> now sets <code>BOARD_STATE_CHANGED</code>.
+</p>
+
+<!-- ─────────────────── THE THREE PANELS ─────────────────── -->
+<h2>The Three Panel Classes</h2>
+<p>Each panel extends libGDX's <code>Table</code> and has a single <code>refresh(Board board)</code> method.</p>
+
+<h3>LeftPanel — the action sidebar</h3>
+<table>
+  <tr><th>Board type</th><th>What it shows</th></tr>
+  <tr><td>MatchBoard (battle)</td><td>Nothing — completely empty</td></tr>
+  <tr><td>MapBoard / ShopBoard</td><td>The "change layout" button</td></tr>
+  <tr><td>AlterLayoutBoard (placement)</td><td>"Change layout" button + any pre-game king power buttons</td></tr>
+</table>
+
+<h3>RightPanel — the status sidebar</h3>
+<table>
+  <tr><th>Board type</th><th>What it shows</th></tr>
+  <tr><td>All boards</td><td>Gold counter + passive king power list</td></tr>
+  <tr><td>AlterLayoutBoard (placement)</td><td>+ piece inventory (drag to place)</td></tr>
+</table>
+<p>
+  <code>RightPanel</code> also has an <code>updateCurrency()</code> method that <code>GameScreen</code>
+  calls every frame to keep the gold display live — currency can change at any moment, so it can't
+  wait for a state change.
+</p>
+
+<h3>BottomPanel — king active powers</h3>
+<table>
+  <tr><th>Board type</th><th>What it shows</th></tr>
+  <tr><td>MatchBoard (battle)</td><td>Up to 3 active king power buttons (greyed out if unavailable)</td></tr>
+  <tr><td>All other boards</td><td>Nothing</td></tr>
+</table>
+
+<!-- ─────────────────── NEW RENDER LOOP ─────────────────── -->
+<h2>The New render() Loop</h2>
+<pre>public void render(float delta) {
+    ScreenUtils.clear(Color.BLACK);
+
+    if (gameRunInstance.getGameState() != GameState.NEUTRAL) {
+        Board current = gameRunInstance.getCurrentBoard();
+        boardActor.setSize(board.getPixelWidth(), board.getPixelHeight());
+        centerContainer.invalidateHierarchy();
+        leftPanel.refresh(current);    // left panel decides what it shows
+        rightPanel.refresh(current);   // right panel decides what it shows
+        bottomPanel.refresh(current);  // bottom panel decides what it shows
+        gameRunInstance.setGameState(GameState.NEUTRAL);
+    }
+
+    rightPanel.updateCurrency();  // live gold counter, updates every frame
+
+    uiStage.act(delta);
+    uiStage.draw();
+}</pre>
+<p>
+  Adding a new UI element to a panel in future no longer requires touching <code>GameScreen</code> at all —
+  you just modify the relevant panel's <code>refresh()</code> method.
+</p>
+
+<!-- ─────────────────── FILE SUMMARY ─────────────────── -->
+<h2>File Changes Summary</h2>
+<div class="file-row"><span class="file-name">engine/GameState.java</span><span class="tag mod">modified</span><span class="file-desc">Removed 3 states, added <code>BOARD_STATE_CHANGED</code></span></div>
+<div class="file-row"><span class="file-name">engine/GameRun.java</span><span class="tag mod">modified</span><span class="file-desc">Uses <code>BOARD_STATE_CHANGED</code> instead of <code>CHANGING_MAP</code></span></div>
+<div class="file-row"><span class="file-name">gui/BoardInput.java</span><span class="tag mod">modified</span><span class="file-desc">Uses <code>BOARD_STATE_CHANGED</code> for inventory and power events</span></div>
+<div class="file-row"><span class="file-name">gui/BoardActor.java</span><span class="tag mod">modified</span><span class="file-desc">Uses <code>BOARD_STATE_CHANGED</code> for inventory drag-drop events</span></div>
+<div class="file-row"><span class="file-name">engine/interactables/ShopItem.java</span><span class="tag mod">modified</span><span class="file-desc">Uses <code>BOARD_STATE_CHANGED</code> after a purchase</span></div>
+<div class="file-row"><span class="file-name">gui/gameScreen/LeftPanel.java</span><span class="tag new">new</span><span class="file-desc">Left panel — alter-layout button and pre-game powers</span></div>
+<div class="file-row"><span class="file-name">gui/gameScreen/RightPanel.java</span><span class="tag new">new</span><span class="file-desc">Right panel — gold, passives, inventory</span></div>
+<div class="file-row"><span class="file-name">gui/gameScreen/BottomPanel.java</span><span class="tag new">new</span><span class="file-desc">Bottom panel — active king power slots</span></div>
+<div class="file-row"><span class="file-name">gui/gameScreen/GameScreen.java</span><span class="tag mod">modified</span><span class="file-desc">Stripped down to a coordinator — creates panels, calls refresh</span></div>
+
+</body>
+</html>

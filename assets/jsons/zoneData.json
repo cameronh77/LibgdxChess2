@@ -1,0 +1,201 @@
+[
+  {
+    "mapName": "classic8",
+    "mapX": 8,
+    "mapY": 8,
+    "variants": [
+      {
+        "playerStart": { "x": 1, "y": 1 },
+        "nodes": [
+          { "type": "enemy", "x": 0, "y": 0, "ref": "classic1" },
+          { "type": "enemy", "x": 0, "y": 6, "ref": "classic2" }
+        ]
+      },
+      {
+        "playerStart": { "x": 1, "y": 1 },
+        "nodes": [
+          { "type": "enemy", "x": 0, "y": 1, "ref": "classic2" },
+          { "type": "enemy", "x": 0, "y": 5, "ref": "classic1" }
+        ]
+      },
+      {
+        "playerStart": { "x": 1, "y": 1 },
+        "nodes": [
+          { "type": "enemy", "x": 0, "y": 3, "ref": "tollgate-8x8" }
+        ]
+      }
+    ],
+    "enemies": [
+      {
+        "enemyId": "classic1",
+        "fixed": true,
+        "enemyLayout": [
+          { "piece": "classic-bishop", "x": 0, "y": 7 },
+          { "piece": "classic-pawn",   "x": 5, "y": 7 }
+        ],
+        "dialogue": null
+      },
+      {
+        "enemyId": "classic2",
+        "fixed": true,
+        "enemyLayout": [
+          { "piece": "classic-horse", "x": 0, "y": 6 },
+          { "piece": "classic-pawn",  "x": 6, "y": 6 }
+        ],
+        "dialogue": null
+      },
+      {
+        "enemyId": "tollgate-8x8",
+        "fixed": true,
+        "enemyLayout": [
+          { "piece": "toll-gate",    "x": 4, "y": 4 },
+          { "piece": "goblin-pawn",  "x": 1, "y": 6 },
+          { "piece": "goblin-pawn",  "x": 6, "y": 6 },
+          { "piece": "goblin-queen", "x": 4, "y": 7 }
+        ],
+        "dialogue": null
+      }
+    ],
+    "shops": []
+  },
+  {
+    "mapName": "classic6",
+    "mapX": 6,
+    "mapY": 6,
+    "variants": [
+      {
+        "playerStart": { "x": 1, "y": 1 },
+        "nodes": [
+          { "type": "enemy", "x": 0, "y": 1, "ref": "random" },
+          { "type": "enemy", "x": 1, "y": 2, "ref": "random" }
+        ]
+      },
+      {
+        "playerStart": { "x": 1, "y": 1 },
+        "nodes": [
+          { "type": "enemy", "x": 1, "y": 3, "ref": "random" },
+          { "type": "enemy", "x": 1, "y": 4, "ref": "random" }
+        ]
+      },
+      {
+        "playerStart": { "x": 1, "y": 1 },
+        "nodes": [
+          { "type": "enemy", "x": 0, "y": 2, "ref": "tollgate-6x6" }
+        ]
+      }
+    ],
+    "enemies": [
+      {
+        "enemyId": "classic1",
+        "fixed": false,
+        "enemyLayout": [
+          { "piece": "classic-bishop", "x": 0, "y": 4 },
+          { "piece": "classic-pawn",   "x": 5, "y": 4 }
+        ],
+        "dialogue": null
+      },
+      {
+        "enemyId": "classic2",
+        "fixed": false,
+        "enemyLayout": [
+          { "piece": "classic-horse", "x": 0, "y": 4 },
+          { "piece": "classic-pawn",  "x": 4, "y": 4 }
+        ],
+        "dialogue": null
+      },
+      {
+        "enemyId": "tollgate-6x6",
+        "fixed": true,
+        "enemyLayout": [
+          { "piece": "toll-gate",   "x": 3, "y": 3 },
+          { "piece": "goblin-pawn", "x": 1, "y": 5 },
+          { "piece": "goblin-pawn", "x": 4, "y": 5 }
+        ],
+        "dialogue": null
+      }
+    ],
+    "shops": []
+  },
+  {
+    "mapName": "classic4",
+    "mapX": 4,
+    "mapY": 4,
+    "variants": [
+      {
+        "playerStart": { "x": 0, "y": 1 },
+        "nodes": [
+          { "type": "enemy", "x": 0, "y": 0, "ref": "random" },
+          { "type": "enemy", "x": 2, "y": 2, "ref": "random" },
+          { "type": "shop",  "x": 3, "y": 3, "ref": "shop1" }
+        ]
+      },
+      {
+        "playerStart": { "x": 0, "y": 0 },
+        "nodes": [
+          { "type": "enemy", "x": 3, "y": 3, "ref": "random" },
+          { "type": "enemy", "x": 3, "y": 1, "ref": "random" },
+          { "type": "shop",  "x": 3, "y": 2, "ref": "shop1" }
+        ]
+      },
+      {
+        "playerStart": { "x": 0, "y": 0 },
+        "nodes": [
+          { "type": "enemy", "x": 2, "y": 2, "ref": "tollgate-4x4" }
+        ]
+      }
+    ],
+    "enemies": [
+      {
+        "enemyId": "classic1",
+        "fixed": false,
+        "enemyLayout": [
+          { "piece": "goblin-queen", "x": 3, "y": 3 }
+        ],
+        "dialogue": null,
+        "rewards": {
+          "portals": ["classic6", "classic8"],
+          "portalLocations": [{ "x": 0, "y": 3 }, { "x": 1, "y": 3 }],
+          "currency": 3
+        }
+      },
+      {
+        "enemyId": "classic2",
+        "fixed": false,
+        "enemyLayout": [
+          { "piece": "goblin-queen", "x": 3, "y": 2 }
+        ],
+        "dialogue": null,
+        "rewards": {
+          "portals": ["classic6", "classic8"],
+          "portalLocations": [{ "x": 0, "y": 3 }, { "x": 1, "y": 3 }],
+          "currency": 2
+        }
+      },
+      {
+        "enemyId": "tollgate-4x4",
+        "fixed": true,
+        "enemyLayout": [
+          { "piece": "toll-gate",   "x": 2, "y": 2 },
+          { "piece": "goblin-pawn", "x": 0, "y": 3 }
+        ],
+        "dialogue": null,
+        "rewards": {
+          "portals": ["classic6"],
+          "portalLocations": [{ "x": 0, "y": 3 }],
+          "currency": 2
+        }
+      }
+    ],
+    "shops": [
+      {
+        "shopId": "shop1",
+        "fixed": true,
+        "shopLayout": [
+          { "ware": "classic-pawn", "price": "4", "location": { "x": 0, "y": 0 } },
+          { "ware": "goblin-pawn",  "price": "5", "location": { "x": 0, "y": 1 } }
+        ],
+        "startingCoords": { "x": 2, "y": 0 }
+      }
+    ]
+  }
+]

@@ -13,17 +13,18 @@ import java.util.ArrayList;
 
 public class Bishop extends Piece {
 
-    public Bishop(int x, int y, boolean isWhite){
-        super(x, y, isWhite, "bishop", ChessClass.CLASSIC);
+    public Bishop(int x, int y, boolean isBlack){
+        super(x, y, isBlack, "bishop", ChessClass.CLASSIC);
         pieceType = PieceType.BISHOP;
-
     }
 
-    public Bishop(int x, int y, boolean isWhite, String name, ChessClass chessClass){
-        super(x, y, isWhite, name, chessClass);
+    public Bishop(int x, int y, boolean isBlack, String name, ChessClass chessClass){
+        super(x, y, isBlack, name, chessClass);
         pieceType = PieceType.BISHOP;
-
     }
+
+    @Override
+    public String getDescription() { return "Moves any number of squares diagonally. Always stays on the same colour."; }
 
     @Override
     public ArrayList<Move> generateBaseMoves(Board board, Boolean ignoreCheck){
@@ -31,11 +32,11 @@ public class Bishop extends Piece {
             return generateAlterLayoutMoves(board);
         }
         ArrayList<Move> moves = new ArrayList<>();
-        if(isWhite == board.getWhiteToMove()) {
+        if(isBlack == board.getWhiteToMove()) {
             //pos pos
             for (int offset = 1; offset + col < board.boardX && offset + row < board.boardY; offset += 1) {
                 if (board.getTiles().get(col + offset).get(row + offset).getPiece() != null) {
-                    if (board.getTiles().get(col + offset).get(row + offset).getPiece().getIsWhite() != isWhite) {
+                    if (board.getTiles().get(col + offset).get(row + offset).getPiece().getIsBlack() != isBlack) {
                         moves.add(new Move(this, col + offset, row + offset, board));
                     }
                     break;
@@ -47,7 +48,7 @@ public class Bishop extends Piece {
             //pos neg
             for (int offset = 1; offset + col < board.boardX && -offset + row >= 0; offset += 1) {
                 if (board.getTiles().get(col + offset).get(row - offset).getPiece() != null) {
-                    if (board.getTiles().get(col + offset).get(row - offset).getPiece().getIsWhite() != isWhite) {
+                    if (board.getTiles().get(col + offset).get(row - offset).getPiece().getIsBlack() != isBlack) {
                         moves.add(new Move(this, col + offset, row - offset, board));
                     }
                     break;
@@ -58,7 +59,7 @@ public class Bishop extends Piece {
 
             for (int offset = 1; -offset + col >= 0 && offset + row < board.boardY; offset += 1) {
                 if (board.getTiles().get(col - offset).get(row + offset).getPiece() != null) {
-                    if (board.getTiles().get(col - offset).get(row + offset).getPiece().getIsWhite() != isWhite) {
+                    if (board.getTiles().get(col - offset).get(row + offset).getPiece().getIsBlack() != isBlack) {
                         moves.add(new Move(this, col - offset, row + offset, board));
                     }
                     break;
@@ -69,7 +70,7 @@ public class Bishop extends Piece {
 
             for (int offset = 1; -offset + col >= 0 && -offset + row >= 0; offset += 1) {
                 if (board.getTiles().get(col - offset).get(row - offset).getPiece() != null) {
-                    if (board.getTiles().get(col - offset).get(row - offset).getPiece().getIsWhite() != isWhite) {
+                    if (board.getTiles().get(col - offset).get(row - offset).getPiece().getIsBlack() != isBlack) {
                         moves.add(new Move(this, col - offset, row - offset, board));
                     }
                     break;

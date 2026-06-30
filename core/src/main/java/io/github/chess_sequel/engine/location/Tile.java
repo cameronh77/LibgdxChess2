@@ -53,7 +53,7 @@ public class Tile {
 
     public void removeAura(Piece owner, String name){
         for(Aura aura: auras){
-            if(owner == aura.getOwner() && name == aura.getName()){
+            if(owner == aura.getOwner() && name.equals(aura.getName())){
                 auras.remove(aura);
                 break;
             }

@@ -8,9 +8,12 @@ import io.github.chess_sequel.engine.powers.pieceAltering.Stuck;
 public class Goblin extends Pawn {
 
     private Stuck stuck = new Stuck(3);
-    public Goblin(int x, int y, boolean isWhite){
-        super(x, y, isWhite, "goblin", ChessClass.GOBLIN);
+    public Goblin(int x, int y, boolean isBlack){
+        super(x, y, isBlack, "goblin", ChessClass.GOBLIN);
     }
+
+    @Override
+    public String getDescription() { return "Moves like a Pawn. On capture, stuns the target for 3 turns — they cannot move."; }
 
     @Override
     public void onCapture(Piece piece){

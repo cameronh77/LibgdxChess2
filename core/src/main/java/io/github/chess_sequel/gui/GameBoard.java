@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.chess_sequel.ProjectName;
 import io.github.chess_sequel.engine.GameRun;
+import io.github.chess_sequel.engine.auras.Aura;
 import io.github.chess_sequel.engine.interactables.Interactable;
 import io.github.chess_sequel.engine.interactables.ShopItem;
 import io.github.chess_sequel.engine.location.board.MapBoard;
@@ -43,7 +44,24 @@ public class GameBoard {
 
             }
         }
-        //System.out.println(game.getCurrentBoard().getPieces());
+        // Tile-level aura images (e.g. petrifying aura)
+        for (int x = 0; x < gameRun.getCurrentBoard().boardX; x++) {
+            for (int y = 0; y < gameRun.getCurrentBoard().boardY; y++) {
+                for (Aura aura : gameRun.getCurrentBoard().getTiles().get(x).get(y).getAuras()) {
+                    if (aura.getImagePath() != null) {
+                        batch.draw(TextureCache.get(aura.getImagePath()), xorigin + x * TILE_SIZE, yorigin + y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                    }
+                }
+            }
+        }
+
+        // Board-level aura images with a fixed position (e.g. slime)
+        for (Aura aura : gameRun.getCurrentBoard().getBoardAuras()) {
+            if (aura.getImagePath() != null && aura.getAuraCol() >= 0) {
+                batch.draw(TextureCache.get(aura.getImagePath()), xorigin + aura.getAuraCol() * TILE_SIZE, yorigin + aura.getAuraRow() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            }
+        }
+
         for (Piece piece : gameRun.getCurrentBoard().getPieces()) {
             Texture tex = TextureCache.get(piece.getFilePath());
             if(piece == gameRun.getCurrentBoard().getSelectedPiece()){
@@ -57,20 +75,23 @@ public class GameBoard {
             }
         }
 
+        float time = (float)(System.currentTimeMillis() % 1000) / 1000f;
+        float alpha = 0.5f + 0.5f * (float)Math.sin(time * Math.PI * 2);
+        Texture highlightTex = TextureCache.get("tiles/highlight.png");
+
         if(gameRun.getCurrentBoard().getSelectedPiece() != null && !gameRun.getCurrentBoard().getValidMoves().isEmpty()){
-            // calculate pulsing alpha
-            float time = (float)(System.currentTimeMillis() % 1000) / 1000f; // cycles every 1 sec
-            float alpha = 0.5f + 0.5f * (float)Math.sin(time * Math.PI * 2); // 0->1->0
-
-            Texture highlightTex = TextureCache.get("tiles/highlight.png"); // white square texture
-
             for(Move move: gameRun.getCurrentBoard().getValidMoves()){
-                int col = move.getNewX();
-                int row = move.getNewY();
+                batch.setColor(1f, 1f, 1f, alpha);
+                batch.draw(highlightTex, xorigin + move.getNewX() * TILE_SIZE, yorigin + move.getNewY() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                batch.setColor(1f, 1f, 1f, 1f);
+            }
+        }
 
-                batch.setColor(1f, 1f, 1f, alpha); // set alpha for pulsing
-                batch.draw(highlightTex, xorigin+col * TILE_SIZE, yorigin+row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-                batch.setColor(1f, 1f, 1f, 1f); // reset to fully opaque for next draw
+        if(input.hasSelectedPower() && input.getPendingPowerMoves() != null){
+            for(Move move: input.getPendingPowerMoves()){
+                batch.setColor(1f, 0.8f, 0f, alpha); // gold tint for power targets
+                batch.draw(highlightTex, xorigin + move.getNewX() * TILE_SIZE, yorigin + move.getNewY() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                batch.setColor(1f, 1f, 1f, 1f);
             }
         }
 

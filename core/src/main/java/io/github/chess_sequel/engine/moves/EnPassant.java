@@ -8,14 +8,14 @@ public class EnPassant extends Move{
 
     public EnPassant(Piece piece, int newX, int newY, Board board){
         super(piece, newX, newY, board);
-        capturedPiece = board.getTiles().get(newX).get(newY+(movingPiece.getIsWhite()?1:-1)).getPiece();
+        capturedPiece = board.getTiles().get(newX).get(newY+(movingPiece.getIsBlack()?1:-1)).getPiece();
     }
 
     @Override
     public void execute(){
         board.getTiles().get(oldX).get(oldY).setPiece(null);
 
-        board.getTiles().get(newX).get(newY+(movingPiece.getIsWhite()?1:-1)).setPiece(null);
+        board.getTiles().get(newX).get(newY+(movingPiece.getIsBlack()?1:-1)).setPiece(null);
         board.getPieces().remove(capturedPiece);
 
 
@@ -39,7 +39,7 @@ public class EnPassant extends Move{
 
         //Re add the captured pawn
         if(capturedPiece != null){
-            board.getTiles().get(newX).get(newY+(movingPiece.getIsWhite()?1:-1)).setPiece(capturedPiece);
+            board.getTiles().get(newX).get(newY+(movingPiece.getIsBlack()?1:-1)).setPiece(capturedPiece);
             board.getPieces().add(capturedPiece);
         }
 

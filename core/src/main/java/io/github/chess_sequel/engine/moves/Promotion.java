@@ -25,13 +25,13 @@ public class Promotion extends Move{
 
         board.getPieces().remove(capturedPiece);
         if(type == PieceType.QUEEN){
-            promotionPiece = new Queen(newX, newY, movingPiece.isWhite());
+            promotionPiece = new Queen(newX, newY, movingPiece.isBlack());
         } else if (type == PieceType.BISHOP){
-            promotionPiece = new Bishop(newX, newY, movingPiece.isWhite());
+            promotionPiece = new Bishop(newX, newY, movingPiece.isBlack());
         }else if (type == PieceType.HORSE){
-            promotionPiece = new Horse(newX, newY, movingPiece.isWhite());
+            promotionPiece = new Horse(newX, newY, movingPiece.isBlack());
         }else if (type == PieceType.CASTLE){
-            promotionPiece = new Castle(newX, newY, movingPiece.isWhite());
+            promotionPiece = new Castle(newX, newY, movingPiece.isBlack());
         }
 
         board.getPieces().remove(movingPiece);

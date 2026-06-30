@@ -12,13 +12,16 @@ import java.util.ArrayList;
 
 public class Castle extends Piece {
 
-    public Castle(int x, int y, boolean isWhite){
-        super(x, y, isWhite, "castle", ChessClass.CLASSIC);
+    public Castle(int x, int y, boolean isBlack){
+        super(x, y, isBlack, "castle", ChessClass.CLASSIC);
         pieceType = PieceType.CASTLE;
     }
 
-    public Castle(int x, int y, boolean isWhite, String name, ChessClass chessClass){
-        super(x, y, isWhite, name, chessClass);
+    @Override
+    public String getDescription() { return "Moves any number of squares horizontally or vertically."; }
+
+    public Castle(int x, int y, boolean isBlack, String name, ChessClass chessClass){
+        super(x, y, isBlack, name, chessClass);
         pieceType = PieceType.CASTLE;
     }
 
@@ -28,11 +31,11 @@ public class Castle extends Piece {
             return generateAlterLayoutMoves(board);
         }
         ArrayList<Move> moves = new ArrayList<>();
-        if(isWhite == board.getWhiteToMove()) {
+        if(isBlack == board.getWhiteToMove()) {
             //pos x
             for (int c = col + 1; c < board.boardX; c += 1) {
                 if (board.getTiles().get(c).get(row).getPiece() != null) {
-                    if (board.getTiles().get(c).get(row).getPiece().getIsWhite() != isWhite) {
+                    if (board.getTiles().get(c).get(row).getPiece().getIsBlack() != isBlack) {
                         moves.add(new Move(this, c, row, board));
                     }
                     break;
@@ -44,7 +47,7 @@ public class Castle extends Piece {
             //pos y
             for (int r = row + 1; r < board.boardY; r += 1) {
                 if (board.getTiles().get(col).get(r).getPiece() != null) {
-                    if (board.getTiles().get(col).get(r).getPiece().getIsWhite() != isWhite) {
+                    if (board.getTiles().get(col).get(r).getPiece().getIsBlack() != isBlack) {
                         moves.add(new Move(this, col, r, board));
                     }
                     break;
@@ -56,7 +59,7 @@ public class Castle extends Piece {
             //neg x
             for (int c = col - 1; c >= 0; c -= 1) {
                 if (board.getTiles().get(c).get(row).getPiece() != null) {
-                    if (board.getTiles().get(c).get(row).getPiece().getIsWhite() != isWhite) {
+                    if (board.getTiles().get(c).get(row).getPiece().getIsBlack() != isBlack) {
                         moves.add(new Move(this, c, row, board));
                     }
                     break;
@@ -68,7 +71,7 @@ public class Castle extends Piece {
             //neg y
             for (int r = row - 1; r >= 0; r -= 1) {
                 if (board.getTiles().get(col).get(r).getPiece() != null) {
-                    if (board.getTiles().get(col).get(r).getPiece().getIsWhite() != isWhite) {
+                    if (board.getTiles().get(col).get(r).getPiece().getIsBlack() != isBlack) {
                         moves.add(new Move(this, col, r, board));
                     }
                     break;

@@ -2,6 +2,6 @@ package io.github.chess_sequel.engine;
 
 public enum GameState {
     NEUTRAL,
-    CHANGING_MAP,
-    CHANGING_INVENTORY,
+    BOARD_STATE_CHANGED,
+    MATCH_WON,
 }

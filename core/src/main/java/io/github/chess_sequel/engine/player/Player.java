@@ -2,14 +2,14 @@ package io.github.chess_sequel.engine.player;
 
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.pieces.*;
-import io.github.chess_sequel.engine.pieces.classic.Castle;
 import io.github.chess_sequel.engine.pieces.classic.King;
 import io.github.chess_sequel.engine.pieces.classic.Pawn;
-import io.github.chess_sequel.engine.pieces.classic.Queen;
-import io.github.chess_sequel.engine.pieces.goblin.Goblin;
-import io.github.chess_sequel.engine.pieces.goblin.GoblinDrill;
+import io.github.chess_sequel.engine.powers.kingPower.BouncingBishopsPassive;
+import io.github.chess_sequel.engine.powers.kingPower.MeekInheritPower;
+import io.github.chess_sequel.engine.powers.kingPower.WinBonus;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Player {
 
@@ -32,10 +32,14 @@ public class Player {
 
 
     public void createPieceList(){
-        pieces.add(new Castle(0, 0, false));
-        pieces.add(new Queen(2, 0, false));
-        pieces.add(new GoblinDrill(3, 0, false));
-        leadPiece = new King(1, 0, false);
+        pieces.add(new Pawn(1, 0, false));
+        pieces.add(new Pawn(2, 0, false));
+        pieces.add(new Pawn(3, 0, false));
+        King king = new King(0, 0, false);
+        king.addActivePower(new MeekInheritPower(king));
+        king.addPassivePower(new BouncingBishopsPassive(king));
+        king.addPreGamePower(new WinBonus());
+        leadPiece = king;
         pieces.add(leadPiece);
         /**
         pieces.add(new Castle(0, 0, false));
@@ -57,6 +61,17 @@ public class Player {
         pieces.add(new Pawn(6, 1, false));
         pieces.add(new Pawn(7, 1, false));
          */
+    }
+
+    public void setTeam(List<Piece> pieces) {
+        this.pieces = new ArrayList<>(pieces);
+        this.leadPiece = null;
+        for (Piece piece : this.pieces) {
+            if (piece instanceof King) {
+                this.leadPiece = piece;
+                break;
+            }
+        }
     }
 
     public ArrayList<Piece> getPieces(){
@@ -104,5 +119,11 @@ public class Player {
         return pieceInventory;
     }
 
+    public King getKing() {
+        for (Piece piece : pieces) {
+            if (piece instanceof King) return (King) piece;
+        }
+        return null;
+    }
 
 }

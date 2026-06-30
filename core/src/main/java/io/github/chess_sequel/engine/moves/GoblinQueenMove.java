@@ -23,7 +23,7 @@ public class GoblinQueenMove extends Move{
                 board.getTiles().get(newX-1).get(newY-1).getAuras().add(new PetrifyingAura(movingPiece));
             }
 
-            if(newY+1 < board.boardY && newY-1 >= 0){
+            if(newY+1 < board.boardY){
                 board.getTiles().get(newX-1).get(newY+1).getAuras().add(new PetrifyingAura(movingPiece));
             }
         }
@@ -56,7 +56,7 @@ public class GoblinQueenMove extends Move{
                 board.getTiles().get(oldX-1).get(oldY-1).removeAura(movingPiece, "petrifyingAura");
             }
 
-            if(oldY+1 < board.boardY && oldY-1 >= 0){
+            if(oldY+1 < board.boardY){
                 board.getTiles().get(oldX-1).get(oldY+1).removeAura(movingPiece, "petrifyingAura");
             }
         }
@@ -130,7 +130,7 @@ public class GoblinQueenMove extends Move{
                 board.getTiles().get(oldX-1).get(oldY-1).getAuras().add(new PetrifyingAura(movingPiece));
             }
 
-            if(oldY+1 < board.boardY && oldY-1 >= 0){
+            if(oldY+1 < board.boardY){
                 board.getTiles().get(oldX-1).get(oldY+1).getAuras().add(new PetrifyingAura(movingPiece));
             }
         }
@@ -163,7 +163,7 @@ public class GoblinQueenMove extends Move{
                 board.getTiles().get(newX-1).get(newY-1).removeAura(movingPiece, "petrifyingAura");
             }
 
-            if(newY+1 < board.boardY && newY-1 >= 0){
+            if(newY+1 < board.boardY){
                 board.getTiles().get(newX-1).get(newY+1).removeAura(movingPiece, "petrifyingAura");
             }
         }

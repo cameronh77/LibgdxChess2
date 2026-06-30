@@ -6,6 +6,8 @@ public class ZoneData {
     public String mapName;
     public int mapX;
     public int mapY;
+    public int combatX;
+    public int combatY;
     public ArrayList<ZoneVariant> variants;
     public ArrayList<EnemyData> enemies;
     public ArrayList<ShopData> shops;

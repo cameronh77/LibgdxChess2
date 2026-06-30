@@ -15,7 +15,7 @@ public class AlterLayoutBoard extends Board{
 
     }
 
-
-
+    @Override
+    public BoardType getBoardType() { return BoardType.ALTER_LAYOUT; }
 
 }

@@ -1,6 +1,7 @@
 package io.github.chess_sequel.engine.pieces.classic;
 
 
+import io.github.chess_sequel.engine.location.Tile;
 import io.github.chess_sequel.engine.location.board.AlterLayoutBoard;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
@@ -9,18 +10,56 @@ import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.ChessClass;
 import io.github.chess_sequel.engine.pieces.Piece;
 import io.github.chess_sequel.engine.pieces.PieceType;
+import io.github.chess_sequel.engine.powers.kingPower.ActiveKingPower;
+import io.github.chess_sequel.engine.powers.kingPower.PassiveKingPower;
+import io.github.chess_sequel.engine.powers.kingPower.PreKingPower;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class King extends Piece {
 
-    public King(int x, int y, boolean isWhite){
-        super(x, y, isWhite, "king", ChessClass.CLASSIC);
+    private Board activeBoard;
+    private final List<ActiveKingPower>  activePowers  = new ArrayList<>();
+    private final List<PassiveKingPower> passivePowers = new ArrayList<>();
+    private final List<PreKingPower>     preGamePowers = new ArrayList<>();
+
+    public void addActivePower(ActiveKingPower power)  { activePowers.add(power); }
+    public void addPassivePower(PassiveKingPower power) { passivePowers.add(power); }
+    public void addPreGamePower(PreKingPower power)     { preGamePowers.add(power); }
+
+    @Override
+    public String getDescription() { return "Moves one square in any direction. Protect it at all costs — if it falls, you lose."; }
+
+    public List<ActiveKingPower>  getActivePowers()  { return activePowers; }
+    public List<PassiveKingPower> getPassivePowers()  { return passivePowers; }
+    public List<PreKingPower>     getPreGamePowers()  { return preGamePowers; }
+
+    @Override
+    public void onStart(Board board) {
+        this.activeBoard = board;
+        for (PassiveKingPower power : passivePowers) board.addAura(power);
+    }
+
+    @Override
+    public void onCapture(Piece piece) {
+        if (activeBoard == null) return;
+        for (PassiveKingPower power : passivePowers) activeBoard.removeAura(power);
+    }
+
+    @Override
+    public void undoOnCapture(Piece piece) {
+        if (activeBoard == null) return;
+        for (PassiveKingPower power : passivePowers) activeBoard.addAura(power);
+    }
+
+    public King(int x, int y, boolean isBlack){
+        super(x, y, isBlack, "king", ChessClass.CLASSIC);
         pieceType = PieceType.KING;
     }
 
-    public King(int x, int y, boolean isWhite, String name, ChessClass chessClass){
-        super(x, y, isWhite, name, chessClass);
+    public King(int x, int y, boolean isBlack, String name, ChessClass chessClass){
+        super(x, y, isBlack, name, chessClass);
         pieceType = PieceType.KING;
     }
 
@@ -30,7 +69,7 @@ public class King extends Piece {
             return generateAlterLayoutMoves(board);
         }
         ArrayList<Move> moves = new ArrayList<>();
-        if(isWhite == board.getWhiteToMove()) {
+        if(isBlack == board.getWhiteToMove()) {
             //Currently no moves are showing and this setup also means king can take pieces of its own colour
             if (col - 1 >= 0) {
                 moves.add(new Move(this, col - 1, row, board));
@@ -48,7 +87,7 @@ public class King extends Piece {
 
             if (col + 1 < board.boardX) {
                 moves.add(new Move(this, col + 1, row, board));
-                if (row + 1 < board.boardX) {
+                if (row + 1 < board.boardY) {
                     moves.add(new Move(this, col + 1, row + 1, board));
                 }
                 if (row - 1 >= 0) {
@@ -56,29 +95,32 @@ public class King extends Piece {
                 }
             }
 
-            if (row + 1 < board.boardX) {
+            if (row + 1 < board.boardY) {
                 moves.add(new Move(this, col, row + 1, board));
             }
 
 
             //Castling is being restricted to 8x8 boards
             if (isFirstMove && board.boardX == 8 && board.boardY == 8) {
-                Piece rightCastle = board.getTiles().get(7).get(isWhite ? 7 : 0).getPiece();
+                Piece rightCastle = board.getTiles().get(7).get(isBlack ? 7 : 0).getPiece();
                 //I refuse to believe that there isn't a more efficient way to do this
-                if (rightCastle != null && rightCastle.getIsFirstMove() && board.getTiles().get(6).get(isWhite ? 7 : 0).getPiece() == null && board.getTiles().get(5).get(isWhite ? 7 : 0).getPiece() == null && rightCastle.getName() == "castle" && !board.tileCheckEvaluator(board.getTiles().get(6).get(isWhite ? 7 : 0)) && !board.tileCheckEvaluator(board.getTiles().get(5).get(isWhite ? 7 : 0))) {
-                    moves.add(new Castling(this, 6, isWhite ? 7 : 0, board, rightCastle));
+                if (rightCastle != null && rightCastle.getIsFirstMove() && board.getTiles().get(6).get(isBlack ? 7 : 0).getPiece() == null && board.getTiles().get(5).get(isBlack ? 7 : 0).getPiece() == null && rightCastle.getName() == "castle" && !board.tileCheckEvaluator(board.getTiles().get(6).get(isBlack ? 7 : 0)) && !board.tileCheckEvaluator(board.getTiles().get(5).get(isBlack ? 7 : 0))) {
+                    moves.add(new Castling(this, 6, isBlack ? 7 : 0, board, rightCastle));
                 }
 
-                Piece leftCastle = board.getTiles().get(0).get(isWhite ? 7 : 0).getPiece();
+                Piece leftCastle = board.getTiles().get(0).get(isBlack ? 7 : 0).getPiece();
                 //I refuse to believe that there isn't a more efficient way to do this
-                if (leftCastle != null && leftCastle.getIsFirstMove() && board.getTiles().get(1).get(isWhite ? 7 : 0).getPiece() == null && board.getTiles().get(2).get(isWhite ? 7 : 0).getPiece() == null && board.getTiles().get(3).get(isWhite ? 7 : 0).getPiece() == null && leftCastle.getName() == "castle"  && !board.tileCheckEvaluator(board.getTiles().get(2).get(isWhite ? 7 : 0)) && !board.tileCheckEvaluator(board.getTiles().get(3).get(isWhite ? 7 : 0))) {
-                    moves.add(new Castling(this, 2, isWhite ? 7 : 0, board, leftCastle));
+                if (leftCastle != null && leftCastle.getIsFirstMove() && board.getTiles().get(1).get(isBlack ? 7 : 0).getPiece() == null && board.getTiles().get(2).get(isBlack ? 7 : 0).getPiece() == null && board.getTiles().get(3).get(isBlack ? 7 : 0).getPiece() == null && leftCastle.getName() == "castle"  && !board.tileCheckEvaluator(board.getTiles().get(2).get(isBlack ? 7 : 0)) && !board.tileCheckEvaluator(board.getTiles().get(3).get(isBlack ? 7 : 0))) {
+                    moves.add(new Castling(this, 2, isBlack ? 7 : 0, board, leftCastle));
                 }
             }
 
             ArrayList<Move> trueMoves = new ArrayList<>();
             for (Move move : moves) {
-                if (!(board.getTiles().get(move.getNewX()).get(move.getNewY()).getPiece() != null && board.getTiles().get(move.getNewX()).get(move.getNewY()).getPiece().getIsWhite() == isWhite)) {
+                Tile dest = board.getTiles().get(move.getNewX()).get(move.getNewY());
+                boolean blockedByPiece = dest.getPiece() != null && dest.getPiece().getIsBlack() == isBlack;
+                boolean blockedByTerrain = dest.getInteractable() != null && !dest.getInteractable().isPassable();
+                if (!blockedByPiece && !blockedByTerrain) {
                     trueMoves.add(move);
                 }
             }
@@ -90,6 +132,9 @@ public class King extends Piece {
                     if (!board.checkEvaluator(move)) {
                         truerMoves.add(move);
                     }
+                }
+                for (ActiveKingPower power : activePowers) {
+                    if (power.isAvailable()) truerMoves.addAll(power.generateMoves(board));
                 }
                 return truerMoves;
             }

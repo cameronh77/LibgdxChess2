@@ -13,9 +13,12 @@ import java.util.ArrayList;
  */
 public class GoblinDrill extends Bishop {
 
-    public GoblinDrill(int x, int y, boolean isWhite){
-        super(x, y, isWhite, "goblin-drill", ChessClass.GOBLIN);
+    public GoblinDrill(int x, int y, boolean isBlack){
+        super(x, y, isBlack, "goblin-drill", ChessClass.GOBLIN);
     }
+
+    @Override
+    public String getDescription() { return "Moves diagonally like a Bishop, but can drill through one piece in each direction."; }
 
     @Override
     public ArrayList<Move> generateBaseMoves(Board board, Boolean ignoreCheck){
@@ -29,13 +32,13 @@ public class GoblinDrill extends Bishop {
         boolean negNeg = false;
 
         ArrayList<Move> moves = new ArrayList<>();
-        if(isWhite == board.getWhiteToMove()) {
+        if(isBlack == board.getWhiteToMove()) {
             //pos pos
             for (int offset = 1; offset + col < board.boardX && offset + row < board.boardY; offset += 1) {
                 //if there is a piece
                 if (board.getTiles().get(col + offset).get(row + offset).getPiece() != null) {
                     //if the piece is an enemy piece
-                    if (board.getTiles().get(col + offset).get(row + offset).getPiece().getIsWhite() != isWhite) {
+                    if (board.getTiles().get(col + offset).get(row + offset).getPiece().getIsBlack() != isBlack) {
                         moves.add(new Move(this, col + offset, row + offset, board));
                     }
                     if(posPos){
@@ -50,7 +53,7 @@ public class GoblinDrill extends Bishop {
             //pos neg
             for (int offset = 1; offset + col < board.boardX && -offset + row >= 0; offset += 1) {
                 if (board.getTiles().get(col + offset).get(row - offset).getPiece() != null) {
-                    if (board.getTiles().get(col + offset).get(row - offset).getPiece().getIsWhite() != isWhite) {
+                    if (board.getTiles().get(col + offset).get(row - offset).getPiece().getIsBlack() != isBlack) {
                         moves.add(new Move(this, col + offset, row - offset, board));
                     }
                     if(posNeg){
@@ -64,7 +67,7 @@ public class GoblinDrill extends Bishop {
 
             for (int offset = 1; -offset + col >= 0 && offset + row < board.boardY; offset += 1) {
                 if (board.getTiles().get(col - offset).get(row + offset).getPiece() != null) {
-                    if (board.getTiles().get(col - offset).get(row + offset).getPiece().getIsWhite() != isWhite) {
+                    if (board.getTiles().get(col - offset).get(row + offset).getPiece().getIsBlack() != isBlack) {
                         moves.add(new Move(this, col - offset, row + offset, board));
                     }
                     if(negPos){
@@ -78,7 +81,7 @@ public class GoblinDrill extends Bishop {
 
             for (int offset = 1; -offset + col >= 0 && -offset + row >= 0; offset += 1) {
                 if (board.getTiles().get(col - offset).get(row - offset).getPiece() != null) {
-                    if (board.getTiles().get(col - offset).get(row - offset).getPiece().getIsWhite() != isWhite) {
+                    if (board.getTiles().get(col - offset).get(row - offset).getPiece().getIsBlack() != isBlack) {
                         moves.add(new Move(this, col - offset, row - offset, board));
                     }
                     if(negNeg){

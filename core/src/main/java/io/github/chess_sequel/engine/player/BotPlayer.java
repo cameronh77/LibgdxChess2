@@ -1,33 +1,31 @@
 package io.github.chess_sequel.engine.player;
 
 import io.github.chess_sequel.engine.GameRun;
+import io.github.chess_sequel.engine.GameState;
+import io.github.chess_sequel.engine.jsonTypes.PiecePlacement;
 import io.github.chess_sequel.engine.jsonTypes.Rewards;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.*;
-import io.github.chess_sequel.engine.pieces.classic.*;
 import io.github.chess_sequel.engine.pieces.factories.PieceFactory;
-import io.github.chess_sequel.engine.pieces.goblin.Goblin;
-import io.github.chess_sequel.engine.pieces.goblin.GoblinQueen;
 
 import java.util.ArrayList;
 
 public class BotPlayer extends Player{
 
     private int skillLevel;
-    private String army;
+    private ArrayList<PiecePlacement> army;
     private boolean defeated = false;
     private GameRun gameRun;
     private Rewards rewards;
 
-    public BotPlayer(GameRun gameRun, int skillLevel, String army, Rewards rewards){
+    public BotPlayer(GameRun gameRun, int skillLevel, ArrayList<PiecePlacement> army, Rewards rewards){
         this.skillLevel = skillLevel;
         this.army = army;
         this.createPieceList();
         this.gameRun = gameRun;
         this.rewards = rewards;
-
     }
 
     @Override
@@ -42,12 +40,21 @@ public class BotPlayer extends Player{
                 ((MatchBoard) board).clearEndMatchEffect();
             }
             gameRun.popBoard();
-            if(rewards != null){
-                gameRun.handleRewards(rewards);
-            }
+            gameRun.setPendingRewards(rewards);
+            gameRun.setGameState(GameState.MATCH_WON);
             System.out.println("Bot player has no moves left");
         }
 
+    }
+
+    public void onLeaderCaptured(Board board) {
+        this.defeated = true;
+        if (board instanceof MatchBoard) {
+            ((MatchBoard) board).clearEndMatchEffect();
+        }
+        gameRun.popBoard();
+        gameRun.setPendingRewards(rewards);
+        gameRun.setGameState(GameState.MATCH_WON);
     }
 
     public static Move findBestMove(Board board, int depth) {
@@ -143,18 +150,14 @@ public class BotPlayer extends Player{
 
     @Override
     public void createPieceList(){
-
         pieces.clear();
-        String[] parts = army.split(" ");
-
-        for(String part: parts){
-            Piece piece = PieceFactory.generatePiece(part, false);
+        for(PiecePlacement placement: army){
+            Piece piece = PieceFactory.generatePiece(placement.piece, placement.x, placement.y, false);
             if(leadPiece == null){
                 leadPiece = piece;
             }
             pieces.add(piece);
         }
-
     }
 
     public boolean getDefeated(){

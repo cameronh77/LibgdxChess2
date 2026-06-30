@@ -13,13 +13,16 @@ import java.util.ArrayList;
 
 public class Horse extends Piece {
 
-    public Horse(int x, int y, boolean isWhite){
-        super(x, y, isWhite, "horse", ChessClass.CLASSIC);
+    public Horse(int x, int y, boolean isBlack){
+        super(x, y, isBlack, "horse", ChessClass.CLASSIC);
         pieceType = PieceType.HORSE;
     }
 
-    public Horse(int x, int y, boolean isWhite, String name, ChessClass chessClass){
-        super(x, y, isWhite, name, chessClass);
+    @Override
+    public String getDescription() { return "Jumps in an L-shape: two squares one way, one to the side. Can leap over other pieces."; }
+
+    public Horse(int x, int y, boolean isBlack, String name, ChessClass chessClass){
+        super(x, y, isBlack, name, chessClass);
         pieceType = PieceType.HORSE;
     }
 
@@ -31,7 +34,7 @@ public class Horse extends Piece {
 
         ArrayList<Move> moves = new ArrayList<>();
 
-        if(isWhite == board.getWhiteToMove()) {
+        if(isBlack == board.getWhiteToMove()) {
             moves.add(new Move(this, col + 1, row + 2, board));
             moves.add(new Move(this, col + 1, row - 2, board));
             moves.add(new Move(this, col - 1, row + 2, board));
@@ -46,7 +49,7 @@ public class Horse extends Piece {
 
             for (Move move : moves) {
                 if (move.getNewX() >= 0 && move.getNewX() < board.boardX && move.getNewY() >= 0 && move.getNewY() < board.boardY) {
-                    if (!(board.getTiles().get(move.getNewX()).get(move.getNewY()).getPiece() != null && board.getTiles().get(move.getNewX()).get(move.getNewY()).getPiece().getIsWhite() == isWhite)) {
+                    if (!(board.getTiles().get(move.getNewX()).get(move.getNewY()).getPiece() != null && board.getTiles().get(move.getNewX()).get(move.getNewY()).getPiece().getIsBlack() == isBlack)) {
                         trueMoves.add(move);
                     }
                 }

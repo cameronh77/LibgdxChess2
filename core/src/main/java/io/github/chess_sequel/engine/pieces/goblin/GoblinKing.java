@@ -5,7 +5,10 @@ import io.github.chess_sequel.engine.pieces.classic.King;
 
 public class GoblinKing extends King {
 
-    public GoblinKing(int x, int y, boolean isWhite){
-        super(x, y, isWhite, "goblin-king", ChessClass.GOBLIN);
+    public GoblinKing(int x, int y, boolean isBlack){
+        super(x, y, isBlack, "goblin-king", ChessClass.GOBLIN);
     }
+
+    @Override
+    public String getDescription() { return "Moves one square in any direction. Defeat the goblin king to win the battle."; }
 }

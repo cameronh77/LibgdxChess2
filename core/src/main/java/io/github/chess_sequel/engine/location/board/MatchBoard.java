@@ -111,33 +111,33 @@ public class MatchBoard extends Board{
             } else if (Character.isDigit(ch)) {
                 col += Character.getNumericValue(ch);
             } else {
-                boolean isWhite = Character.isUpperCase(ch);
+                boolean isBlack = Character.isUpperCase(ch);
                 char pieceChar = Character.toLowerCase(ch);
 
                 switch(pieceChar){
                     case 'r':
-                        tiles.get(col).get(row).setPiece(new Castle(col, row, isWhite));
+                        tiles.get(col).get(row).setPiece(new Castle(col, row, isBlack));
                         addToBoard(tiles.get(col).get(row).getPiece());
                         break;
                     case 'n':
-                        tiles.get(col).get(row).setPiece(new Horse(col, row, isWhite));
+                        tiles.get(col).get(row).setPiece(new Horse(col, row, isBlack));
                         addToBoard(tiles.get(col).get(row).getPiece());
                         break;
                     case 'b':
-                        tiles.get(col).get(row).setPiece(new Bishop(col, row, isWhite));
+                        tiles.get(col).get(row).setPiece(new Bishop(col, row, isBlack));
                         addToBoard(tiles.get(col).get(row).getPiece());
                         break;
                     case 'q':
-                        tiles.get(col).get(row).setPiece(new Queen(col, row, isWhite));
+                        tiles.get(col).get(row).setPiece(new Queen(col, row, isBlack));
                         addToBoard(tiles.get(col).get(row).getPiece());
                         break;
                     case 'k':
-                        tiles.get(col).get(row).setPiece(new King(col, row, isWhite));
+                        tiles.get(col).get(row).setPiece(new King(col, row, isBlack));
                         addToBoard(tiles.get(col).get(row).getPiece());
                         break;
                     case 'p':
-                        Piece pawn = new Pawn(col, row, isWhite);
-                        if((pawn.getIsWhite() && pawn.getRow() != 6) || (!pawn.getIsWhite() && pawn.getRow() != 1)){
+                        Piece pawn = new Pawn(col, row, isBlack);
+                        if((pawn.getIsBlack() && pawn.getRow() != 6) || (!pawn.getIsBlack() && pawn.getRow() != 1)){
                             pawn.setIsFirstMove(false);
                         }
                         addToBoard(pawn);
@@ -193,6 +193,7 @@ public class MatchBoard extends Board{
         }
     }
 
-
+    @Override
+    public BoardType getBoardType() { return BoardType.MATCH; }
 
 }

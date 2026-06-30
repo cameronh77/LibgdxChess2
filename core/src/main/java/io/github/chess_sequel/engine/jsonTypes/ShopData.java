@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class ShopData {
     public String shopId;
+    public boolean fixed;
     public ArrayList<IndividualWare> shopLayout;
     public Coordinates startingCoords;
 }

@@ -1,5 +1,6 @@
 package io.github.chess_sequel.engine.location.board;
 
+import io.github.chess_sequel.engine.auras.Aura;
 import io.github.chess_sequel.engine.location.Tile;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.*;
@@ -17,6 +18,7 @@ public abstract class Board {
     protected ArrayList<Piece> pieces = new ArrayList<>();
     protected int[] enPassantTile = new int[2];
     protected ArrayList<ArrayList<Tile>> tiles = new ArrayList();
+    protected ArrayList<Aura> boardAuras = new ArrayList<>();
 
     protected Piece selectedPiece;
     protected ArrayList<Move> validMoves;
@@ -85,6 +87,18 @@ public abstract class Board {
         pieces.add(piece);
         piece.setStartCords();
         tiles.get(piece.getCol()).get(piece.getRow()).setPiece(piece);
+    }
+
+    public ArrayList<Aura> getBoardAuras(){
+        return boardAuras;
+    }
+
+    public void addAura(Aura aura){
+        this.boardAuras.add(aura);
+    }
+
+    public void removeAura(Aura aura){
+        this.boardAuras.remove(aura);
     }
 
 
@@ -183,14 +197,16 @@ public abstract class Board {
         }
     }
 
-    public int getTeamPieces(boolean isWhite){
+    public int getTeamPieces(boolean isBlack){
         int value = 0;
         for(Piece piece: pieces){
-            if (piece.isWhite()){
+            if (piece.isBlack()){
                 value += 1;
             }
         }
         return value;
     }
+
+    public abstract BoardType getBoardType();
 
 }

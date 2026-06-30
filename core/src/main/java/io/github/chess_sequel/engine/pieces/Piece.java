@@ -16,26 +16,26 @@ public abstract class Piece {
     protected Boolean isFirstMove = true;
     protected ArrayList<AlterMovePower> alterMovePowers = new ArrayList<>();
 
-    public boolean isWhite() {
-        return isWhite;
+    public boolean isBlack() {
+        return isBlack;
     }
 
     protected int col, row; // 0-7
     protected int trueCol, trueRow;
     protected int mapCol, mapRow;
-    protected boolean isWhite;
+    protected boolean isBlack;
 
     protected PieceType pieceType;
     protected ChessClass chessClass;
 
-    public Piece(int x, int y, boolean isWhite, String name, ChessClass chessClass){
+    public Piece(int x, int y, boolean isBlack, String name, ChessClass chessClass){
         this.trueCol = x;
         this.trueRow = y;
 
-        this.isWhite = isWhite;
+        this.isBlack = isBlack;
         this.name = name;
         this.chessClass = chessClass;
-        this.filePath = "pieces/"+chessClass.getType()+"/"+(isWhite?"black":"white")+"-"+name+".png";
+        this.filePath = "pieces/"+chessClass.getType()+"/"+(isBlack?"black":"white")+"-"+name+".png";
     }
 
 
@@ -45,9 +45,14 @@ public abstract class Piece {
         for(AlterMovePower power: alterMovePowers){
             moves = power.alterMoves(moves, board, ignoreCheck);
         }
-        for(Aura aura: board.getTiles().get(col).get(row).getAuras()){
+        for(Aura aura: new ArrayList<>(board.getTiles().get(col).get(row).getAuras())){
             moves = aura.alterMoves(this, moves, board, ignoreCheck);
         }
+
+        for(Aura aura: new ArrayList<>(board.getBoardAuras())){
+            moves = aura.alterMoves(this, moves, board, ignoreCheck);
+        }
+
         return moves;
     }
 
@@ -73,8 +78,8 @@ public abstract class Piece {
         return isFirstMove;
     }
 
-    public Boolean getIsWhite(){
-        return isWhite;
+    public Boolean getIsBlack(){
+        return isBlack;
     }
 
     public void setCol(int col){
@@ -106,6 +111,8 @@ public abstract class Piece {
     public String getName(){
         return name;
     }
+
+    public String getDescription() { return null; }
 
     public String getFilePath() {
         return filePath;

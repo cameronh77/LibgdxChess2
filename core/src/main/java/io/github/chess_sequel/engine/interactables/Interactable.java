@@ -6,6 +6,8 @@ public abstract class Interactable {
     protected String filePath;
     public abstract void interaction();
 
+    public boolean isPassable() { return true; }
+
     public void setCol(int col){
         this.col = col;
     }

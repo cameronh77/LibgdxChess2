@@ -1,9 +1,12 @@
 package io.github.chess_sequel.engine.moves;
 
+import io.github.chess_sequel.engine.auras.Aura;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MapBoard;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.pieces.Piece;
+
+import java.util.ArrayList;
 
 public class Move {
     protected int oldX, oldY;
@@ -65,7 +68,10 @@ public class Move {
 
         if(capturedPiece != null){
             capturedPiece.onCapture(movingPiece);
-            //System.out.println(movingPiece + " captured " + capturedPiece);
+        }
+
+        for (Aura aura : new ArrayList<>(board.getBoardAuras())) {
+            aura.onLand(movingPiece, newX, newY, board);
         }
 
         board.tick();
@@ -76,6 +82,10 @@ public class Move {
 
 
     public void undo(){
+        for (Aura aura : new ArrayList<>(board.getBoardAuras())) {
+            aura.onUndoLand(movingPiece, newX, newY, board);
+        }
+
         //Revert Tile ownership
         board.getTiles().get(newX).get(newY).setPiece(capturedPiece);
 

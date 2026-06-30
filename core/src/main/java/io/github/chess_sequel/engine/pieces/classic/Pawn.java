@@ -15,15 +15,18 @@ import java.util.ArrayList;
 
 public class Pawn extends Piece {
 
-    public Pawn(int x, int y, boolean isWhite){
-        super(x, y, isWhite, "pawn", ChessClass.CLASSIC);
+    public Pawn(int x, int y, boolean isBlack){
+        super(x, y, isBlack, "pawn", ChessClass.CLASSIC);
         pieceType = PieceType.PAWN;
     }
 
-    public Pawn(int x, int y, boolean isWhite, String name, ChessClass chessClass){
-        super(x, y, isWhite, name, chessClass);
+    public Pawn(int x, int y, boolean isBlack, String name, ChessClass chessClass){
+        super(x, y, isBlack, name, chessClass);
         pieceType = PieceType.PAWN;
     }
+
+    @Override
+    public String getDescription() { return "Moves forward one square, captures diagonally. Can move two squares on its first move."; }
 
     @Override
     public ArrayList<Move> generateBaseMoves(Board board, Boolean ignoreCheck){
@@ -31,8 +34,8 @@ public class Pawn extends Piece {
             return generateAlterLayoutMoves(board);
         }
         ArrayList<Move> moves = new ArrayList<>();
-        if(isWhite == board.getWhiteToMove()) {
-            int offset = isWhite ? -1 : 1; //Set offset
+        if(isBlack == board.getWhiteToMove()) {
+            int offset = isBlack ? -1 : 1; //Set offset
             //Generate moves for first turn not considering promotion on first turn, can revisit
             if (this.isFirstMove && row + 2*offset > 0 && row+2*offset < board.boardX) {
                 if (board.getTiles().get(col).get(row + (2 * offset)).getPiece() == null && board.getTiles().get(col).get(row + (offset)).getPiece() == null) {
@@ -42,7 +45,7 @@ public class Pawn extends Piece {
             //Generate single moves
             if ((row+offset) > 0 && row + offset < board.boardY && board.getTiles().get(col).get(row + (offset)).getPiece() == null) {
 
-                if (row + (offset) == (isWhite ? 0 : board.boardX - 1)) {
+                if (row + (offset) == (isBlack ? 0 : board.boardX - 1)) {
                     moves.add(new Promotion(this, col, row + (offset), board, PieceType.QUEEN));
                     moves.add(new Promotion(this, col, row + (offset), board, PieceType.BISHOP));
                     moves.add(new Promotion(this, col, row + (offset), board, PieceType.CASTLE));
@@ -53,8 +56,8 @@ public class Pawn extends Piece {
             }
 
             //Generate left takes (This could probably be more efficient)
-            if ((row+offset) > 0 && row + offset < board.boardY && col - 1 >= 0 && board.getTiles().get(col - 1).get(row + (offset)).getPiece() != null && board.getTiles().get(col - 1).get(row + (offset)).getPiece().getIsWhite() != isWhite) {
-                if (row + (offset) == (isWhite ? 0 : board.boardX - 1)) {
+            if ((row+offset) > 0 && row + offset < board.boardY && col - 1 >= 0 && board.getTiles().get(col - 1).get(row + (offset)).getPiece() != null && board.getTiles().get(col - 1).get(row + (offset)).getPiece().getIsBlack() != isBlack) {
+                if (row + (offset) == (isBlack ? 0 : board.boardX - 1)) {
                     moves.add(new Promotion(this, col-1, row + (offset), board, PieceType.QUEEN));
                     moves.add(new Promotion(this, col-1, row + (offset), board, PieceType.BISHOP));
                     moves.add(new Promotion(this, col-1, row + (offset), board, PieceType.CASTLE));
@@ -65,8 +68,8 @@ public class Pawn extends Piece {
             }
 
             //Generate right takes
-            if ((row+offset) > 0 && row + offset < board.boardY && col + 1 < board.boardX && board.getTiles().get(col + 1).get(row + (offset)).getPiece() != null && board.getTiles().get(col + 1).get(row + (offset)).getPiece().getIsWhite() != isWhite) {
-                if (row + (offset) == (isWhite ? 0 : board.boardX - 1)) {
+            if ((row+offset) > 0 && row + offset < board.boardY && col + 1 < board.boardX && board.getTiles().get(col + 1).get(row + (offset)).getPiece() != null && board.getTiles().get(col + 1).get(row + (offset)).getPiece().getIsBlack() != isBlack) {
+                if (row + (offset) == (isBlack ? 0 : board.boardX - 1)) {
                     moves.add(new Promotion(this, col+1, row + (offset), board, PieceType.QUEEN));
                     moves.add(new Promotion(this, col+1, row + (offset), board, PieceType.BISHOP));
                     moves.add(new Promotion(this, col+1, row + (offset), board, PieceType.CASTLE));

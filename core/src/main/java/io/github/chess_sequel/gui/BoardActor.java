@@ -43,7 +43,7 @@ public class BoardActor extends Actor {
                         move.execute();
                         board.getGame().getPlayer().getPieceInventory().remove((Piece) payload.getObject());
                         board.getGame().getPlayer().getPieces().add((Piece) payload.getObject());
-                        board.getGame().setGameState(GameState.CHANGING_INVENTORY);
+                        board.getGame().setGameState(GameState.BOARD_STATE_CHANGED);
                         executed = true;
                         break;
                     }

@@ -1,9 +1,11 @@
 package io.github.chess_sequel.engine.jsonTypes;
 
+import java.util.ArrayList;
+
 public class EnemyData {
     public String enemyId;
-    public String enemyLayout;
-    public String dialogue;
+    public boolean fixed;
+    public ArrayList<PiecePlacement> enemyLayout;
+    public Dialogue dialogue;
     public Rewards rewards;
-
 }

@@ -13,13 +13,16 @@ import java.util.ArrayList;
 
 public class Queen extends Piece {
 
-    public Queen(int x, int y, boolean isWhite){
-        super(x, y, isWhite, "queen", ChessClass.CLASSIC);
+    public Queen(int x, int y, boolean isBlack){
+        super(x, y, isBlack, "queen", ChessClass.CLASSIC);
         pieceType = PieceType.QUEEN;
     }
 
-    public Queen(int x, int y, boolean isWhite, String name, ChessClass chessClass){
-        super(x, y, isWhite, name, chessClass);
+    @Override
+    public String getDescription() { return "Moves any number of squares in any direction. The most powerful piece on the board."; }
+
+    public Queen(int x, int y, boolean isBlack, String name, ChessClass chessClass){
+        super(x, y, isBlack, name, chessClass);
         pieceType = PieceType.QUEEN;
     }
 
@@ -31,11 +34,11 @@ public class Queen extends Piece {
             return generateAlterLayoutMoves(board);
         }
         ArrayList<Move> moves = new ArrayList<>();
-        if(isWhite == board.getWhiteToMove()) {
+        if(isBlack == board.getWhiteToMove()) {
             //pos pos
             for (int offset = 1; offset + col < board.boardX && offset + row < board.boardY; offset += 1) {
                 if (board.getTiles().get(col + offset).get(row + offset).getPiece() != null) {
-                    if (board.getTiles().get(col + offset).get(row + offset).getPiece().getIsWhite() != isWhite) {
+                    if (board.getTiles().get(col + offset).get(row + offset).getPiece().getIsBlack() != isBlack) {
                         moves.add(new Move(this, col + offset, row + offset, board));
                     }
                     break;
@@ -47,7 +50,7 @@ public class Queen extends Piece {
             //pos neg
             for (int offset = 1; offset + col < board.boardX && -offset + row >= 0; offset += 1) {
                 if (board.getTiles().get(col + offset).get(row - offset).getPiece() != null) {
-                    if (board.getTiles().get(col + offset).get(row - offset).getPiece().getIsWhite() != isWhite) {
+                    if (board.getTiles().get(col + offset).get(row - offset).getPiece().getIsBlack() != isBlack) {
                         moves.add(new Move(this, col + offset, row - offset, board));
                     }
                     break;
@@ -58,7 +61,7 @@ public class Queen extends Piece {
 
             for (int offset = 1; -offset + col >= 0 && offset + row < board.boardY; offset += 1) {
                 if (board.getTiles().get(col - offset).get(row + offset).getPiece() != null) {
-                    if (board.getTiles().get(col - offset).get(row + offset).getPiece().getIsWhite() != isWhite) {
+                    if (board.getTiles().get(col - offset).get(row + offset).getPiece().getIsBlack() != isBlack) {
                         moves.add(new Move(this, col - offset, row + offset, board));
                     }
                     break;
@@ -69,7 +72,7 @@ public class Queen extends Piece {
 
             for (int offset = 1; -offset + col >= 0 && -offset + row >= 0; offset += 1) {
                 if (board.getTiles().get(col - offset).get(row - offset).getPiece() != null) {
-                    if (board.getTiles().get(col - offset).get(row - offset).getPiece().getIsWhite() != isWhite) {
+                    if (board.getTiles().get(col - offset).get(row - offset).getPiece().getIsBlack() != isBlack) {
                         moves.add(new Move(this, col - offset, row - offset, board));
                     }
                     break;
@@ -81,7 +84,7 @@ public class Queen extends Piece {
             //pos x
             for (int c = col + 1; c < board.boardX; c += 1) {
                 if (board.getTiles().get(c).get(row).getPiece() != null) {
-                    if (board.getTiles().get(c).get(row).getPiece().getIsWhite() != isWhite) {
+                    if (board.getTiles().get(c).get(row).getPiece().getIsBlack() != isBlack) {
                         moves.add(new Move(this, c, row, board));
                     }
                     break;
@@ -93,7 +96,7 @@ public class Queen extends Piece {
             //pos y
             for (int r = row + 1; r < board.boardY; r += 1) {
                 if (board.getTiles().get(col).get(r).getPiece() != null) {
-                    if (board.getTiles().get(col).get(r).getPiece().getIsWhite() != isWhite) {
+                    if (board.getTiles().get(col).get(r).getPiece().getIsBlack() != isBlack) {
                         moves.add(new Move(this, col, r, board));
                     }
                     break;
@@ -105,7 +108,7 @@ public class Queen extends Piece {
             //neg x
             for (int c = col - 1; c >= 0; c -= 1) {
                 if (board.getTiles().get(c).get(row).getPiece() != null) {
-                    if (board.getTiles().get(c).get(row).getPiece().getIsWhite() != isWhite) {
+                    if (board.getTiles().get(c).get(row).getPiece().getIsBlack() != isBlack) {
                         moves.add(new Move(this, c, row, board));
                     }
                     break;
@@ -117,7 +120,7 @@ public class Queen extends Piece {
             //neg y
             for (int r = row - 1; r >= 0; r -= 1) {
                 if (board.getTiles().get(col).get(r).getPiece() != null) {
-                    if (board.getTiles().get(col).get(r).getPiece().getIsWhite() != isWhite) {
+                    if (board.getTiles().get(col).get(r).getPiece().getIsBlack() != isBlack) {
                         moves.add(new Move(this, col, r, board));
                     }
                     break;

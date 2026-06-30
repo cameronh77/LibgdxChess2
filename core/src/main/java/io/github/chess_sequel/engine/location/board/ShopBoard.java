@@ -16,8 +16,6 @@ public class ShopBoard extends Board{
         super(boardX, boardY, player, null);
         this.shop = shop;
         fillShop(shop.getWares());
-        pieces.add(player.getLeadPiece());
-
         addToBoard(player.getLeadPiece());
     }
 
@@ -47,5 +45,7 @@ public class ShopBoard extends Board{
         return shop;
     }
 
+    @Override
+    public BoardType getBoardType() { return BoardType.SHOP; }
 
 }

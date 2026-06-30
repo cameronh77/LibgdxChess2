@@ -11,11 +11,12 @@ public class PetrifyingAura extends Aura{
 
     public PetrifyingAura(Piece owner){
         super(owner, "petrifyingAura");
+        this.imagePath = "tileModifiers/petrifying-aura.png";
     }
 
     @Override
     public ArrayList<Move> alterMoves(Piece piece, ArrayList<Move> moves, Board board, Boolean isCheck){
-        if(piece.isWhite() != owner.isWhite() && piece.getPieceType() != PieceType.KING){
+        if(piece.isBlack() != owner.isBlack() && piece.getPieceType() != PieceType.KING){
             moves.clear();
         }
 

@@ -10,6 +10,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Goblin faction knight. Moves like a Horse but when it is captured it places
+ * {@link io.github.chess_sequel.engine.auras.SlimeAura} on 2 randomly chosen adjacent tiles,
+ * slowing enemy pieces that land on them.
+ */
 public class SlimeSteed extends Horse {
 
     private Board activeBoard;

@@ -6,6 +6,11 @@ import io.github.chess_sequel.engine.pieces.PieceType;
 
 import java.util.ArrayList;
 
+/**
+ * A timed modifier attached directly to a piece that filters or extends its move list each turn.
+ * Duration ticks down on every move executed and back up on undo. When duration reaches 0
+ * the effect typically has no impact (subclass logic handles this).
+ */
 public abstract class AlterMovePower {
 
     protected ArrayList<PieceType> inheritors; //The pieces that can receive this power

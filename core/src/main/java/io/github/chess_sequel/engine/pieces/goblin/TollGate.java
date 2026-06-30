@@ -6,6 +6,11 @@ import io.github.chess_sequel.engine.pieces.ChessClass;
 import io.github.chess_sequel.engine.pieces.Piece;
 import io.github.chess_sequel.engine.pieces.classic.Castle;
 
+/**
+ * Goblin faction rook. Moves like a Castle and emits a {@link io.github.chess_sequel.engine.auras.TollGateAura}
+ * that prevents enemy pieces from crossing the row the TollGate occupies.
+ * The aura is added at match start and removed on capture.
+ */
 public class TollGate extends Castle {
 
     private Board activeBoard;

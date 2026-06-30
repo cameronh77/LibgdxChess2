@@ -11,6 +11,12 @@ import io.github.chess_sequel.engine.GameState;
 import io.github.chess_sequel.engine.pieces.Piece;
 import io.github.chess_sequel.gui.gameScreen.GameScreen;
 
+/**
+ * Draggable UI image for a piece in the player's inventory panel. On drag-start it selects
+ * the piece on the board and generates its layout moves; on drop it delegates to the
+ * {@link BoardActor}'s DragAndDrop target which executes the corresponding
+ * {@link io.github.chess_sequel.engine.moves.AlterLayoutMove}.
+ */
 public class PieceIcon extends Image {
 
     private final Piece piece;

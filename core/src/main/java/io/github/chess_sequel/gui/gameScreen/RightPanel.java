@@ -23,6 +23,11 @@ import io.github.chess_sequel.engine.powers.kingPower.PreKingPower;
 import io.github.chess_sequel.gui.PieceIcon;
 import io.github.chess_sequel.gui.TextureCache;
 
+/**
+ * Right-side UI panel. Always shows the player's gold balance at the top. During combat and
+ * map exploration it also lists the king's passive and pre-game powers. On the layout board
+ * it additionally shows the piece inventory so items can be dragged onto the board.
+ */
 public class RightPanel extends Table {
 
     private final GameRun gameRun;

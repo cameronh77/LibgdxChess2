@@ -27,6 +27,12 @@ import io.github.chess_sequel.gui.TextureCache;
 
 import java.util.List;
 
+/**
+ * Character selection screen shown before the game begins. Displays the {@link io.github.chess_sequel.engine.roster.KingRoster}
+ * as a scrollable king list on the left and a live team preview on the right. Confirming a
+ * selection calls {@link io.github.chess_sequel.engine.player.Player#setTeam} and transitions
+ * to {@link GameScreen}.
+ */
 public class KingSelectionScreen implements Screen {
 
     private final ProjectName game;

@@ -5,6 +5,11 @@ import io.github.chess_sequel.engine.moves.Move;
 
 import java.util.ArrayList;
 
+/**
+ * A king power that generates additional moves and costs a charge to use.
+ * {@code charges == -1} (or any override of {@link #isAvailable}) means unlimited.
+ * Charges are spent on execute and refunded on undo so the minimax search remains consistent.
+ */
 public abstract class ActiveKingPower implements KingPower {
     protected int charges;
 

@@ -7,6 +7,11 @@ import io.github.chess_sequel.engine.pieces.classic.Bishop;
 
 import java.util.ArrayList;
 
+/**
+ * Passive king power: "Bouncing Bishops". Extends the king's friendly bishops so their
+ * diagonal rays reflect off board edges and continue on the opposite side. Applied as a
+ * board aura that intercepts bishop move generation each turn.
+ */
 public class BouncingBishopsPassive extends PassiveKingPower {
 
     public BouncingBishopsPassive(Piece king) {

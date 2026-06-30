@@ -11,6 +11,11 @@ import io.github.chess_sequel.engine.pieces.classic.Queen;
 
 import java.util.ArrayList;
 
+/**
+ * Goblin faction queen. Moves like a standard Queen but places a {@link io.github.chess_sequel.engine.auras.PetrifyingAura}
+ * on all 8 adjacent tiles whenever it moves, and removes them from its old position.
+ * This prevents enemy pieces from moving through those tiles.
+ */
 public class GoblinQueen extends Queen {
 
     public GoblinQueen(int x, int y, boolean isBlack){

@@ -5,6 +5,11 @@ import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.pieces.Piece;
 
+/**
+ * Move used on the {@link io.github.chess_sequel.engine.location.board.AlterLayoutBoard}.
+ * Repositions a piece to any empty tile in the bottom half of the board and updates its
+ * true start coordinates. Undo is a no-op since layout edits are permanent.
+ */
 public class AlterLayoutMove extends Move{
 
     public AlterLayoutMove(Piece piece, int newX, int newY, Board board){

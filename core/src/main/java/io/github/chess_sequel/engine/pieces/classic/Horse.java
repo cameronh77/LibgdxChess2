@@ -11,6 +11,7 @@ import io.github.chess_sequel.engine.pieces.PieceType;
 
 import java.util.ArrayList;
 
+/** Standard knight (named "horse") — jumps in an L-shape and can leap over other pieces. */
 public class Horse extends Piece {
 
     public Horse(int x, int y, boolean isBlack){

@@ -1,5 +1,10 @@
 package io.github.chess_sequel.engine.interactables;
 
+/**
+ * An object that occupies a map tile and triggers an effect when the player's king moves
+ * onto it. Subclasses define the specific interaction (combat, shop, travel, dialogue, etc.).
+ * {@link #isPassable()} returns {@code false} for terrain that blocks movement.
+ */
 public abstract class Interactable {
 
     protected int col, row;

@@ -11,7 +11,6 @@ import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MapBoard;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.location.Tile;
-import io.github.chess_sequel.engine.location.board.ShopBoard;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.Piece;
 import io.github.chess_sequel.engine.player.BotPlayer;
@@ -20,6 +19,11 @@ import io.github.chess_sequel.engine.powers.kingPower.ActiveKingPower;
 import java.util.ArrayList;
 
 
+/**
+ * Handles all mouse/touch input on the board. Manages piece selection, move execution,
+ * active king power targeting mode, and piece hover detection for tooltip display.
+ * Delegates drag-and-drop from the inventory to {@link BoardActor}'s DragAndDrop target.
+ */
 public class BoardInput extends InputAdapter {
 
     private final GameBoard board;
@@ -44,6 +48,7 @@ public class BoardInput extends InputAdapter {
         this.boardActor = boardActor;
     }
 
+    /** Enters power-targeting mode: clears any selected piece and generates the power's candidate moves. */
     public void selectPower(ActiveKingPower power) {
         gameRun.getCurrentBoard().setSelectedPiece(null);
         gameRun.getCurrentBoard().resetValidMoves();
@@ -197,11 +202,6 @@ public class BoardInput extends InputAdapter {
                         }
                     }
                     if(boardAtMove instanceof MapBoard){
-                        if(boardAtMove.getTiles().get(move.getNewX()).get(move.getNewY()).getInteractable() != null){
-                            boardAtMove.getTiles().get(move.getNewX()).get(move.getNewY()).getInteractable().interaction();
-                        }
-                    }
-                    if(boardAtMove instanceof ShopBoard){
                         if(boardAtMove.getTiles().get(move.getNewX()).get(move.getNewY()).getInteractable() != null){
                             boardAtMove.getTiles().get(move.getNewX()).get(move.getNewY()).getInteractable().interaction();
                         }

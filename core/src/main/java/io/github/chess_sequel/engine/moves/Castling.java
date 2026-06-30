@@ -4,6 +4,10 @@ import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.pieces.Piece;
 
+/**
+ * Castling move. Moves the king two squares toward the rook and places the rook on the
+ * other side of the king. Kingside rook lands on column 5; queenside on column 3.
+ */
 public class Castling extends Move{
 
     private Piece castle;

@@ -5,6 +5,10 @@ import io.github.chess_sequel.engine.pieces.Piece;
 import io.github.chess_sequel.engine.pieces.classic.Queen;
 import io.github.chess_sequel.engine.powers.kingPower.ActiveKingPower;
 
+/**
+ * King move for the "Meek Shall Inherit" active power. Removes the target pawn from the
+ * board and replaces it with a Queen of the same colour; undone by reversing that swap.
+ */
 public class MeekMove extends KingMove {
 
     private final Piece targetPawn;

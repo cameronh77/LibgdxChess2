@@ -2,6 +2,10 @@ package io.github.chess_sequel.engine.interactables;
 
 import io.github.chess_sequel.engine.GameRun;
 
+/**
+ * Reward-unlocked portal that permanently transitions the run to a new level zone.
+ * Unlike {@link MapEntrance}, this replaces the current map rather than pushing a sub-zone.
+ */
 public class LevelPortal extends Interactable{
 
     private String level;

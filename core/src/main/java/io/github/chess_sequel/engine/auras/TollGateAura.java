@@ -7,6 +7,11 @@ import io.github.chess_sequel.engine.pieces.Piece;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * Board-level aura emitted by the {@link io.github.chess_sequel.engine.pieces.goblin.TollGate}.
+ * Prevents enemy pieces from moving across the row occupied by the owning TollGate piece —
+ * pieces below it cannot move above it and vice versa.
+ */
 public class TollGateAura extends Aura {
 
     public TollGateAura(Piece owner) {

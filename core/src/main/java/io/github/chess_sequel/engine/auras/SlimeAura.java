@@ -7,6 +7,12 @@ import io.github.chess_sequel.engine.powers.pieceAltering.Stuck;
 
 import java.util.ArrayList;
 
+/**
+ * Board-level aura dropped by {@link io.github.chess_sequel.engine.pieces.goblin.SlimeSteed} on capture.
+ * Blocks enemy pieces from moving through the slimed tile while unconsumed, then applies a
+ * {@link io.github.chess_sequel.engine.powers.pieceAltering.Stuck} debuff to the first enemy that lands on it.
+ * Single-use — consumed after the first landing.
+ */
 public class SlimeAura extends Aura {
 
     private final boolean isBlackOwned;

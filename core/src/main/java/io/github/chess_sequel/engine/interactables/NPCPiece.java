@@ -6,6 +6,12 @@ import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MapBoard;
 import io.github.chess_sequel.engine.player.BotPlayer;
 
+/**
+ * Map interactable representing an enemy (or neutral NPC) piece. If the NPC has a
+ * {@link io.github.chess_sequel.engine.jsonTypes.Dialogue}, stepping on it starts a
+ * conversation; otherwise combat begins immediately. After being defeated the NPC stops
+ * responding to interactions.
+ */
 public class NPCPiece extends Interactable {
 
     private boolean hostile = true;
@@ -36,6 +42,7 @@ public class NPCPiece extends Interactable {
         this.entryNode = nodeId;
     }
 
+    /** Directly starts a match against this NPC's bot player, bypassing dialogue. */
     public void startCombat() {
         gameRun.addMatchBoard(botPlayer);
     }

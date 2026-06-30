@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.chess_sequel.ProjectName;
 
+/** Title/main menu screen. Provides buttons to start a new run (→ KingSelectionScreen), view the piecetiary, or exit. */
 public class MenuScreen implements Screen {
 
     Stage stage;

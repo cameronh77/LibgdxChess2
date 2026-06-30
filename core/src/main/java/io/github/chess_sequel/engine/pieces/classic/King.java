@@ -17,6 +17,12 @@ import io.github.chess_sequel.engine.powers.kingPower.PreKingPower;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The King piece. Moves one square in any direction and supports castling on 8×8 boards.
+ * Holds three lists of {@link io.github.chess_sequel.engine.powers.kingPower.KingPower}:
+ * active (usable in-match), passive (permanent auras), and pre-game (pre-match / on-victory effects).
+ * Passive powers are registered as board auras when the match starts and removed on capture.
+ */
 public class King extends Piece {
 
     private Board activeBoard;

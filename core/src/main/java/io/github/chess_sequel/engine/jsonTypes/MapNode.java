@@ -5,4 +5,6 @@ public class MapNode {
     public int x;
     public int y;
     public String ref;
+    public int price;
+    public String icon;
 }

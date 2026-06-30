@@ -11,6 +11,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Static registry of all playable king archetypes and their starting team presets.
+ * Each {@link KingDef} maps a king archetype to a list of {@link TeamPreset}s. The
+ * KingSelectionScreen reads this list to build the character-select UI.
+ */
 public class KingRoster {
 
     public static final List<KingDef> KINGS = new ArrayList<>();

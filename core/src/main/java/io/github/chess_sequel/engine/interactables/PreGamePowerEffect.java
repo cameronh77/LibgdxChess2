@@ -6,6 +6,10 @@ import io.github.chess_sequel.engine.powers.kingPower.PreKingPower;
 
 import java.util.function.Function;
 
+/**
+ * {@link ShopEffect} that grants the player's king a new {@link io.github.chess_sequel.engine.powers.kingPower.PreKingPower}.
+ * Uses a factory function so the power can be constructed with a reference to the king instance.
+ */
 public class PreGamePowerEffect implements ShopEffect {
 
     private final Function<King, PreKingPower> factory;

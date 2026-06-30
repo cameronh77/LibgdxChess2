@@ -11,6 +11,7 @@ import io.github.chess_sequel.engine.pieces.PieceType;
 
 import java.util.ArrayList;
 
+/** Standard bishop — slides diagonally any number of squares, blocked by intervening pieces. */
 public class Bishop extends Piece {
 
     public Bishop(int x, int y, boolean isBlack){

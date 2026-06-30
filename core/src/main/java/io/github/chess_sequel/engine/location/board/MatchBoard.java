@@ -8,6 +8,11 @@ import io.github.chess_sequel.engine.powers.pieceAltering.AlterMovePower;
 
 import java.util.ArrayList;
 
+/**
+ * Combat board for a chess match. Places all player and bot pieces on construction,
+ * then calls {@link io.github.chess_sequel.engine.pieces.Piece#onStart} so pieces can
+ * register their auras. Also supports FEN loading for testing.
+ */
 public class MatchBoard extends Board{
 
 
@@ -95,6 +100,7 @@ public class MatchBoard extends Board{
 
 
 
+    /** Clears the board and sets up pieces from a FEN string. Useful for test positions. */
     public void loadPositionFromFEN(String fenString){
         pieces.clear();
         String[] parts = fenString.split(" ");
@@ -182,6 +188,7 @@ public class MatchBoard extends Board{
         }
     }
 
+    /** Removes any {@link AlterMovePower} flagged as "remove at game end" from all pieces (e.g. stun effects). */
     public void clearEndMatchEffect(){
         for(Piece piece:pieces){
             ArrayList<AlterMovePower> tmp = (ArrayList<AlterMovePower>) piece.getAlterMovePowers().clone();

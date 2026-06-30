@@ -11,6 +11,11 @@ import io.github.chess_sequel.engine.powers.kingPower.WinBonus;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents the human player. Holds the active piece team, the king piece used as the
+ * lead on the map, a piece inventory (items picked up from shops), currency, and the
+ * saved map position of the lead piece between boards.
+ */
 public class Player {
 
     protected ArrayList<Piece> pieces = new ArrayList<>();
@@ -63,6 +68,7 @@ public class Player {
          */
     }
 
+    /** Replaces the current piece list and sets {@code leadPiece} to the first King found. */
     public void setTeam(List<Piece> pieces) {
         this.pieces = new ArrayList<>(pieces);
         this.leadPiece = null;

@@ -8,6 +8,11 @@ import io.github.chess_sequel.engine.pieces.classic.Pawn;
 
 import java.util.ArrayList;
 
+/**
+ * Active king power: "The Meek Shall Inherit". When the king's entire non-king team consists
+ * only of Pawns, the king may swap places with any of them, promoting that Pawn to a Queen.
+ * Available unconditionally but generates no moves unless the condition is met.
+ */
 public class MeekInheritPower extends ActiveKingPower {
 
     private final Piece king;

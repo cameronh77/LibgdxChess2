@@ -2,6 +2,7 @@ package io.github.chess_sequel.engine.interactables;
 
 import io.github.chess_sequel.engine.GameRun;
 
+/** Exit tile that returns the player to the parent map via {@link io.github.chess_sequel.engine.GameRun#popMap}. */
 public class MapExit extends Interactable {
 
     private final GameRun gameRun;

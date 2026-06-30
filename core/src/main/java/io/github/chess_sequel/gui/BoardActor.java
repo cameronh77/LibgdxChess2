@@ -16,6 +16,11 @@ import io.github.chess_sequel.gui.GameBoard;
 import io.github.chess_sequel.gui.BoardInput;
 import io.github.chess_sequel.gui.TextureCache;
 
+/**
+ * LibGDX scene2d Actor that wraps the {@link GameBoard} renderer inside the UI stage.
+ * Also acts as the DragAndDrop target for inventory pieces: on drop it validates and
+ * executes the corresponding {@link io.github.chess_sequel.engine.moves.AlterLayoutMove}.
+ */
 public class BoardActor extends Actor {
 
     private final GameBoard board;

@@ -3,6 +3,7 @@ package io.github.chess_sequel.engine.powers.kingPower;
 import io.github.chess_sequel.engine.location.board.AlterLayoutBoard;
 import io.github.chess_sequel.engine.player.Player;
 
+/** Pre-game king power: "Victory Bonus". Awards +5 gold to the player after each match won. */
 public class WinBonus extends PreKingPower {
 
     @Override

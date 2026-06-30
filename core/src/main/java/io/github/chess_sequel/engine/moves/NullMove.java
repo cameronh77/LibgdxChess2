@@ -5,6 +5,7 @@ import io.github.chess_sequel.engine.location.board.MapBoard;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.pieces.Piece;
 
+/** A no-op move — execute and undo do nothing. Used as a placeholder where a move object is required but no board change should occur. */
 public class NullMove extends Move {
     protected int oldX, oldY;
     protected int newX, newY;

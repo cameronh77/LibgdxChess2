@@ -9,6 +9,11 @@ import io.github.chess_sequel.engine.pieces.Piece;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Perft move-count verifier. Used to validate move generation correctness by counting
+ * the number of leaf nodes at a given search depth — results can be compared against
+ * published perft tables for standard chess positions.
+ */
 public class MoveGenerator {
 
     private MatchBoard board;

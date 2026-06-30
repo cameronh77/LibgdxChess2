@@ -3,8 +3,16 @@ package io.github.chess_sequel.engine.pieces.factories;
 import io.github.chess_sequel.engine.pieces.Piece;
 import io.github.chess_sequel.engine.pieces.goblin.*;
 
+/**
+ * Central factory that maps string identifiers (from JSON) to concrete piece instances.
+ * Delegates to {@link ClassicFactory} or {@link GoblinFactory} based on the faction prefix.
+ */
 public class PieceFactory {
 
+    /**
+     * Creates a piece for the given name string, position, and context.
+     * @param isShop {@code true} when the piece is being created for a shop display rather than active play
+     */
     public static Piece generatePiece(String pieceName, int x, int y, boolean isShop) {
         switch (pieceName) {
             case "classic-pawn":   return ClassicFactory.createPiece('p', x, y, isShop);

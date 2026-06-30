@@ -10,6 +10,7 @@ import io.github.chess_sequel.engine.pieces.PieceType;
 
 import java.util.ArrayList;
 
+/** Standard rook (named "castle") — slides horizontally or vertically any number of squares, blocked by intervening pieces. */
 public class Castle extends Piece {
 
     public Castle(int x, int y, boolean isBlack){

@@ -10,11 +10,15 @@ import io.github.chess_sequel.engine.auras.Aura;
 import io.github.chess_sequel.engine.interactables.Interactable;
 import io.github.chess_sequel.engine.interactables.ShopItem;
 import io.github.chess_sequel.engine.location.board.MapBoard;
-import io.github.chess_sequel.engine.location.board.ShopBoard;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.Piece;
 
 
+/**
+ * Renderer for the active board. Draws tiles, tile-level aura overlays, board-level aura
+ * overlays (with fixed positions), pieces (dragged piece follows the cursor), animated move
+ * highlights, interactable icons, and price labels for shop items.
+ */
 public class GameBoard {
 
     private static Texture lightTexture;
@@ -98,26 +102,16 @@ public class GameBoard {
         if(gameRun.getCurrentBoard() instanceof MapBoard){
             MapBoard currentBoard = (MapBoard) gameRun.getCurrentBoard();
             for(Interactable interactable: currentBoard.getLocations()){
-                Texture tex = TextureCache.get(interactable.getFilePath());
-                batch.draw(tex, xorigin+interactable.getCol() * TILE_SIZE, yorigin+interactable.getRow() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-            }
-        }
-
-        if(gameRun.getCurrentBoard() instanceof ShopBoard){
-            ShopBoard currentBoard = (ShopBoard) gameRun.getCurrentBoard();
-            for(Interactable interactable: currentBoard.getWares()){
-                if(interactable instanceof ShopItem){
+                if (interactable instanceof ShopItem) {
+                    ShopItem shopItem = (ShopItem) interactable;
                     Texture tex = TextureCache.get(interactable.getFilePath());
                     batch.draw(tex, (xorigin+interactable.getCol() * TILE_SIZE) + TILE_SIZE/4, (yorigin+interactable.getRow() * TILE_SIZE) + TILE_SIZE/2, TILE_SIZE/2, TILE_SIZE/2);
-                    ShopItem shopItem = (ShopItem) interactable;
                     game.font.getData().setScale(2f);
                     game.font.draw(batch, String.valueOf(shopItem.getPrice()), (xorigin+interactable.getCol() * TILE_SIZE) + TILE_SIZE/3, (yorigin+interactable.getRow() * TILE_SIZE) + TILE_SIZE/2);
-
-                } else{
+                } else {
                     Texture tex = TextureCache.get(interactable.getFilePath());
                     batch.draw(tex, xorigin+interactable.getCol() * TILE_SIZE, yorigin+interactable.getRow() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                 }
-
             }
         }
         //batch.draw(TextureCache.get("tiles/highlight.png"), 500, 500, 64, 64);

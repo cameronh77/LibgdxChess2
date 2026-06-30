@@ -302,23 +302,32 @@
           { "type": "boulder",  "x": 3, "y": 1 },
           { "type": "boulder",  "x": 3, "y": 4 },
           { "type": "boulder",  "x": 3, "y": 5 },
-          { "type": "shop",     "x": 6, "y": 4, "ref": "shop1" },
+          { "type": "entrance", "x": 6, "y": 4, "ref": "classic4-shop", "icon": "shop.png" },
           { "type": "entrance", "x": 7, "y": 3, "ref": "goblin-castle" }
         ]
       }
     ],
     "enemies": [],
-    "shops": [
+    "shops": []
+  },
+  {
+    "mapName": "classic4-shop",
+    "mapX": 4,
+    "mapY": 4,
+    "combatX": 4,
+    "combatY": 4,
+    "variants": [
       {
-        "shopId": "shop1",
-        "fixed": true,
-        "shopLayout": [
-          { "ware": "classic-pawn", "price": "4", "location": { "x": 0, "y": 0 } },
-          { "ware": "goblin-pawn",  "price": "5", "location": { "x": 0, "y": 1 } }
-        ],
-        "startingCoords": { "x": 2, "y": 0 }
+        "playerStart": { "x": 2, "y": 1 },
+        "nodes": [
+          { "type": "exit",     "x": 2, "y": 0 },
+          { "type": "shopitem", "x": 0, "y": 2, "ref": "classic-pawn", "price": 4 },
+          { "type": "shopitem", "x": 0, "y": 1, "ref": "goblin-pawn",  "price": 5 }
+        ]
       }
-    ]
+    ],
+    "enemies": [],
+    "shops": []
   },
   {
     "mapName": "goblin-castle",

@@ -10,6 +10,11 @@ import io.github.chess_sequel.engine.powers.pieceAltering.AlterMovePower;
 
 import java.util.ArrayList;
 
+/**
+ * Base class for all chess pieces. Tracks board position ({@code col}/{@code row}),
+ * a "true" starting position used to reset after setup, team colour, and a list of
+ * {@link AlterMovePower} modifiers that can change or suppress its moves each turn.
+ */
 public abstract class Piece {
     protected String name;
     protected String filePath;
@@ -39,6 +44,12 @@ public abstract class Piece {
     }
 
 
+    /**
+     * Returns all legal moves for this piece. Calls {@link #generateBaseMoves} then lets
+     * each {@link AlterMovePower} and tile/board {@link io.github.chess_sequel.engine.auras.Aura} filter the list.
+     *
+     * @param ignoreCheck when {@code true} skip the self-check filter (used during check detection to avoid recursion)
+     */
     public ArrayList<Move> generateMoves(Board board, Boolean ignoreCheck){
         ArrayList<Move> moves = generateBaseMoves(board, ignoreCheck);
 
@@ -58,6 +69,7 @@ public abstract class Piece {
 
     public abstract ArrayList<Move> generateBaseMoves(Board board, Boolean ignoreCheck);
 
+    /** Generates moves for the layout screen — any empty tile in the bottom half of the board. */
     public ArrayList<Move> generateAlterLayoutMoves(Board board){
         ArrayList<Move> moves = new ArrayList<>();
         for(int x = 0; x< board.boardX;x++){
@@ -97,12 +109,14 @@ public abstract class Piece {
         return row;
     }
 
+    /** Resets {@code col}/{@code row} to the stored true start coordinates (called on board setup). */
     public void setStartCords(){
         //System.out.println("THIS is the true row: "+trueRow + " THis is the true col: "+ trueCol);
         this.row = trueRow;
         this.col = trueCol;
     }
 
+    /** Updates the true start coordinates to the current position (called after a layout move is confirmed). */
     public void updateStartCords(){
         this.trueRow = row;
         this.trueCol = col;
@@ -130,10 +144,12 @@ public abstract class Piece {
         return trueRow;
     }
 
+    /** Called when this piece captures {@code piece}. Override to apply on-capture effects. */
     public void onCapture(Piece piece){
 
     }
 
+    /** Reverts any effect applied in {@link #onCapture} — called when a move is undone. */
     public void undoOnCapture(Piece piece){
 
     }

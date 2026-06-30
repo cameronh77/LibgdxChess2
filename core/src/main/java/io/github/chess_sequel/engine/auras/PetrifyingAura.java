@@ -7,6 +7,11 @@ import io.github.chess_sequel.engine.pieces.PieceType;
 
 import java.util.ArrayList;
 
+/**
+ * Tile-level aura placed by the {@link io.github.chess_sequel.engine.pieces.goblin.GoblinQueen}
+ * on all 8 adjacent tiles. Clears the move list of any enemy non-King piece, preventing it
+ * from moving through those tiles.
+ */
 public class PetrifyingAura extends Aura{
 
     public PetrifyingAura(Piece owner){

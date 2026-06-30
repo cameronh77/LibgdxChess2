@@ -9,6 +9,11 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
+/**
+ * A single cell on the board grid. Holds at most one {@link io.github.chess_sequel.engine.pieces.Piece},
+ * one {@link io.github.chess_sequel.engine.interactables.Interactable}, and a list of
+ * {@link io.github.chess_sequel.engine.auras.Aura}s applied to pieces that occupy or pass through it.
+ */
 public class Tile {
     private int xord;
     private int yord;
@@ -51,6 +56,7 @@ public class Tile {
         return auras;
     }
 
+    /** Removes the first aura on this tile that matches the given owner and name. */
     public void removeAura(Piece owner, String name){
         for(Aura aura: auras){
             if(owner == aura.getOwner() && name.equals(aura.getName())){

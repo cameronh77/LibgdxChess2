@@ -24,6 +24,12 @@ import io.github.chess_sequel.gui.BoardInput;
 import io.github.chess_sequel.gui.GameBoard;
 
 
+/**
+ * Main gameplay screen. Owns the {@link io.github.chess_sequel.engine.GameRun} instance,
+ * the board renderer, the UI stage (left/right/bottom panels + win overlay), and the input
+ * handler. Each frame it polls {@link io.github.chess_sequel.engine.GameState} to decide
+ * whether to show the win overlay or rebuild the UI panels.
+ */
 public class GameScreen implements Screen {
 
     final ProjectName game;

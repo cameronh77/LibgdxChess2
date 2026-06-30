@@ -8,6 +8,10 @@ import io.github.chess_sequel.engine.pieces.classic.Castle;
 import io.github.chess_sequel.engine.pieces.classic.Horse;
 import io.github.chess_sequel.engine.pieces.classic.Queen;
 
+/**
+ * Pawn promotion move. On execute, replaces the pawn with the chosen piece type (Queen,
+ * Bishop, Castle, or Horse) at the promotion square. Undo re-inserts the original pawn.
+ */
 public class Promotion extends Move{
 
     private Piece promotionPiece;

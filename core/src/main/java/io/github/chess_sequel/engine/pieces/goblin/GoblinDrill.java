@@ -9,7 +9,8 @@ import io.github.chess_sequel.engine.pieces.classic.Bishop;
 import java.util.ArrayList;
 
 /**
- * The goblin drill can "drill" under one object.
+ * Goblin faction bishop. Moves diagonally like a Bishop but can pass through (drill through)
+ * one blocking piece per diagonal direction, continuing the ray behind it.
  */
 public class GoblinDrill extends Bishop {
 

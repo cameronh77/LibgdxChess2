@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import io.github.chess_sequel.ProjectName;
 import io.github.chess_sequel.engine.GameRun;
+import io.github.chess_sequel.engine.interactables.ShopEffect;
 import io.github.chess_sequel.engine.jsonTypes.DialogueChoice;
 import io.github.chess_sequel.engine.jsonTypes.Rewards;
 import io.github.chess_sequel.engine.location.board.Board;
@@ -22,6 +23,11 @@ import io.github.chess_sequel.gui.TextureCache;
 
 import java.util.List;
 
+/**
+ * Bottom UI panel that shows contextual content depending on game state:
+ * active king power buttons (during a match), dialogue lines and choices, or a reward
+ * summary after NPC dialogue concludes. Rebuilt from scratch on every {@link #refresh} call.
+ */
 public class BottomPanel extends Table {
 
     private final GameRun gameRun;
@@ -38,6 +44,11 @@ public class BottomPanel extends Table {
 
     public void refresh(Board board) {
         clear();
+
+        if (gameRun.hasPendingPowerOffer()) {
+            buildPowerOfferUI();
+            return;
+        }
 
         if (gameRun.hasPendingDisplayReward()) {
             buildRewardUI(gameRun.getPendingDisplayReward());
@@ -99,6 +110,39 @@ public class BottomPanel extends Table {
                 slot.add(new Label("—", labelStyle));
                 add(slot).size(80, 70).pad(4);
             }
+        }
+    }
+
+    private void buildPowerOfferUI() {
+        Label.LabelStyle titleStyle = new Label.LabelStyle(font, Color.YELLOW);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
+
+        add(new Label("Choose a power:", titleStyle)).padLeft(16).padRight(12).top().padTop(12);
+
+        Button.ButtonStyle btnStyle = new Button.ButtonStyle();
+        btnStyle.up = game.skin.getDrawable("white");
+
+        for (ShopEffect offer : gameRun.getPendingPowerOffer()) {
+            Button btn = new Button(btnStyle);
+
+            String iconPath = offer.getIconPath();
+            if (iconPath != null) {
+                try {
+                    Texture tex = TextureCache.get(iconPath);
+                    btn.add(new Image(tex)).size(28, 28).padBottom(2);
+                    btn.row();
+                } catch (Exception ignored) {}
+            }
+
+            btn.add(new Label(offer.getName(), labelStyle)).pad(6);
+            btn.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    gameRun.selectPowerOffer(offer);
+                    refresh(gameRun.getCurrentBoard());
+                }
+            });
+            add(btn).pad(8).minWidth(130).top();
         }
     }
 

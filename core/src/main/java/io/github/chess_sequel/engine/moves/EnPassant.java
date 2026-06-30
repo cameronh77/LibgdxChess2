@@ -4,6 +4,10 @@ import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.pieces.Piece;
 
+/**
+ * En-passant capture. The captured pawn is one square behind the destination (not on it),
+ * so the constructor resolves the captured piece explicitly from that offset tile.
+ */
 public class EnPassant extends Move{
 
     public EnPassant(Piece piece, int newX, int newY, Board board){

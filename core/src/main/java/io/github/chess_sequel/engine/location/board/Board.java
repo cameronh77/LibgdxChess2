@@ -10,6 +10,11 @@ import io.github.chess_sequel.engine.player.Player;
 
 import java.util.ArrayList;
 
+/**
+ * Base class for all board types. Owns the 2-D tile grid, the active piece list,
+ * board-wide auras, the currently selected piece, and the turn flag ({@code whiteToMove}).
+ * Subclasses specialise for map exploration, combat, team setup, etc.
+ */
 public abstract class Board {
 
     public int boardX;
@@ -83,6 +88,7 @@ public abstract class Board {
 
     }
 
+    /** Adds {@code piece} to the piece list, sets its start coordinates, and places it on the tile. */
     public void addToBoard(Piece piece){
         pieces.add(piece);
         piece.setStartCords();
@@ -122,6 +128,7 @@ public abstract class Board {
         return selectedPiece;
     }
 
+    /** Populates {@code validMoves} with legal moves for the currently selected piece (check-aware). */
     public void generatePieceMoves(){
         validMoves = selectedPiece.generateMoves(this, false);
 
@@ -149,6 +156,10 @@ public abstract class Board {
         this.enPassantTile = enPassantTile;
     }
 
+    /**
+     * Returns {@code true} if executing {@code move} would leave the current side's king
+     * in check. Executes and then undoes the move to test.
+     */
     public Boolean checkEvaluator(Move move){
         move.execute();
         Boolean isKingChecked = false;
@@ -167,6 +178,7 @@ public abstract class Board {
 
 
 
+    /** Returns {@code true} if any enemy piece can move to {@code tile} (used to validate castling squares). */
     public Boolean tileCheckEvaluator(Tile tile){
         Boolean isTileChecked = false;
         whiteToMove = !whiteToMove;
@@ -185,18 +197,21 @@ public abstract class Board {
         return isTileChecked;
     }
 
+    /** Advances all piece-altering power durations by one turn (called at the end of every executed move). */
     public void tick(){
         for(Piece piece: pieces){
             piece.tick();
         }
     }
 
+    /** Reverses a tick — called when a move is undone so durations remain consistent. */
     public void untick(){
         for(Piece piece: pieces){
             piece.untick();
         }
     }
 
+    /** Returns the number of pieces belonging to the given team. */
     public int getTeamPieces(boolean isBlack){
         int value = 0;
         for(Piece piece: pieces){

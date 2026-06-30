@@ -11,6 +11,7 @@ import io.github.chess_sequel.engine.pieces.PieceType;
 
 import java.util.ArrayList;
 
+/** Standard queen — slides any number of squares in all 8 directions, blocked by intervening pieces. */
 public class Queen extends Piece {
 
     public Queen(int x, int y, boolean isBlack){

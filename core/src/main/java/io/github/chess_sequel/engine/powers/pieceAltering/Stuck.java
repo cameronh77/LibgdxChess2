@@ -5,6 +5,11 @@ import io.github.chess_sequel.engine.moves.Move;
 
 import java.util.ArrayList;
 
+/**
+ * Stun debuff that clears all of a piece's moves for {@code duration} turns.
+ * Applied by {@link io.github.chess_sequel.engine.pieces.goblin.Goblin} on capture
+ * and by {@link io.github.chess_sequel.engine.auras.SlimeAura} on landing.
+ */
 public class Stuck extends AlterMovePower{
 
     public Stuck(int duration){

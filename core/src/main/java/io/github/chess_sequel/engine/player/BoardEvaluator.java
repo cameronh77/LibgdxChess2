@@ -6,6 +6,11 @@ import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.pieces.Piece;
 
 
+/**
+ * Static heuristic evaluator for the minimax search. Scores each piece by type and
+ * sums from the perspective of the current turn's player. Higher is better for the
+ * maximising side.
+ */
 public class BoardEvaluator {
 
     private static final int kingVal = 10000;

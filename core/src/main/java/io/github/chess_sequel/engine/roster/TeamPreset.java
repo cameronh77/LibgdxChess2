@@ -5,6 +5,10 @@ import io.github.chess_sequel.engine.pieces.Piece;
 import java.util.List;
 import java.util.function.Supplier;
 
+/**
+ * A named starting team configuration. The piece list is lazily produced by a factory
+ * so each call to {@link #build()} returns a fresh set of piece instances.
+ */
 public class TeamPreset {
 
     public final String name;

@@ -8,6 +8,12 @@ import io.github.chess_sequel.engine.pieces.Piece;
 
 import java.util.ArrayList;
 
+/**
+ * Represents a single piece move. Captures the board state needed for full undo support:
+ * origin, destination, any captured piece, the previous en-passant tile, and the moving
+ * piece's first-move flag. {@link #execute()} and {@link #undo()} must always be called
+ * as a matching pair.
+ */
 public class Move {
     protected int oldX, oldY;
     protected int newX, newY;
@@ -36,6 +42,7 @@ public class Move {
         this.enPassantTile = board.getEnPassantTile();
     }
 
+    /** Applies the move to the board: moves the piece, removes any capture, updates en-passant state, and flips the turn. */
     public void execute(){
         //Vacate old piece
         board.getTiles().get(oldX).get(oldY).setPiece(null);
@@ -81,6 +88,7 @@ public class Move {
 
 
 
+    /** Fully reverts the move, restoring the board to the exact state before {@link #execute()} was called. */
     public void undo(){
         for (Aura aura : new ArrayList<>(board.getBoardAuras())) {
             aura.onUndoLand(movingPiece, newX, newY, board);

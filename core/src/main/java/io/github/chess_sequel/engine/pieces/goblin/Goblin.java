@@ -5,6 +5,10 @@ import io.github.chess_sequel.engine.pieces.Piece;
 import io.github.chess_sequel.engine.pieces.classic.Pawn;
 import io.github.chess_sequel.engine.powers.pieceAltering.Stuck;
 
+/**
+ * Goblin faction pawn. Moves identically to a standard Pawn but applies a {@link io.github.chess_sequel.engine.powers.pieceAltering.Stuck}
+ * debuff (3 turns) to any piece it captures, preventing that piece from moving.
+ */
 public class Goblin extends Pawn {
 
     private Stuck stuck = new Stuck(3);

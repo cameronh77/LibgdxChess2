@@ -12,6 +12,11 @@ import io.github.chess_sequel.engine.pieces.factories.PieceFactory;
 
 import java.util.ArrayList;
 
+/**
+ * AI-controlled opponent. Selects moves using alpha-beta minimax at a configurable depth.
+ * When no moves remain (or the king is captured) the bot sets itself as defeated and triggers
+ * the reward and board-pop sequence via {@link io.github.chess_sequel.engine.GameRun}.
+ */
 public class BotPlayer extends Player{
 
     private int skillLevel;
@@ -47,6 +52,7 @@ public class BotPlayer extends Player{
 
     }
 
+    /** Called externally when the bot's king piece is captured mid-turn to trigger defeat handling. */
     public void onLeaderCaptured(Board board) {
         this.defeated = true;
         if (board instanceof MatchBoard) {
@@ -57,6 +63,7 @@ public class BotPlayer extends Player{
         gameRun.setGameState(GameState.MATCH_WON);
     }
 
+    /** Finds the highest-value move for the current side using alpha-beta minimax at the given depth. */
     public static Move findBestMove(Board board, int depth) {
         Move bestMove = null;
         int bestValue = Integer.MIN_VALUE;
@@ -83,6 +90,10 @@ public class BotPlayer extends Player{
         return bestMove;
     }
 
+    /**
+     * Alpha-beta minimax search. Returns a heuristic board evaluation score from the perspective
+     * of the maximising player. Cuts off when alpha >= beta.
+     */
     public static int minimax(Board board, int depth, int alpha, int beta, boolean maximizingPlayer) {
 
         // Base case – leaf node or game over

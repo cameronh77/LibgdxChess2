@@ -13,6 +13,11 @@ import io.github.chess_sequel.engine.pieces.PieceType;
 
 import java.util.ArrayList;
 
+/**
+ * Standard pawn. Moves forward one square, two on its first move, and captures diagonally.
+ * Supports en-passant and auto-promotes to Queen, Bishop, Rook, or Knight on reaching the
+ * far rank.
+ */
 public class Pawn extends Piece {
 
     public Pawn(int x, int y, boolean isBlack){

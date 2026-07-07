@@ -8,4 +8,6 @@ public class Rewards {
     public Integer currency;
     /** Power IDs offered as a choice on victory — player picks one, e.g. ["power-bouncing-bishops", "power-win-bonus"]. */
     public ArrayList<String> powerChoices;
+    /** Item refs granted immediately on victory, e.g. ["item-bomb", "item-essence-horse"]. */
+    public ArrayList<String> items;
 }

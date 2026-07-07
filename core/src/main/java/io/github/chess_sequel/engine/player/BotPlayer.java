@@ -7,6 +7,7 @@ import io.github.chess_sequel.engine.jsonTypes.Rewards;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Move;
+import io.github.chess_sequel.engine.moves.TurnCondition;
 import io.github.chess_sequel.engine.pieces.*;
 import io.github.chess_sequel.engine.pieces.factories.PieceFactory;
 
@@ -38,6 +39,18 @@ public class BotPlayer extends Player{
         Move move = findBestMove(board, skillLevel);
         if(move != null){
             move.execute();
+            if (!move.endsTurn()) {
+                takeTurn(board);
+            } else {
+                TurnCondition condition = board.getTurnCondition();
+                if (condition != null) {
+                    if (board.hasFrenzyEligibleMoves()) {
+                        takeTurn(board);
+                    } else {
+                        board.setTurnCondition(null);
+                    }
+                }
+            }
         }
         else{
             this.defeated = true;
@@ -77,8 +90,10 @@ public class BotPlayer extends Player{
 
         for (Move move : moves) {
             System.out.println("This is a move: x "+move.getNewX() + "  y  " + move.getNewY());
+            boolean wasWhiteToMove = board.getWhiteToMove();
             move.execute();
-            int moveVal = minimax(board, depth - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
+            boolean turnFlipped = board.getWhiteToMove() != wasWhiteToMove;
+            int moveVal = minimax(board, depth - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, !turnFlipped);
             move.undo();
 
             if (moveVal > bestValue) {
@@ -114,9 +129,10 @@ public class BotPlayer extends Player{
                 return BoardEvaluator.evaluatePosition(board, board.getWhiteToMove());
             }
             for (Move move : moves) {
-
+                boolean wasWhiteToMove = board.getWhiteToMove();
                 move.execute();
-                int eval = minimax(board, depth - 1, alpha, beta, false);
+                boolean turnFlipped = board.getWhiteToMove() != wasWhiteToMove;
+                int eval = minimax(board, depth - 1, alpha, beta, turnFlipped ? !maximizingPlayer : maximizingPlayer);
                 move.undo();
 
                 maxEval = Math.max(maxEval, eval);
@@ -143,9 +159,10 @@ public class BotPlayer extends Player{
                 return BoardEvaluator.evaluatePosition(board, board.getWhiteToMove());
             }
             for (Move move : moves) {
-
+                boolean wasWhiteToMove = board.getWhiteToMove();
                 move.execute();
-                int eval = minimax(board, depth - 1, alpha, beta, true);
+                boolean turnFlipped = board.getWhiteToMove() != wasWhiteToMove;
+                int eval = minimax(board, depth - 1, alpha, beta, turnFlipped ? !maximizingPlayer : maximizingPlayer);
                 move.undo();
 
                 minEval = Math.min(minEval, eval);

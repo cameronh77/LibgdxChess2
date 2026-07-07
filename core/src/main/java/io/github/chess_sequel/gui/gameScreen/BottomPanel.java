@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import io.github.chess_sequel.ProjectName;
 import io.github.chess_sequel.engine.GameRun;
 import io.github.chess_sequel.engine.interactables.ShopEffect;
+import io.github.chess_sequel.engine.interactables.ShopItem;
 import io.github.chess_sequel.engine.jsonTypes.DialogueChoice;
 import io.github.chess_sequel.engine.jsonTypes.Rewards;
 import io.github.chess_sequel.engine.location.board.Board;
@@ -40,6 +41,8 @@ public class BottomPanel extends Table {
         this.game = game;
         this.input = input;
         setBackground(game.skin.getDrawable("yellow"));
+        top().left();
+        pad(6);
     }
 
     public void refresh(Board board) {
@@ -52,6 +55,11 @@ public class BottomPanel extends Table {
 
         if (gameRun.hasPendingDisplayReward()) {
             buildRewardUI(gameRun.getPendingDisplayReward());
+            return;
+        }
+
+        if (gameRun.hasPendingShopItem()) {
+            buildShopItemUI();
             return;
         }
 
@@ -84,7 +92,7 @@ public class BottomPanel extends Table {
                     Texture tex = TextureCache.get(iconPath);
                     Image icon = new Image(tex);
                     icon.setColor(available ? Color.WHITE : new Color(0.5f, 0.5f, 0.5f, 1f));
-                    slot.add(icon).size(32, 32);
+                    slot.add(icon).size(24, 24);
                     slot.row();
                 }
 
@@ -102,13 +110,13 @@ public class BottomPanel extends Table {
                     }
                 });
 
-                add(slot).size(80, 70).pad(4);
+                add(slot).size(64, 52).pad(3);
             } else {
                 Table slot = new Table();
                 slot.setBackground(game.skin.getDrawable("white"));
                 slot.setColor(0.3f, 0.3f, 0.3f, 0.6f);
                 slot.add(new Label("—", labelStyle));
-                add(slot).size(80, 70).pad(4);
+                add(slot).size(64, 52).pad(3);
             }
         }
     }
@@ -129,12 +137,12 @@ public class BottomPanel extends Table {
             if (iconPath != null) {
                 try {
                     Texture tex = TextureCache.get(iconPath);
-                    btn.add(new Image(tex)).size(28, 28).padBottom(2);
+                    btn.add(new Image(tex)).size(22, 22).padBottom(2);
                     btn.row();
                 } catch (Exception ignored) {}
             }
 
-            btn.add(new Label(offer.getName(), labelStyle)).pad(6);
+            btn.add(new Label(offer.getName(), labelStyle)).pad(4);
             btn.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
@@ -142,7 +150,7 @@ public class BottomPanel extends Table {
                     refresh(gameRun.getCurrentBoard());
                 }
             });
-            add(btn).pad(8).minWidth(130).top();
+            add(btn).size(110, 52).pad(4).top();
         }
     }
 
@@ -177,7 +185,69 @@ public class BottomPanel extends Table {
                 refresh(gameRun.getCurrentBoard());
             }
         });
-        add(continueBtn).right().pad(8).minWidth(100);
+        add(continueBtn).size(88, 36).pad(6).top();
+    }
+
+    private void buildShopItemUI() {
+        ShopItem item = gameRun.getPendingShopItem();
+        ShopEffect effect = item.getEffect();
+
+        Label.LabelStyle titleStyle = new Label.LabelStyle(font, Color.YELLOW);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
+        Button.ButtonStyle btnStyle = new Button.ButtonStyle();
+        btnStyle.up = game.skin.getDrawable("white");
+
+        String iconPath = effect.getIconPath();
+        if (iconPath != null) {
+            try {
+                Texture tex = TextureCache.get(iconPath);
+                add(new Image(tex)).size(36, 36).pad(6);
+            } catch (Exception ignored) {}
+        }
+
+        Table info = new Table();
+        info.left().top();
+        info.add(new Label(effect.getName(), titleStyle)).left().padBottom(2);
+        info.row();
+        String desc = effect.getDescription();
+        if (desc != null && !desc.isEmpty()) {
+            Label descLabel = new Label(desc, labelStyle);
+            descLabel.setWrap(true);
+            info.add(descLabel).left().fillX().padBottom(4);
+            info.row();
+        }
+        info.add(new Label(item.getPrice() + " Gold", labelStyle)).left();
+        add(info).expandX().fillX().pad(8).left().top();
+
+        boolean canBuy = gameRun.getPlayer().getCurrency() >= item.getPrice()
+                         && effect.canPurchase(gameRun.getPlayer());
+
+        Table buttons = new Table();
+        Button buyBtn = new Button(btnStyle);
+        buyBtn.add(new Label("Buy", labelStyle)).pad(6);
+        buyBtn.setColor(canBuy ? Color.WHITE : new Color(0.4f, 0.4f, 0.4f, 1f));
+        buyBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (!canBuy) return;
+                gameRun.purchaseShopItem();
+                refresh(gameRun.getCurrentBoard());
+            }
+        });
+        buttons.add(buyBtn).size(72, 32).pad(3);
+        buttons.row();
+
+        Button leaveBtn = new Button(btnStyle);
+        leaveBtn.add(new Label("Leave", labelStyle)).pad(6);
+        leaveBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                gameRun.dismissShopItem();
+                refresh(gameRun.getCurrentBoard());
+            }
+        });
+        buttons.add(leaveBtn).size(72, 32).pad(3);
+        add(buttons).right().pad(6).top();
     }
 
     private void buildDialogueUI() {
@@ -202,7 +272,7 @@ public class BottomPanel extends Table {
                     refresh(gameRun.getCurrentBoard());
                 }
             });
-            add(nextBtn).right().pad(8).minWidth(80);
+            add(nextBtn).size(72, 36).pad(6).top();
         } else {
             List<DialogueChoice> choices = gameRun.getCurrentChoices();
             if (choices != null) {
@@ -217,9 +287,10 @@ public class BottomPanel extends Table {
                             refresh(gameRun.getCurrentBoard());
                         }
                     });
-                    add(choiceBtn).pad(6).minWidth(140);
+                    add(choiceBtn).size(130, 40).pad(4).top();
                 }
             }
         }
     }
+
 }

@@ -5,6 +5,7 @@ import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MapBoard;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.pieces.Piece;
+import io.github.chess_sequel.engine.powers.kingPower.goblin.BloodFrenzyPassive;
 
 import java.util.ArrayList;
 
@@ -22,6 +23,7 @@ public class Move {
     protected Piece capturedPiece;
     protected Boolean isFirstMove;
     protected int[] enPassantTile;
+    protected TurnCondition previousCondition;
 
 
     public Move(Piece piece, int newX, int newY, Board board){
@@ -44,6 +46,8 @@ public class Move {
 
     /** Applies the move to the board: moves the piece, removes any capture, updates en-passant state, and flips the turn. */
     public void execute(){
+        previousCondition = board.getTurnCondition();
+
         //Vacate old piece
         board.getTiles().get(oldX).get(oldY).setPiece(null);
 
@@ -68,8 +72,9 @@ public class Move {
             board.setEnPassantTile(null);
         }
 
-        //Flip the turn
-        if(board instanceof MatchBoard){
+        // Flip the turn — skipped for frenzy captures so the same side keeps moving
+        boolean frenzyCapture = capturedPiece != null && BloodFrenzyPassive.isActive(board, movingPiece.isBlack());
+        if(board instanceof MatchBoard && endsTurn() && !frenzyCapture){
             board.setWhiteToMove(!board.getWhiteToMove());
         }
 
@@ -79,6 +84,17 @@ public class Move {
 
         for (Aura aura : new ArrayList<>(board.getBoardAuras())) {
             aura.onLand(movingPiece, newX, newY, board);
+        }
+
+        // Update Blood Frenzy condition
+        if (frenzyCapture) {
+            TurnCondition c = board.getTurnCondition();
+            if (c == null || c.frenzySide != movingPiece.isBlack()) {
+                c = new TurnCondition(movingPiece.isBlack());
+            }
+            board.setTurnCondition(c.withActor(movingPiece));
+        } else if (board.getTurnCondition() != null && board.getTurnCondition().frenzySide == movingPiece.isBlack()) {
+            board.setTurnCondition(null);
         }
 
         board.tick();
@@ -115,10 +131,13 @@ public class Move {
         //Revert en passant tile
         board.setEnPassantTile(enPassantTile);
 
-        //Flip the turn
-        if(board instanceof MatchBoard){
+        // Reverse turn flip — mirrors execute's frenzy-capture check
+        boolean frenzyCapture = capturedPiece != null && BloodFrenzyPassive.isActive(board, movingPiece.isBlack());
+        if(board instanceof MatchBoard && endsTurn() && !frenzyCapture){
             board.setWhiteToMove(!board.getWhiteToMove());
         }
+
+        board.setTurnCondition(previousCondition);
 
         board.untick();
 
@@ -145,4 +164,7 @@ public class Move {
     public Piece getCapturedPiece(){
         return capturedPiece;
     }
+
+    /** Returns true if this move ends the current player's turn. Override to return false for free actions. */
+    public boolean endsTurn() { return true; }
 }

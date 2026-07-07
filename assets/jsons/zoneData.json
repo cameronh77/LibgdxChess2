@@ -1,7 +1,7 @@
 [
   {
-    "mapName": "classic8",
-    "mapX": 8,
+    "mapName": "goblin-territory",
+    "mapX": 10,
     "mapY": 8,
     "combatX": 8,
     "combatY": 8,
@@ -9,356 +9,182 @@
       {
         "playerStart": { "x": 1, "y": 1 },
         "nodes": [
-          { "type": "enemy",   "x": 4, "y": 1, "ref": "classic1" },
-          { "type": "enemy",   "x": 5, "y": 6, "ref": "classic2" },
-          { "type": "boulder", "x": 3, "y": 4 },
-          { "type": "boulder", "x": 3, "y": 5 },
-          { "type": "boulder", "x": 3, "y": 6 }
-        ]
-      },
-      {
-        "playerStart": { "x": 1, "y": 1 },
-        "nodes": [
-          { "type": "enemy",   "x": 2, "y": 6, "ref": "classic2" },
-          { "type": "enemy",   "x": 7, "y": 2, "ref": "classic1" },
-          { "type": "boulder", "x": 5, "y": 2 },
-          { "type": "boulder", "x": 5, "y": 3 },
-          { "type": "boulder", "x": 5, "y": 4 }
-        ]
-      },
-      {
-        "playerStart": { "x": 1, "y": 1 },
-        "nodes": [
-          { "type": "enemy",   "x": 4, "y": 3, "ref": "tollgate-8x8" },
-          { "type": "boulder", "x": 3, "y": 1 },
           { "type": "boulder", "x": 3, "y": 2 },
+          { "type": "boulder", "x": 3, "y": 3 },
           { "type": "boulder", "x": 3, "y": 4 },
-          { "type": "boulder", "x": 3, "y": 5 },
-          { "type": "boulder", "x": 3, "y": 6 },
-          { "type": "boulder", "x": 3, "y": 7 }
+          { "type": "boulder", "x": 6, "y": 4 },
+          { "type": "boulder", "x": 6, "y": 5 },
+          { "type": "boulder", "x": 6, "y": 6 },
+          { "type": "enemy",   "x": 4, "y": 3, "ref": "goblin-prowler", "behaviour": "patrol", "waypoints": [[4,3],[4,6],[7,6],[7,3]] },
+          { "type": "enemy",   "x": 8, "y": 5, "ref": "goblin-sentry", "behaviour": "chase" },
+          { "type": "entrance","x": 2, "y": 7, "ref": "goblin-market", "icon": "shop.png" },
+          { "type": "entrance","x": 9, "y": 3, "ref": "goblin-outpost" },
+          { "type": "entrance","x": 9, "y": 7, "ref": "goblin-castle" }
         ]
       }
     ],
     "enemies": [
       {
-        "enemyId": "classic1",
+        "enemyId": "goblin-prowler",
         "fixed": true,
         "enemyLayout": [
-          { "piece": "classic-bishop", "x": 0, "y": 7 },
-          { "piece": "classic-pawn",   "x": 5, "y": 7 }
+          { "piece": "goblin-pawn", "x": 0, "y": 7 },
+          { "piece": "goblin-pawn", "x": 4, "y": 7 }
         ],
         "dialogue": {
           "entry": "start",
           "nodes": [
             {
               "id": "start",
-              "lines": ["The deep caves are no place for a king.", "Turn back while you still can."],
+              "lines": ["Oi! You're trespassing in goblin territory!", "Pay the toll or face the consequences."],
               "choices": [
-                { "text": "Stand aside!", "next": "combat" },
-                { "text": "I don't want trouble.", "next": "peaceful" }
+                { "text": "I don't pay tolls.", "next": "combat" },
+                { "text": "I'll find another way.", "next": "pass" }
               ]
             },
             {
-              "id": "peaceful",
-              "lines": ["...Wise. Move along then."],
+              "id": "pass",
+              "lines": ["Smart. Now stay out of my patrol zone."],
               "outcome": "leave",
               "setEntry": "met"
             },
             {
               "id": "met",
-              "lines": ["You again. Just keep walking."],
+              "lines": ["You again. I'm warning you — keep moving."],
               "outcome": "leave"
             },
-            {
-              "id": "combat",
-              "outcome": "combat"
-            }
+            { "id": "combat", "outcome": "combat" }
           ]
-        }
+        },
+        "rewards": { "currency": 3 }
       },
       {
-        "enemyId": "classic2",
+        "enemyId": "goblin-sentry",
         "fixed": true,
         "enemyLayout": [
-          { "piece": "classic-horse", "x": 0, "y": 6 },
-          { "piece": "classic-pawn",  "x": 6, "y": 6 }
+          { "piece": "goblin-pawn",  "x": 0, "y": 7 },
+          { "piece": "goblin-pawn",  "x": 3, "y": 7 },
+          { "piece": "goblin-drill", "x": 6, "y": 7 }
         ],
         "dialogue": {
           "entry": "start",
           "nodes": [
             {
               "id": "start",
-              "lines": ["Hah! A king wandering alone?", "My blade's been idle too long."],
+              "lines": ["The castle is sealed. Nobody gets through.", "You'll have to go through me first."],
               "choices": [
-                { "text": "Then let's end that.", "next": "combat" },
-                { "text": "I have no quarrel with you.", "next": "peaceful" }
+                { "text": "Then let's finish this.", "next": "combat" }
               ]
             },
-            {
-              "id": "peaceful",
-              "lines": ["No quarrel... bah. Fine. Go."],
-              "outcome": "leave",
-              "setEntry": "met"
-            },
-            {
-              "id": "met",
-              "lines": ["Still breathing, I see. Lucky."],
-              "outcome": "leave"
-            },
-            {
-              "id": "combat",
-              "outcome": "combat"
-            }
+            { "id": "combat", "outcome": "combat" }
           ]
-        }
-      },
-      {
-        "enemyId": "tollgate-8x8",
-        "fixed": true,
-        "enemyLayout": [
-          { "piece": "toll-gate",    "x": 4, "y": 4 },
-          { "piece": "goblin-pawn",  "x": 1, "y": 6 },
-          { "piece": "goblin-pawn",  "x": 6, "y": 6 },
-          { "piece": "goblin-queen", "x": 4, "y": 7 }
-        ],
-        "dialogue": {
-          "entry": "start",
-          "nodes": [
-            {
-              "id": "start",
-              "lines": ["TOLL GATE. Nobody passes for free.", "Pay up or get out."],
-              "choices": [
-                { "text": "I'm not paying anyone.", "next": "combat" },
-                { "text": "I'll find another way.", "next": "retreat" }
-              ]
-            },
-            {
-              "id": "retreat",
-              "lines": ["Smart. Now back the way you came."],
-              "outcome": "leave"
-            },
-            {
-              "id": "combat",
-              "outcome": "combat"
-            }
-          ]
-        }
+        },
+        "rewards": { "currency": 5 }
       }
     ],
     "shops": []
   },
   {
-    "mapName": "classic6",
-    "mapX": 6,
-    "mapY": 6,
-    "combatX": 6,
-    "combatY": 6,
+    "mapName": "goblin-market",
+    "mapX": 7,
+    "mapY": 5,
+    "combatX": 7,
+    "combatY": 5,
     "variants": [
       {
-        "playerStart": { "x": 1, "y": 1 },
+        "playerStart": { "x": 3, "y": 2 },
         "nodes": [
-          { "type": "enemy",   "x": 4, "y": 4, "ref": "random" },
-          { "type": "enemy",   "x": 5, "y": 1, "ref": "random" },
-          { "type": "boulder", "x": 2, "y": 3 },
-          { "type": "boulder", "x": 2, "y": 4 }
-        ]
-      },
-      {
-        "playerStart": { "x": 1, "y": 1 },
-        "nodes": [
-          { "type": "enemy",   "x": 1, "y": 4, "ref": "random" },
-          { "type": "enemy",   "x": 4, "y": 2, "ref": "random" },
-          { "type": "boulder", "x": 3, "y": 1 },
-          { "type": "boulder", "x": 3, "y": 2 }
-        ]
-      },
-      {
-        "playerStart": { "x": 1, "y": 1 },
-        "nodes": [
-          { "type": "enemy",   "x": 4, "y": 3, "ref": "tollgate-6x6" },
-          { "type": "boulder", "x": 2, "y": 2 },
-          { "type": "boulder", "x": 2, "y": 3 }
+          { "type": "exit",     "x": 0, "y": 2 },
+          { "type": "shopitem", "x": 1, "y": 4, "ref": "item-essence-horse", "price": 4 },
+          { "type": "shopitem", "x": 3, "y": 4, "ref": "item-bomb",          "price": 3 },
+          { "type": "shopitem", "x": 5, "y": 4, "ref": "goblin-pawn",        "price": 5 },
+          { "type": "shopitem", "x": 1, "y": 0, "ref": "orb-passive",        "price": 9 },
+          { "type": "shopitem", "x": 5, "y": 0, "ref": "power-blood-frenzy", "price": 7 }
         ]
       }
     ],
-    "enemies": [
-      {
-        "enemyId": "classic1",
-        "fixed": false,
-        "enemyLayout": [
-          { "piece": "classic-bishop", "x": 0, "y": 4 },
-          { "piece": "classic-pawn",   "x": 5, "y": 4 }
-        ],
-        "dialogue": {
-          "entry": "start",
-          "nodes": [
-            {
-              "id": "start",
-              "lines": ["You're in goblin territory now, little king.", "This path has a price."],
-              "choices": [
-                { "text": "I'll pay with steel.", "next": "combat" },
-                { "text": "No trouble needed.", "next": "peaceful" }
-              ]
-            },
-            {
-              "id": "peaceful",
-              "lines": ["Hmm. Alright. This time."],
-              "outcome": "leave",
-              "setEntry": "met"
-            },
-            {
-              "id": "met",
-              "lines": ["You keep showing up. Lucky I'm patient."],
-              "outcome": "leave"
-            },
-            {
-              "id": "combat",
-              "outcome": "combat"
-            }
-          ]
-        }
-      },
-      {
-        "enemyId": "classic2",
-        "fixed": false,
-        "enemyLayout": [
-          { "piece": "classic-horse", "x": 0, "y": 4 },
-          { "piece": "classic-pawn",  "x": 4, "y": 4 }
-        ],
-        "dialogue": {
-          "entry": "start",
-          "nodes": [
-            {
-              "id": "start",
-              "lines": ["Oh, a king! Haven't seen one of those in a while.", "You look lost."],
-              "choices": [
-                { "text": "I'm exactly where I mean to be.", "next": "combat" },
-                { "text": "Just passing through.", "next": "peaceful" }
-              ]
-            },
-            {
-              "id": "peaceful",
-              "lines": ["Passing through, sure. Don't touch anything."],
-              "outcome": "leave",
-              "setEntry": "met"
-            },
-            {
-              "id": "met",
-              "lines": ["Oh it's you again. Still 'just passing through'?"],
-              "outcome": "leave"
-            },
-            {
-              "id": "combat",
-              "outcome": "combat"
-            }
-          ]
-        }
-      },
-      {
-        "enemyId": "tollgate-6x6",
-        "fixed": true,
-        "enemyLayout": [
-          { "piece": "toll-gate",   "x": 3, "y": 3 },
-          { "piece": "goblin-pawn", "x": 1, "y": 5 },
-          { "piece": "goblin-pawn", "x": 4, "y": 5 }
-        ],
-        "dialogue": {
-          "entry": "start",
-          "nodes": [
-            {
-              "id": "start",
-              "lines": ["Gate's closed. Boss's orders.", "Nobody gets through without a fight or a fee."],
-              "choices": [
-                { "text": "Then we fight.", "next": "combat" },
-                { "text": "I'll go around.", "next": "retreat" }
-              ]
-            },
-            {
-              "id": "retreat",
-              "lines": ["Good idea. Less paperwork for me."],
-              "outcome": "leave"
-            },
-            {
-              "id": "combat",
-              "outcome": "combat"
-            }
-          ]
-        }
-      }
-    ],
+    "enemies": [],
     "shops": []
   },
   {
-    "mapName": "classic4",
+    "mapName": "goblin-outpost",
     "mapX": 8,
     "mapY": 6,
     "combatX": 4,
     "combatY": 4,
     "variants": [
       {
-        "playerStart": { "x": 0, "y": 3 },
+        "playerStart": { "x": 3, "y": 1 },
         "nodes": [
-          { "type": "boulder",  "x": 3, "y": 0 },
-          { "type": "boulder",  "x": 3, "y": 1 },
-          { "type": "boulder",  "x": 3, "y": 4 },
-          { "type": "boulder",  "x": 3, "y": 5 },
-          { "type": "entrance", "x": 6, "y": 4, "ref": "classic4-shop", "icon": "shop.png" },
-          { "type": "entrance", "x": 7, "y": 3, "ref": "goblin-castle" }
+          { "type": "exit",    "x": 0, "y": 0 },
+          { "type": "boulder", "x": 0, "y": 2 },
+          { "type": "boulder", "x": 1, "y": 2 },
+          { "type": "boulder", "x": 2, "y": 2 },
+          { "type": "boulder", "x": 3, "y": 2 },
+          { "type": "boulder", "x": 4, "y": 2 },
+          { "type": "boulder", "x": 5, "y": 2 },
+          { "type": "boulder", "x": 6, "y": 2 },
+          { "type": "boulder", "x": 7, "y": 2 },
+          { "type": "boulder", "x": 7, "y": 3 },
+          { "type": "boulder", "x": 7, "y": 4 },
+          { "type": "enemy",   "x": 3, "y": 3, "ref": "outpost-guardian" }
         ]
       }
     ],
-    "enemies": [],
-    "shops": []
-  },
-  {
-    "mapName": "classic4-shop",
-    "mapX": 4,
-    "mapY": 4,
-    "combatX": 4,
-    "combatY": 4,
-    "variants": [
+    "enemies": [
       {
-        "playerStart": { "x": 2, "y": 1 },
-        "nodes": [
-          { "type": "exit",     "x": 2, "y": 0 },
-          { "type": "shopitem", "x": 0, "y": 2, "ref": "classic-pawn", "price": 4 },
-          { "type": "shopitem", "x": 0, "y": 1, "ref": "goblin-pawn",  "price": 5 }
-        ]
+        "enemyId": "outpost-guardian",
+        "fixed": true,
+        "enemyLayout": [
+          { "piece": "goblin-queen", "x": 2, "y": 3 },
+          { "piece": "goblin-pawn",  "x": 0, "y": 3 },
+          { "piece": "goblin-pawn",  "x": 3, "y": 2 }
+        ],
+        "dialogue": {
+          "entry": "start",
+          "nodes": [
+            {
+              "id": "start",
+              "lines": [
+                "...How did you get past that wall?",
+                "No matter. Nobody leaves this room in one piece."
+              ],
+              "choices": [
+                { "text": "I'm not leaving. You are.", "next": "combat" }
+              ]
+            },
+            { "id": "combat", "outcome": "combat" }
+          ]
+        },
+        "rewards": {
+          "currency": 4,
+          "items": ["item-bomb", "item-bomb"],
+          "powerChoices": ["power-blood-frenzy", "power-slime-shield", "power-fortify"]
+        }
       }
     ],
-    "enemies": [],
     "shops": []
   },
   {
     "mapName": "goblin-castle",
-    "mapX": 8,
-    "mapY": 6,
-    "combatX": 4,
-    "combatY": 4,
+    "mapX": 10,
+    "mapY": 7,
+    "combatX": 6,
+    "combatY": 6,
     "variants": [
       {
         "playerStart": { "x": 1, "y": 3 },
         "nodes": [
           { "type": "exit",    "x": 0, "y": 3 },
-          { "type": "boulder", "x": 1, "y": 5 },
-          { "type": "boulder", "x": 2, "y": 5 },
-          { "type": "boulder", "x": 3, "y": 5 },
-          { "type": "boulder", "x": 4, "y": 5 },
-          { "type": "boulder", "x": 5, "y": 5 },
-          { "type": "boulder", "x": 6, "y": 5 },
-          { "type": "boulder", "x": 7, "y": 5 },
-          { "type": "boulder", "x": 1, "y": 1 },
           { "type": "boulder", "x": 2, "y": 1 },
-          { "type": "boulder", "x": 3, "y": 1 },
-          { "type": "boulder", "x": 4, "y": 1 },
+          { "type": "boulder", "x": 2, "y": 5 },
           { "type": "boulder", "x": 5, "y": 1 },
-          { "type": "boulder", "x": 6, "y": 1 },
-          { "type": "boulder", "x": 7, "y": 1 },
-          { "type": "boulder", "x": 2, "y": 3 },
-          { "type": "boulder", "x": 3, "y": 3 },
-          { "type": "enemy",   "x": 3, "y": 4, "ref": "goblin-guard-1" },
-          { "type": "enemy",   "x": 3, "y": 2, "ref": "goblin-guard-2" },
-          { "type": "enemy",   "x": 7, "y": 3, "ref": "goblin-king-boss" }
+          { "type": "boulder", "x": 5, "y": 5 },
+          { "type": "boulder", "x": 8, "y": 2 },
+          { "type": "boulder", "x": 8, "y": 4 },
+          { "type": "enemy",   "x": 3, "y": 2, "ref": "goblin-guard-1" },
+          { "type": "enemy",   "x": 3, "y": 4, "ref": "goblin-guard-2" },
+          { "type": "enemy",   "x": 8, "y": 3, "ref": "goblin-king-boss" }
         ]
       }
     ],
@@ -367,35 +193,32 @@
         "enemyId": "goblin-guard-1",
         "fixed": true,
         "enemyLayout": [
-          { "piece": "goblin-pawn", "x": 0, "y": 3 },
-          { "piece": "goblin-pawn", "x": 2, "y": 3 }
+          { "piece": "goblin-pawn", "x": 0, "y": 5 },
+          { "piece": "goblin-pawn", "x": 3, "y": 5 }
         ],
         "dialogue": {
           "entry": "start",
           "nodes": [
             {
               "id": "start",
-              "lines": ["Halt! The throne room is off limits.", "Turn back, or face the consequences."],
+              "lines": ["Halt! The throne hall is off limits.", "Turn back, or face the guard."],
               "choices": [
                 { "text": "I'll fight my way through.", "next": "combat" },
-                { "text": "I mean no trouble.", "next": "bribe" }
+                { "text": "I mean no trouble.", "next": "pass" }
               ]
             },
             {
-              "id": "bribe",
-              "lines": ["Hmph. Smart choice. Move along — slowly."],
+              "id": "pass",
+              "lines": ["...Smart choice. Move along — slowly."],
               "outcome": "leave",
               "setEntry": "met"
             },
             {
               "id": "met",
-              "lines": ["You again. Don't make me regret letting you through."],
+              "lines": ["You again. Don't make me regret it."],
               "outcome": "leave"
             },
-            {
-              "id": "combat",
-              "outcome": "combat"
-            }
+            { "id": "combat", "outcome": "combat" }
           ]
         }
       },
@@ -403,15 +226,15 @@
         "enemyId": "goblin-guard-2",
         "fixed": true,
         "enemyLayout": [
-          { "piece": "goblin-pawn", "x": 0, "y": 3 },
-          { "piece": "goblin-pawn", "x": 3, "y": 3 }
+          { "piece": "goblin-pawn", "x": 0, "y": 5 },
+          { "piece": "goblin-pawn", "x": 4, "y": 5 }
         ],
         "dialogue": {
           "entry": "start",
           "nodes": [
             {
               "id": "start",
-              "lines": ["Nobody gets through this corridor without my say so.", "What's your business here?"],
+              "lines": ["Nobody passes this corridor without my say.", "What's your business?"],
               "choices": [
                 { "text": "Step aside.", "next": "combat" },
                 { "text": "Just passing through.", "next": "pass" }
@@ -419,19 +242,16 @@
             },
             {
               "id": "pass",
-              "lines": ["...Fine. But if the king asks, I never saw you."],
+              "lines": ["...Fine. If the king asks, I never saw you."],
               "outcome": "leave",
               "setEntry": "met"
             },
             {
               "id": "met",
-              "lines": ["Back again? You're either brave or stupid."],
+              "lines": ["Back again? Brave or stupid — hard to tell."],
               "outcome": "leave"
             },
-            {
-              "id": "combat",
-              "outcome": "combat"
-            }
+            { "id": "combat", "outcome": "combat" }
           ]
         }
       },
@@ -439,9 +259,11 @@
         "enemyId": "goblin-king-boss",
         "fixed": true,
         "enemyLayout": [
-          { "piece": "goblin-queen", "x": 1, "y": 3 },
-          { "piece": "goblin-pawn",  "x": 0, "y": 3 },
-          { "piece": "goblin-pawn",  "x": 2, "y": 3 }
+          { "piece": "goblin-queen", "x": 3, "y": 5 },
+          { "piece": "goblin-drill", "x": 1, "y": 5 },
+          { "piece": "goblin-pawn",  "x": 0, "y": 4 },
+          { "piece": "goblin-pawn",  "x": 2, "y": 4 },
+          { "piece": "goblin-pawn",  "x": 4, "y": 4 }
         ],
         "dialogue": {
           "entry": "start",
@@ -449,25 +271,82 @@
             {
               "id": "start",
               "lines": [
-                "So. A king dares enter my throne room.",
-                "You've made it past my guards. I'll give you that.",
-                "But this castle, these caves, every path through them — all mine.",
-                "Nobody leaves without my permission. And I don't give permission."
+                "So. A lone king walks into my throne hall.",
+                "You've bested my patrol, my sentry, my guards.",
+                "I'll give you that. Most don't make it this far.",
+                "But this castle — every corridor, every cave beneath it — all mine.",
+                "And I don't give up what's mine."
               ],
               "choices": [
-                { "text": "Then I'll take it by force.", "next": "combat" }
+                { "text": "Then I'll take it from you.", "next": "combat" }
               ]
             },
-            {
-              "id": "combat",
-              "outcome": "combat"
-            }
+            { "id": "combat", "outcome": "combat" }
           ]
         },
         "rewards": {
-          "portals": ["classic6", "classic8"],
-          "portalLocations": [{ "x": 7, "y": 4 }, { "x": 7, "y": 2 }],
-          "currency": 8
+          "currency": 10,
+          "portals": ["goblin-spoils"],
+          "portalLocations": [{ "x": 9, "y": 3 }],
+          "powerChoices": [
+            "power-goblin-swap", "power-toxic-spill", "power-create-life",
+            "power-slime-shield", "power-stickier-slime", "power-fortify", "power-blood-frenzy"
+          ]
+        }
+      }
+    ],
+    "shops": []
+  },
+  {
+    "mapName": "goblin-spoils",
+    "mapX": 8,
+    "mapY": 6,
+    "combatX": 8,
+    "combatY": 6,
+    "variants": [
+      {
+        "playerStart": { "x": 4, "y": 3 },
+        "nodes": [
+          { "type": "portal",   "x": 7, "y": 5, "ref": "goblin-territory" },
+          { "type": "shopitem", "x": 1, "y": 5, "ref": "item-bomb",          "price": 2 },
+          { "type": "shopitem", "x": 3, "y": 5, "ref": "item-essence-horse", "price": 3 },
+          { "type": "shopitem", "x": 5, "y": 5, "ref": "orb-passive",        "price": 6 },
+          { "type": "shopitem", "x": 1, "y": 1, "ref": "goblin-pawn",        "price": 4 },
+          { "type": "shopitem", "x": 3, "y": 1, "ref": "power-win-bonus",    "price": 5 },
+          { "type": "shopitem", "x": 5, "y": 1, "ref": "orb-map",            "price": 8 },
+          { "type": "enemy",    "x": 7, "y": 1, "ref": "goblin-remnant" }
+        ]
+      }
+    ],
+    "enemies": [
+      {
+        "enemyId": "goblin-remnant",
+        "fixed": true,
+        "enemyLayout": [
+          { "piece": "goblin-pawn",  "x": 0, "y": 5 },
+          { "piece": "goblin-pawn",  "x": 3, "y": 5 },
+          { "piece": "goblin-drill", "x": 6, "y": 5 },
+          { "piece": "goblin-queen", "x": 3, "y": 4 }
+        ],
+        "dialogue": {
+          "entry": "start",
+          "nodes": [
+            {
+              "id": "start",
+              "lines": [
+                "The king is defeated... but we are not.",
+                "His treasury is ours. You'll have to earn it."
+              ],
+              "choices": [
+                { "text": "Step aside and I'll let you live.", "next": "combat" }
+              ]
+            },
+            { "id": "combat", "outcome": "combat" }
+          ]
+        },
+        "rewards": {
+          "currency": 6,
+          "powerChoices": ["power-goblin-swap", "power-toxic-catapult", "power-blood-frenzy", "power-stickier-slime"]
         }
       }
     ],

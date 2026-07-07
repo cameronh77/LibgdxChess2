@@ -45,7 +45,7 @@ public class Promotion extends Move{
 
         promotionPiece.setIsFirstMove(false);
 
-        board.setWhiteToMove(!board.getWhiteToMove());
+        if (endsTurn()) board.setWhiteToMove(!board.getWhiteToMove());
 
         board.tick();
     }
@@ -66,7 +66,7 @@ public class Promotion extends Move{
 
         board.getTiles().get(newX).get(newY).setPiece(capturedPiece);
 
-        board.setWhiteToMove(!board.getWhiteToMove());
+        if (endsTurn()) board.setWhiteToMove(!board.getWhiteToMove());
 
         board.untick();
     }

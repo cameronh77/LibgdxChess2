@@ -34,7 +34,7 @@ public class Castling extends Move{
         movingPiece.setIsFirstMove(false);
         castle.setIsFirstMove(false);
 
-        board.setWhiteToMove(!board.getWhiteToMove());
+        if (endsTurn()) board.setWhiteToMove(!board.getWhiteToMove());
 
         board.tick();
     }
@@ -63,7 +63,7 @@ public class Castling extends Move{
 
         board.setEnPassantTile(enPassantTile);
 
-        board.setWhiteToMove(!board.getWhiteToMove());
+        if (endsTurn()) board.setWhiteToMove(!board.getWhiteToMove());
 
         board.untick();
     }

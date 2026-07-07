@@ -128,19 +128,18 @@ public class King extends Piece {
                 boolean blockedByTerrain = dest.getInteractable() != null && !dest.getInteractable().isPassable();
                 if (!blockedByPiece && !blockedByTerrain) {
                     trueMoves.add(move);
+                } else if (!ignoreCheck) {
+                    System.out.println("[KING] filtered (" + move.getNewX() + "," + move.getNewY() + ") blockedByPiece=" + blockedByPiece + " blockedByTerrain=" + blockedByTerrain);
                 }
             }
+            if (!ignoreCheck) System.out.println("[KING] raw=" + moves.size() + " trueMoves=" + trueMoves.size() + " board=" + board.getClass().getSimpleName());
 
             if(!ignoreCheck){
-                //Ignore the naming convention for now
                 ArrayList<Move> truerMoves = new ArrayList<>();
                 for (Move move : trueMoves) {
                     if (!board.checkEvaluator(move)) {
                         truerMoves.add(move);
                     }
-                }
-                for (ActiveKingPower power : activePowers) {
-                    if (power.isAvailable()) truerMoves.addAll(power.generateMoves(board));
                 }
                 return truerMoves;
             }
@@ -148,6 +147,7 @@ public class King extends Piece {
 
         }
         else{
+            System.out.println("[KING] turn-check FAILED: isBlack=" + isBlack + " board.whiteToMove=" + board.getWhiteToMove() + " board=" + board.getClass().getSimpleName());
             return moves;
         }
     }

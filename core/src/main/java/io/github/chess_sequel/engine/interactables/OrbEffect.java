@@ -11,6 +11,9 @@ import java.util.List;
  * On purchase it generates two offers from the appropriate pool and sets them
  * as the {@link GameRun#setPendingPowerOffer pending power offer}, which the UI
  * then surfaces as a pick-one selection panel.
+ *
+ * Normal orbs (MIXED/RANDOM) draw from the player's class pool.
+ * MAP orbs draw from the current zone's pool.
  */
 public class OrbEffect implements ShopEffect {
 
@@ -24,7 +27,12 @@ public class OrbEffect implements ShopEffect {
 
     @Override
     public void apply(Player player) {
-        List<ShopEffect> offers = KingPowerFactory.generateOrbOffers(orbType);
+        List<ShopEffect> offers = KingPowerFactory.generateOrbOffers(
+            orbType,
+            player.getKing(),
+            player.getPlayerClass(),
+            gameRun.getCurrentMap()
+        );
         gameRun.setPendingPowerOffer(offers);
     }
 
@@ -34,17 +42,15 @@ public class OrbEffect implements ShopEffect {
     @Override
     public String getName() {
         switch (orbType) {
-            case ACTIVE:  return "Orb of Power";
-            case PASSIVE: return "Orb of Wisdom";
-            default:      return "Orb of Chance";
+            case MAP:     return "Orb of the Land";
+            default:      return "Orb of Power";
         }
     }
 
     @Override
     public String getIconPath() {
         switch (orbType) {
-            case ACTIVE:  return "orbs/orb-active.png";
-            case PASSIVE: return "orbs/orb-passive.png";
+            case MAP:     return "orbs/orb-map.png";
             default:      return "orbs/orb-mixed.png";
         }
     }
@@ -52,9 +58,8 @@ public class OrbEffect implements ShopEffect {
     @Override
     public String getDescription() {
         switch (orbType) {
-            case ACTIVE:  return "Choose one of 2 random active powers.";
-            case PASSIVE: return "Choose one of 2 random passive or pre-game powers.";
-            default:      return "Choose between a random active and a random passive power.";
+            case MAP:     return "Choose one of 2 powers drawn from this region.";
+            default:      return "Choose one of 2 powers from your class.";
         }
     }
 }

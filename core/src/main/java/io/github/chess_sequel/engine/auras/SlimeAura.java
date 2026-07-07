@@ -17,14 +17,19 @@ public class SlimeAura extends Aura {
 
     private final boolean isBlackOwned;
     private boolean consumed = false;
-    private final Stuck stuck = new Stuck(1);
+    private final Stuck stuck;
 
     public SlimeAura(int col, int row, boolean isBlackOwned) {
+        this(col, row, isBlackOwned, 1);
+    }
+
+    public SlimeAura(int col, int row, boolean isBlackOwned, int stuckDuration) {
         super(null, "slimeAura");
         this.auraCol = col;
         this.auraRow = row;
         this.isBlackOwned = isBlackOwned;
         this.imagePath = "tileModifiers/slime.png";
+        this.stuck = new Stuck(stuckDuration);
     }
 
     @Override
@@ -56,6 +61,9 @@ public class SlimeAura extends Aura {
             consumed = false;
         }
     }
+
+    public boolean isBlackOwned() { return isBlackOwned; }
+    public boolean isConsumed()   { return consumed; }
 
     // Returns true if (auraCol, auraRow) lies strictly between (pc,pr) and (tc,tr) on a straight line
     private boolean isBlockedBy(int pc, int pr, int tc, int tr) {

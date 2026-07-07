@@ -1,12 +1,13 @@
 package io.github.chess_sequel.engine.player;
 
+import io.github.chess_sequel.engine.interactables.ConsumableItem;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.pieces.*;
 import io.github.chess_sequel.engine.pieces.classic.King;
 import io.github.chess_sequel.engine.pieces.classic.Pawn;
-import io.github.chess_sequel.engine.powers.kingPower.BouncingBishopsPassive;
-import io.github.chess_sequel.engine.powers.kingPower.MeekInheritPower;
-import io.github.chess_sequel.engine.powers.kingPower.WinBonus;
+import io.github.chess_sequel.engine.powers.kingPower.classic.BouncingBishopsPassive;
+import io.github.chess_sequel.engine.powers.kingPower.classic.MeekInheritPower;
+import io.github.chess_sequel.engine.powers.kingPower.goblin.WinBonus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +25,15 @@ public class Player {
 
     private int currency;
     private ArrayList<Piece> pieceInventory = new ArrayList<>();
+    private ArrayList<ConsumableItem> consumables = new ArrayList<>();
+    private String playerClass = "classic";
 
     public Player(){
         this.currency = 30;
-
     }
+
+    public String getPlayerClass() { return playerClass; }
+    public void setPlayerClass(String playerClass) { this.playerClass = playerClass; }
 
     public void takeTurn(Board board){
 
@@ -124,6 +129,8 @@ public class Player {
     public ArrayList<Piece> getPieceInventory(){
         return pieceInventory;
     }
+
+    public ArrayList<ConsumableItem> getConsumables() { return consumables; }
 
     public King getKing() {
         for (Piece piece : pieces) {

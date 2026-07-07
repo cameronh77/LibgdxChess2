@@ -4,6 +4,7 @@ import io.github.chess_sequel.engine.GameRun;
 import io.github.chess_sequel.engine.jsonTypes.Dialogue;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MapBoard;
+import io.github.chess_sequel.engine.map.behaviour.MapBehaviour;
 import io.github.chess_sequel.engine.player.BotPlayer;
 
 /**
@@ -20,6 +21,7 @@ public class NPCPiece extends Interactable {
     private final BotPlayer botPlayer;
     private final Dialogue dialogue;
     private String entryNode;
+    private MapBehaviour behaviour;
 
     private int col, row;
 
@@ -37,6 +39,16 @@ public class NPCPiece extends Interactable {
     public int getRow() { return row; }
     public void setCol(int col) { this.col = col; }
     public void setRow(int row) { this.row = row; }
+
+    public void setBehaviour(MapBehaviour behaviour) { this.behaviour = behaviour; }
+
+    public void onTick(MapBoard board) {
+        if (botPlayer.getDefeated()) {
+            behaviour = null;
+            return;
+        }
+        if (behaviour != null) behaviour.tick(this, board);
+    }
 
     public void setEntryNode(String nodeId) {
         this.entryNode = nodeId;

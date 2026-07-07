@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import io.github.chess_sequel.ProjectName;
 import io.github.chess_sequel.engine.GameRun;
 import io.github.chess_sequel.engine.GameState;
+import io.github.chess_sequel.engine.interactables.ConsumableItem;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.BoardType;
 import io.github.chess_sequel.engine.pieces.classic.King;
@@ -54,6 +55,7 @@ public class LeftPanel extends Table {
             case MAP:
             case SHOP:
                 addAlterLayoutButton();
+                addConsumableButtons();
                 break;
         }
     }
@@ -135,6 +137,94 @@ public class LeftPanel extends Table {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     gameRun.applyPreGamePower(power);
+                }
+            });
+
+            add(row).growX().left().pad(2);
+        }
+    }
+
+    private void addConsumableButtons() {
+        java.util.ArrayList<ConsumableItem> consumables = gameRun.getPlayer().getConsumables();
+        if (consumables.isEmpty()) return;
+
+        Label.LabelStyle whiteStyle = new Label.LabelStyle(font, Color.WHITE);
+
+        row();
+        add(new Label("Items", whiteStyle)).left().padLeft(6).padTop(8);
+
+        for (ConsumableItem item : new java.util.ArrayList<>(consumables)) {
+            boolean active = item.isActive(gameRun);
+            row();
+            Table row = new Table();
+            row.left();
+            if (active) {
+                row.setBackground(game.skin.getDrawable("white"));
+                row.setColor(1f, 1f, 0.3f, 1f);
+            }
+
+            String iconPath = item.getIconPath();
+            if (iconPath != null) {
+                try {
+                    Texture tex = TextureCache.get(iconPath);
+                    Image icon = new Image(tex);
+                    if (active) icon.setColor(Color.BLACK);
+                    row.add(icon).size(20, 20).padRight(4);
+                } catch (Exception ignored) {}
+            }
+
+            Label.LabelStyle nameStyle = new Label.LabelStyle(font, active ? Color.BLACK : Color.WHITE);
+            row.add(new Label(item.getName(), nameStyle)).left();
+
+            String description = item.getDescription();
+            if (description != null && !description.isEmpty()) {
+                row.addListener(new InputListener() {
+                    private Table tooltip;
+
+                    @Override
+                    public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                        if (pointer != -1 || tooltip != null) return;
+                        Stage stage = row.getStage();
+                        if (stage == null) return;
+
+                        Label.LabelStyle darkStyle = new Label.LabelStyle(font, Color.BLACK);
+                        Label desc = new Label(description, darkStyle);
+                        desc.setWrap(true);
+
+                        tooltip = new Table();
+                        tooltip.setBackground(game.skin.getDrawable("white"));
+                        tooltip.pad(8);
+                        tooltip.add(desc).width(160);
+                        tooltip.pack();
+
+                        Vector2 pos = row.localToStageCoordinates(new Vector2(0, 0));
+                        float tx = pos.x + row.getWidth() + 6;
+                        float ty = pos.y - tooltip.getHeight();
+                        tooltip.setPosition(tx, Math.max(0, ty));
+                        stage.addActor(tooltip);
+                    }
+
+                    @Override
+                    public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                        if (pointer != -1) return;
+                        if (tooltip != null) { tooltip.remove(); tooltip = null; }
+                    }
+                });
+            }
+
+            row.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    if (item.isActive(gameRun)) {
+                        item.onDeactivate(gameRun);
+                    } else {
+                        // Deactivate any currently active consumable before activating this one
+                        for (ConsumableItem other : gameRun.getPlayer().getConsumables()) {
+                            if (other != item && other.isActive(gameRun)) other.onDeactivate(gameRun);
+                        }
+                        item.onActivate(gameRun);
+                    }
+                    gameRun.setGameState(GameState.BOARD_STATE_CHANGED);
                 }
             });
 

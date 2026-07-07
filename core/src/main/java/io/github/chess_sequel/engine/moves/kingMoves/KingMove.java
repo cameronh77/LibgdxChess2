@@ -34,14 +34,14 @@ public class KingMove extends Move {
     public void execute() {
         power.spendCharge();
         applyEffect();
-        if (board instanceof MatchBoard) board.setWhiteToMove(!board.getWhiteToMove());
+        if (board instanceof MatchBoard && endsTurn()) board.setWhiteToMove(!board.getWhiteToMove());
         board.tick();
     }
 
     @Override
     public void undo() {
         board.untick();
-        if (board instanceof MatchBoard) board.setWhiteToMove(!board.getWhiteToMove());
+        if (board instanceof MatchBoard && endsTurn()) board.setWhiteToMove(!board.getWhiteToMove());
         revertEffect();
         power.refundCharge();
     }

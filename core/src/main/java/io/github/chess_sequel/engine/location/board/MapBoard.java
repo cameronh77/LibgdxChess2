@@ -11,6 +11,10 @@ import io.github.chess_sequel.engine.pieces.factories.ShopFactory;
 import io.github.chess_sequel.engine.jsonTypes.EnemyData;
 import io.github.chess_sequel.engine.jsonTypes.MapNode;
 import io.github.chess_sequel.engine.jsonTypes.ZoneVariant;
+import io.github.chess_sequel.engine.map.behaviour.ChaseBehaviour;
+import io.github.chess_sequel.engine.map.behaviour.FleeBehaviour;
+import io.github.chess_sequel.engine.map.behaviour.PatrolBehaviour;
+import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.player.BotPlayer;
 import io.github.chess_sequel.engine.player.Player;
 
@@ -51,7 +55,15 @@ public class MapBoard extends Board{
                 case "enemy":
                     EnemyData enemyData = gameRun.getJsonLoader().getEnemyData(gameRun.getCurrentMap(), node.ref);
                     BotPlayer botPlayer = new BotPlayer(gameRun, 3, enemyData.enemyLayout, enemyData.rewards);
-                    addLocation(new NPCPiece(botPlayer, gameRun, node.x, node.y, enemyData.dialogue));
+                    NPCPiece npc = new NPCPiece(botPlayer, gameRun, node.x, node.y, enemyData.dialogue);
+                    if ("patrol".equals(node.behaviour) && node.waypoints != null) {
+                        npc.setBehaviour(new PatrolBehaviour(node.waypoints));
+                    } else if ("chase".equals(node.behaviour)) {
+                        npc.setBehaviour(new ChaseBehaviour());
+                    } else if ("flee".equals(node.behaviour)) {
+                        npc.setBehaviour(new FleeBehaviour());
+                    }
+                    addLocation(npc);
                     break;
                 case "shopitem":
                     addLocation(ShopFactory.createShopItem(node, gameRun));
@@ -65,6 +77,9 @@ public class MapBoard extends Board{
                 case "exit":
                     addLocation(new MapExit(gameRun, node.x, node.y));
                     break;
+                case "portal":
+                    addLocation(new io.github.chess_sequel.engine.interactables.LevelPortal(node.ref, gameRun, node.x, node.y));
+                    break;
             }
         }
     }
@@ -76,6 +91,17 @@ public class MapBoard extends Board{
     public void removeLocation(Interactable location){
         locations.remove(location);
     }
+
+    @Override
+    public void tick() {
+        super.tick();
+        for (Interactable location : new ArrayList<>(locations)) {
+            if (location instanceof NPCPiece) ((NPCPiece) location).onTick(this);
+        }
+    }
+
+    @Override
+    public Boolean checkEvaluator(Move move) { return false; }
 
     @Override
     public BoardType getBoardType() { return BoardType.MAP; }

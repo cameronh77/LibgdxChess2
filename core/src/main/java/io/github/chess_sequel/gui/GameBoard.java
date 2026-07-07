@@ -10,8 +10,10 @@ import io.github.chess_sequel.engine.auras.Aura;
 import io.github.chess_sequel.engine.interactables.Interactable;
 import io.github.chess_sequel.engine.interactables.ShopItem;
 import io.github.chess_sequel.engine.location.board.MapBoard;
+import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.Piece;
+import io.github.chess_sequel.engine.player.Player;
 
 
 /**
@@ -66,6 +68,29 @@ public class GameBoard {
             }
         }
 
+        float time = (float)(System.currentTimeMillis() % 1000) / 1000f;
+        float alpha = 0.5f + 0.5f * (float)Math.sin(time * Math.PI * 2);
+        Texture highlightTex = TextureCache.get("tiles/highlight.png");
+
+        if (gameRun.getCurrentBoard() instanceof MatchBoard) {
+            Piece playerLeader = gameRun.getPlayer().getLeadPiece();
+            if (playerLeader != null && playerLeader != gameRun.getCurrentBoard().getSelectedPiece()) {
+                batch.setColor(1f, 0.85f, 0f, alpha * 0.7f);
+                batch.draw(highlightTex, xorigin + playerLeader.getCol() * TILE_SIZE, yorigin + playerLeader.getRow() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                batch.setColor(1f, 1f, 1f, 1f);
+            }
+
+            Player botPlayer = gameRun.getCurrentBoard().getBotPlayer();
+            if (botPlayer != null) {
+                Piece enemyLeader = botPlayer.getLeadPiece();
+                if (enemyLeader != null) {
+                    batch.setColor(1f, 0.2f, 0.2f, alpha * 0.7f);
+                    batch.draw(highlightTex, xorigin + enemyLeader.getCol() * TILE_SIZE, yorigin + enemyLeader.getRow() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                    batch.setColor(1f, 1f, 1f, 1f);
+                }
+            }
+        }
+
         for (Piece piece : gameRun.getCurrentBoard().getPieces()) {
             Texture tex = TextureCache.get(piece.getFilePath());
             if(piece == gameRun.getCurrentBoard().getSelectedPiece()){
@@ -78,10 +103,6 @@ public class GameBoard {
                     TILE_SIZE, TILE_SIZE);
             }
         }
-
-        float time = (float)(System.currentTimeMillis() % 1000) / 1000f;
-        float alpha = 0.5f + 0.5f * (float)Math.sin(time * Math.PI * 2);
-        Texture highlightTex = TextureCache.get("tiles/highlight.png");
 
         if(gameRun.getCurrentBoard().getSelectedPiece() != null && !gameRun.getCurrentBoard().getValidMoves().isEmpty()){
             for(Move move: gameRun.getCurrentBoard().getValidMoves()){

@@ -27,6 +27,10 @@ public class ShopItem extends Interactable {
 
     @Override
     public void interaction() {
+        game.setPendingShopItem(this);
+    }
+
+    public void purchase() {
         Player player = game.getPlayer();
         if (player.getCurrency() >= price && effect.canPurchase(player)) {
             effect.apply(player);

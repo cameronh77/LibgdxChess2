@@ -5,6 +5,7 @@ import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.pieces.ChessClass;
 import io.github.chess_sequel.engine.pieces.Piece;
 import io.github.chess_sequel.engine.pieces.classic.Horse;
+import io.github.chess_sequel.engine.powers.kingPower.goblin.StickySlimePassive;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,7 +52,8 @@ public class SlimeSteed extends Horse {
         placedSlimes.clear();
         int count = Math.min(2, candidates.size());
         for (int i = 0; i < count; i++) {
-            SlimeAura aura = new SlimeAura(candidates.get(i)[0], candidates.get(i)[1], isBlack);
+            int dur = StickySlimePassive.isActive(activeBoard, isBlack) ? 2 : 1;
+            SlimeAura aura = new SlimeAura(candidates.get(i)[0], candidates.get(i)[1], isBlack, dur);
             placedSlimes.add(aura);
             activeBoard.addAura(aura);
         }

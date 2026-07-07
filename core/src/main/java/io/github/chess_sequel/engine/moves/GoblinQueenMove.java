@@ -6,7 +6,7 @@ import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.pieces.Piece;
 
 /**
- * Move subclass used exclusively by {@link io.github.chess_sequel.engine.pieces.goblin.GoblinQueen}.
+ * Move subclass used exclusively by {@link io.github.chess_sequel.engine.pieces.unassigned.PetrifyQueen}.
  * On execute/undo it shifts the 8 surrounding {@link io.github.chess_sequel.engine.auras.PetrifyingAura}
  * instances from the old position to the new position so the aura always surrounds the queen.
  */
@@ -107,7 +107,7 @@ public class GoblinQueenMove extends Move{
         }
 
         //Flip the turn
-        if(board instanceof MatchBoard){
+        if(board instanceof MatchBoard && endsTurn()){
             board.setWhiteToMove(!board.getWhiteToMove());
         }
 
@@ -212,7 +212,7 @@ public class GoblinQueenMove extends Move{
         board.setEnPassantTile(enPassantTile);
 
         //Flip the turn
-        if(board instanceof MatchBoard){
+        if(board instanceof MatchBoard && endsTurn()){
             board.setWhiteToMove(!board.getWhiteToMove());
         }
 

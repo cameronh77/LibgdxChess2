@@ -3,9 +3,9 @@ package io.github.chess_sequel.engine.roster;
 import io.github.chess_sequel.engine.pieces.Piece;
 import io.github.chess_sequel.engine.pieces.classic.*;
 import io.github.chess_sequel.engine.pieces.goblin.*;
-import io.github.chess_sequel.engine.powers.kingPower.BouncingBishopsPassive;
-import io.github.chess_sequel.engine.powers.kingPower.MeekInheritPower;
-import io.github.chess_sequel.engine.powers.kingPower.WinBonus;
+import io.github.chess_sequel.engine.powers.kingPower.classic.BouncingBishopsPassive;
+import io.github.chess_sequel.engine.powers.kingPower.classic.MeekInheritPower;
+import io.github.chess_sequel.engine.powers.kingPower.goblin.WinBonus;
 
 import java.util.ArrayList;
 import java.util.Arrays;

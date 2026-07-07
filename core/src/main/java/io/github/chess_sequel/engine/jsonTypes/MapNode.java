@@ -7,4 +7,6 @@ public class MapNode {
     public String ref;
     public int price;
     public String icon;
+    public String behaviour;
+    public int[][] waypoints;
 }

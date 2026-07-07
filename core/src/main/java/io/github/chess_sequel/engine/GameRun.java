@@ -1,8 +1,10 @@
 package io.github.chess_sequel.engine;
 
+import io.github.chess_sequel.engine.interactables.BombItem;
 import io.github.chess_sequel.engine.interactables.LevelPortal;
 import io.github.chess_sequel.engine.interactables.NPCPiece;
 import io.github.chess_sequel.engine.interactables.ShopEffect;
+import io.github.chess_sequel.engine.interactables.ShopItem;
 import io.github.chess_sequel.engine.pieces.factories.KingPowerFactory;
 import io.github.chess_sequel.engine.jsonTypes.Dialogue;
 import io.github.chess_sequel.engine.jsonTypes.DialogueChoice;
@@ -43,6 +45,8 @@ public class GameRun {
     private Rewards pendingDisplayReward = null;
 
     private List<ShopEffect> pendingPowerOffer = null;
+    private ShopItem pendingShopItem = null;
+    private BombItem pendingBomb = null;
 
     private Dialogue activeDialogue;
     private DialogueNode currentNode;
@@ -53,7 +57,7 @@ public class GameRun {
     public GameRun(Player player){
         this.player = player;
         jsonLoader.loadZoneData();
-        this.currentMap = "classic4";
+        this.currentMap = "goblin-territory";
         jsonLoader.setMapSizeXY(currentMap);
         addMapBoard();
     }
@@ -84,6 +88,13 @@ public class GameRun {
                 power.onVictory(player);
             }
         }
+        if (rewards.items != null) {
+            for (String ref : rewards.items) {
+                io.github.chess_sequel.engine.interactables.ConsumableItemEffect e =
+                    io.github.chess_sequel.engine.pieces.factories.ShopFactory.consumableEffectFromRef(ref);
+                if (e != null) e.apply(player);
+            }
+        }
         if (rewards.powerChoices != null && !rewards.powerChoices.isEmpty()) {
             List<ShopEffect> offers = new ArrayList<>();
             for (String id : rewards.powerChoices) {
@@ -102,6 +113,39 @@ public class GameRun {
     public boolean hasPendingPowerOffer() { return pendingPowerOffer != null && !pendingPowerOffer.isEmpty(); }
     public List<ShopEffect> getPendingPowerOffer() { return pendingPowerOffer; }
 
+    public void setPendingShopItem(ShopItem item) {
+        this.pendingShopItem = item;
+        setGameState(GameState.BOARD_STATE_CHANGED);
+    }
+
+    public boolean hasPendingShopItem() { return pendingShopItem != null; }
+    public ShopItem getPendingShopItem() { return pendingShopItem; }
+
+    public void purchaseShopItem() {
+        ShopItem item = pendingShopItem;
+        pendingShopItem = null;
+        if (item != null) item.purchase();
+        setGameState(GameState.BOARD_STATE_CHANGED);
+    }
+
+    public void dismissShopItem() {
+        pendingShopItem = null;
+        setGameState(GameState.BOARD_STATE_CHANGED);
+    }
+
+    public void setPendingBomb(BombItem bomb) {
+        this.pendingBomb = bomb;
+        setGameState(GameState.BOARD_STATE_CHANGED);
+    }
+
+    public boolean hasPendingBomb() { return pendingBomb != null; }
+    public BombItem getPendingBomb() { return pendingBomb; }
+
+    public void cancelBomb() {
+        pendingBomb = null;
+        setGameState(GameState.BOARD_STATE_CHANGED);
+    }
+
     public void selectPowerOffer(ShopEffect effect) {
         effect.apply(player);
         pendingPowerOffer = null;
@@ -110,12 +154,13 @@ public class GameRun {
 
     /** Pops the current board and replaces it with the named map — used by {@link io.github.chess_sequel.engine.interactables.LevelPortal}. */
     public void progressGame(String level){
-        //this.currentMap = level.getLevel();
-        gameState = GameState.BOARD_STATE_CHANGED;
+        gameBoards.clear();
+        mapStack.clear();
+        returnPositions.clear();
         this.currentMap = level;
         jsonLoader.setMapSizeXY(currentMap);
-        popBoard();
         addMapBoard();
+        gameState = GameState.BOARD_STATE_CHANGED;
     }
 
     /**
@@ -186,11 +231,18 @@ public class GameRun {
         return gameBoards.peek();
     }
 
+    public String getCurrentMap() { return currentMap; }
+
     /** Pops the top board (e.g. after a match ends) and restores the king's pre-match position. */
     public void popBoard(){
         gameBoards.pop();
-        player.getLeadPiece().setCol(player.getLeadPieceX());
-        player.getLeadPiece().setRow(player.getLeadPieceY());
+        int rx = player.getLeadPieceX();
+        int ry = player.getLeadPieceY();
+        player.getLeadPiece().setCol(rx);
+        player.getLeadPiece().setRow(ry);
+        Board current = getCurrentBoard();
+        io.github.chess_sequel.engine.pieces.Piece tileKing = current.getTiles().get(rx).get(ry).getPiece();
+        System.out.println("[POPBOARD] king restored to (" + rx + "," + ry + ") on " + current.getClass().getSimpleName() + ", tile.piece=" + (tileKing == null ? "NULL" : tileKing.getName()) + " whiteToMove=" + current.getWhiteToMove());
         gameState = GameState.BOARD_STATE_CHANGED;
     }
 
@@ -212,10 +264,6 @@ public class GameRun {
             gameBoards.push(new AlterLayoutBoard(this, jsonLoader.getCombatSizeX(), jsonLoader.getCombatSizeY(), player));
             gameState = GameState.BOARD_STATE_CHANGED;
         }
-    }
-
-    public String getCurrentMap(){
-        return currentMap;
     }
 
     public JsonLoader getJsonLoader(){

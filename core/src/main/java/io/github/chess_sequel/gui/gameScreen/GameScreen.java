@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import io.github.chess_sequel.ProjectName;
 import io.github.chess_sequel.engine.GameRun;
 import io.github.chess_sequel.engine.GameState;
+import io.github.chess_sequel.engine.interactables.ConsumableItem;
 import io.github.chess_sequel.engine.jsonTypes.Rewards;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.player.Player;
@@ -55,6 +56,9 @@ public class GameScreen implements Screen {
     private Table pieceTooltip;
     private Piece pendingHoverPiece;
     private float hoverTime = 0f;
+
+    private Table activeBanner;
+    private Label activeBannerLabel;
 
     public GameScreen(ProjectName game, Player player) {
         game.viewport.apply();
@@ -98,6 +102,7 @@ public class GameScreen implements Screen {
             leftPanel.refresh(current);
             rightPanel.refresh(current);
             bottomPanel.refresh(current);
+            refreshBanner();
             gameRunInstance.setGameState(GameState.NEUTRAL);
         }
 
@@ -155,6 +160,17 @@ public class GameScreen implements Screen {
         pendingHoverPiece = null;
     }
 
+    private void refreshBanner() {
+        for (ConsumableItem item : new java.util.ArrayList<>(gameRunInstance.getPlayer().getConsumables())) {
+            if (item.isActive(gameRunInstance)) {
+                activeBannerLabel.setText(item.getName() + " — " + item.getDescription());
+                activeBanner.setVisible(true);
+                return;
+            }
+        }
+        activeBanner.setVisible(false);
+    }
+
     private void buildUILayout() {
         centerContainer = new Table();
 
@@ -168,6 +184,16 @@ public class GameScreen implements Screen {
         rootTable.row();
         rootTable.add(bottomPanel).colspan(3).height(160).growX();
 
+        Label.LabelStyle bannerStyle = new Label.LabelStyle(tooltipFont, Color.BLACK);
+        activeBannerLabel = new Label("", bannerStyle);
+        activeBanner = new Table();
+        activeBanner.setBackground(game.skin.getDrawable("white"));
+        activeBanner.setColor(1f, 1f, 0.3f, 1f);
+        activeBanner.pad(6, 12, 6, 12);
+        activeBanner.add(activeBannerLabel).left();
+        activeBanner.setVisible(false);
+        centerContainer.add(activeBanner).growX().padBottom(4).row();
+
         centerContainer.add(boardActor).grow();
 
         // Initial population of all panels
@@ -175,6 +201,7 @@ public class GameScreen implements Screen {
         leftPanel.refresh(current);
         rightPanel.refresh(current);
         bottomPanel.refresh(current);
+        refreshBanner();
     }
 
     private void showWinOverlay() {
@@ -198,6 +225,7 @@ public class GameScreen implements Screen {
         leftPanel.refresh(current);
         rightPanel.refresh(current);
         bottomPanel.refresh(current);
+        refreshBanner();
     }
 
     @Override public void show() {}

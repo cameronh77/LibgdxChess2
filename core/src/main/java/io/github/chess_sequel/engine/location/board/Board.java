@@ -3,6 +3,7 @@ package io.github.chess_sequel.engine.location.board;
 import io.github.chess_sequel.engine.auras.Aura;
 import io.github.chess_sequel.engine.location.Tile;
 import io.github.chess_sequel.engine.moves.Move;
+import io.github.chess_sequel.engine.moves.TurnCondition;
 import io.github.chess_sequel.engine.pieces.*;
 import io.github.chess_sequel.engine.pieces.classic.*;
 import io.github.chess_sequel.engine.player.Player;
@@ -30,6 +31,7 @@ public abstract class Board {
 
     protected Boolean whiteToMove = false;
     protected Player botPlayer;
+    protected TurnCondition turnCondition = null;
 
     public Board(int boardX, int boardY, Player player, Player opponent){
         this.boardX = boardX;
@@ -131,7 +133,7 @@ public abstract class Board {
     /** Populates {@code validMoves} with legal moves for the currently selected piece (check-aware). */
     public void generatePieceMoves(){
         validMoves = selectedPiece.generateMoves(this, false);
-
+        System.out.println("[GEN_MOVES] " + selectedPiece.getName() + " at (" + selectedPiece.getCol() + "," + selectedPiece.getRow() + ") on " + getClass().getSimpleName() + " -> " + validMoves.size() + " moves, alterMovePowers=" + selectedPiece.getAlterMovePowers().size());
     }
     public ArrayList<Piece> getPieces() {
         return pieces;
@@ -161,10 +163,14 @@ public abstract class Board {
      * in check. Executes and then undoes the move to test.
      */
     public Boolean checkEvaluator(Move move){
+        boolean preMoveWhite = whiteToMove;
         move.execute();
+        boolean postExecuteWhite = whiteToMove;
+        // Always evaluate check from the enemy's perspective so frenzy captures
+        // (which don't flip whiteToMove) are still validated for king safety.
+        whiteToMove = !preMoveWhite;
         Boolean isKingChecked = false;
         for(Piece piece: pieces){
-            //System.out.println(piece);
             ArrayList<Move> moves = piece.generateMoves(this, true);
             for(Move subMove: moves){
                 if(subMove.getCapturedPiece() != null && subMove.getCapturedPiece().getName() == "king"){
@@ -172,6 +178,7 @@ public abstract class Board {
                 }
             }
         }
+        whiteToMove = postExecuteWhite;
         move.undo();
         return isKingChecked;
     }
@@ -220,6 +227,20 @@ public abstract class Board {
             }
         }
         return value;
+    }
+
+    public TurnCondition getTurnCondition() { return turnCondition; }
+    public void setTurnCondition(TurnCondition c) { this.turnCondition = c; }
+
+    /** Returns true if a Blood Frenzy is active and at least one unacted piece has a legal move. */
+    public boolean hasFrenzyEligibleMoves() {
+        if (turnCondition == null) return false;
+        for (Piece p : new ArrayList<>(pieces)) {
+            if (p.isBlack() == turnCondition.frenzySide && !turnCondition.hasActed(p)) {
+                if (!p.generateMoves(this, false).isEmpty()) return true;
+            }
+        }
+        return false;
     }
 
     public abstract BoardType getBoardType();

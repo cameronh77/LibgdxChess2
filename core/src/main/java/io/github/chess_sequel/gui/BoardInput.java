@@ -6,12 +6,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import io.github.chess_sequel.engine.GameRun;
 import io.github.chess_sequel.engine.GameState;
+import io.github.chess_sequel.engine.interactables.Boulder;
+import io.github.chess_sequel.engine.interactables.Interactable;
 import io.github.chess_sequel.engine.location.board.AlterLayoutBoard;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MapBoard;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.location.Tile;
 import io.github.chess_sequel.engine.moves.Move;
+import io.github.chess_sequel.engine.moves.TurnCondition;
 import io.github.chess_sequel.engine.pieces.Piece;
 import io.github.chess_sequel.engine.player.BotPlayer;
 import io.github.chess_sequel.engine.powers.kingPower.ActiveKingPower;
@@ -48,12 +51,18 @@ public class BoardInput extends InputAdapter {
         this.boardActor = boardActor;
     }
 
-    /** Enters power-targeting mode: clears any selected piece and generates the power's candidate moves. */
+    /** Enters power-targeting mode: clears any selected piece and generates the power's candidate moves, filtered for check. */
     public void selectPower(ActiveKingPower power) {
         gameRun.getCurrentBoard().setSelectedPiece(null);
         gameRun.getCurrentBoard().resetValidMoves();
         this.selectedPower = power;
-        this.pendingPowerMoves = power.generateMoves(gameRun.getCurrentBoard());
+        Board board = gameRun.getCurrentBoard();
+        ArrayList<Move> raw = power.generateMoves(board);
+        ArrayList<Move> safe = new ArrayList<>();
+        for (Move m : raw) {
+            if (!board.checkEvaluator(m)) safe.add(m);
+        }
+        this.pendingPowerMoves = safe;
     }
 
     public void cancelPower() {
@@ -75,6 +84,7 @@ public class BoardInput extends InputAdapter {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (gameRun.isDialogueActive()) return false;
+        if (gameRun.hasPendingShopItem()) return false;
         if (button != Input.Buttons.LEFT) return false;
         Vector3 mouse = screenToBoard(screenX, screenY);
         System.out.println(mouse.x);
@@ -112,6 +122,7 @@ public class BoardInput extends InputAdapter {
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         if (gameRun.isDialogueActive()) return false;
+        if (gameRun.hasPendingShopItem()) return false;
         if(gameRun.getCurrentBoard().getSelectedPiece() != null){
             Vector3 worldCoords = screenToBoard(screenX, screenY);
             this.dragX = (worldCoords.x - board.TILE_SIZE / 2f);
@@ -122,6 +133,35 @@ public class BoardInput extends InputAdapter {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+
+        // Bomb targeting mode — destroy an orthogonally adjacent boulder
+        if (gameRun.hasPendingBomb()) {
+            Vector3 mouse = screenToBoard(screenX, screenY);
+            if (mouse.x >= 0 && mouse.y >= 0 &&
+                mouse.x < board.getPixelWidth() &&
+                mouse.y < board.getPixelHeight()) {
+                int clickRow = (int) mouse.y / board.TILE_SIZE;
+                int clickCol = (int) mouse.x / board.TILE_SIZE;
+                Piece king = gameRun.getPlayer().getLeadPiece();
+                int dx = Math.abs(clickCol - king.getCol());
+                int dy = Math.abs(clickRow - king.getRow());
+                boolean orthogonallyAdjacent = (dx == 1 && dy == 0) || (dx == 0 && dy == 1);
+                if (orthogonallyAdjacent) {
+                    Tile t = gameRun.getCurrentBoard().getTiles().get(clickCol).get(clickRow);
+                    Interactable interactable = t.getInteractable();
+                    if (interactable instanceof Boulder) {
+                        MapBoard mapBoard = (MapBoard) gameRun.getCurrentBoard();
+                        t.setInteractable(null);
+                        mapBoard.removeLocation(interactable);
+                        gameRun.getPlayer().getConsumables().remove(gameRun.getPendingBomb());
+                        mapBoard.tick();
+                        gameRun.setGameState(GameState.BOARD_STATE_CHANGED);
+                    }
+                }
+            }
+            gameRun.cancelBomb();
+            return true;
+        }
 
         // Power targeting mode — match clicked tile to a pending power move
         if (selectedPower != null) {
@@ -136,10 +176,18 @@ public class BoardInput extends InputAdapter {
                         Board boardAtPower = gameRun.getCurrentBoard();
                         move.execute();
                         if (boardAtPower instanceof MatchBoard) {
-                            if (move.getCapturedPiece() != null && move.getCapturedPiece() == boardAtPower.getBotPlayer().getLeadPiece()) {
-                                ((BotPlayer) boardAtPower.getBotPlayer()).onLeaderCaptured(boardAtPower);
-                            } else {
-                                boardAtPower.getBotPlayer().takeTurn(boardAtPower);
+                            TurnCondition powerCondition = boardAtPower.getTurnCondition();
+                            boolean powerFrenzyHasMoves = powerCondition != null && boardAtPower.hasFrenzyEligibleMoves();
+                            if (powerCondition != null && !powerFrenzyHasMoves) {
+                                boardAtPower.setTurnCondition(null);
+                                boardAtPower.setWhiteToMove(!boardAtPower.getWhiteToMove());
+                            }
+                            if (move.endsTurn() && !powerFrenzyHasMoves) {
+                                if (move.getCapturedPiece() != null && move.getCapturedPiece() == boardAtPower.getBotPlayer().getLeadPiece()) {
+                                    ((BotPlayer) boardAtPower.getBotPlayer()).onLeaderCaptured(boardAtPower);
+                                } else {
+                                    boardAtPower.getBotPlayer().takeTurn(boardAtPower);
+                                }
                             }
                         }
                         if (gameRun.getGameState() != GameState.MATCH_WON) {
@@ -194,17 +242,26 @@ public class BoardInput extends InputAdapter {
                     System.out.println("Action executed");
                     Board boardAtMove = gameRun.getCurrentBoard();
                     move.execute();
-                    if(boardAtMove instanceof MatchBoard){
-                        if (move.getCapturedPiece() != null && move.getCapturedPiece() == boardAtMove.getBotPlayer().getLeadPiece()) {
-                            ((BotPlayer) boardAtMove.getBotPlayer()).onLeaderCaptured(boardAtMove);
-                        } else {
-                            boardAtMove.getBotPlayer().takeTurn(boardAtMove);
+                    if (boardAtMove instanceof MatchBoard) {
+                        TurnCondition moveCondition = boardAtMove.getTurnCondition();
+                        boolean frenzyHasMoves = moveCondition != null && boardAtMove.hasFrenzyEligibleMoves();
+                        if (moveCondition != null && !frenzyHasMoves) {
+                            boardAtMove.setTurnCondition(null);
+                            boardAtMove.setWhiteToMove(!boardAtMove.getWhiteToMove());
+                        }
+                        if (move.endsTurn() && !frenzyHasMoves) {
+                            if (move.getCapturedPiece() != null && move.getCapturedPiece() == boardAtMove.getBotPlayer().getLeadPiece()) {
+                                ((BotPlayer) boardAtMove.getBotPlayer()).onLeaderCaptured(boardAtMove);
+                            } else {
+                                boardAtMove.getBotPlayer().takeTurn(boardAtMove);
+                            }
                         }
                     }
                     if(boardAtMove instanceof MapBoard){
                         if(boardAtMove.getTiles().get(move.getNewX()).get(move.getNewY()).getInteractable() != null){
                             boardAtMove.getTiles().get(move.getNewX()).get(move.getNewY()).getInteractable().interaction();
                         }
+                        gameRun.setGameState(GameState.BOARD_STATE_CHANGED);
                     }
                     executed = true;
                     break;

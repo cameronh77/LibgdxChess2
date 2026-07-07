@@ -31,7 +31,7 @@ public class EnPassant extends Move{
 
         board.setEnPassantTile(null);
 
-        board.setWhiteToMove(!board.getWhiteToMove());
+        if (endsTurn()) board.setWhiteToMove(!board.getWhiteToMove());
 
         board.tick();
     }
@@ -58,7 +58,7 @@ public class EnPassant extends Move{
         //Reset en passant tile
         board.setEnPassantTile(enPassantTile);
 
-        board.setWhiteToMove(!board.getWhiteToMove());
+        if (endsTurn()) board.setWhiteToMove(!board.getWhiteToMove());
 
         board.untick();
     }

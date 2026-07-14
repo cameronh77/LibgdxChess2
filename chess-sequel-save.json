@@ -1,0 +1,11 @@
+{
+selectedKingIndex: 0
+selectedPresetIndex: 0
+clearedSections: []
+defeatedEnemies: [
+	strategy-grunt
+]
+visitedLocations: []
+unlocks: []
+npcStates: {}
+}

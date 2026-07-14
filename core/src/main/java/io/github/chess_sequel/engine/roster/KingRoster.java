@@ -3,6 +3,7 @@ package io.github.chess_sequel.engine.roster;
 import io.github.chess_sequel.engine.pieces.Piece;
 import io.github.chess_sequel.engine.pieces.classic.*;
 import io.github.chess_sequel.engine.pieces.goblin.*;
+import io.github.chess_sequel.engine.pieces.war.strategy.*;
 import io.github.chess_sequel.engine.powers.kingPower.classic.BouncingBishopsPassive;
 import io.github.chess_sequel.engine.powers.kingPower.classic.MeekInheritPower;
 import io.github.chess_sequel.engine.powers.kingPower.goblin.WinBonus;
@@ -55,6 +56,29 @@ public class KingRoster {
                 new TeamPreset("Drill Squad", () -> {
                     GoblinKing k = new GoblinKing(0, 0, false);
                     return mutable(k, new GoblinDrill(1, 0, false), new GoblinDrill(2, 0, false), new GoblinDrill(3, 0, false));
+                })
+            )
+        ));
+
+        KINGS.add(new KingDef(
+            "Strategy King",
+            "pieces/goblin/white-strategy-king.png",
+            Arrays.asList(
+                new TeamPreset("Trappers", () -> {
+                    StrategyKing k = new StrategyKing(0, 0, false);
+                    return mutable(k, new TrapPawn(1, 0, false), new TrapPawn(2, 0, false), new TrapPawn(3, 0, false));
+                }),
+                new TeamPreset("Far Seers", () -> {
+                    StrategyKing k = new StrategyKing(0, 0, false);
+                    return mutable(k, new ProphetBishop(1, 0, false), new ProphetBishop(2, 0, false));
+                    }),
+                new TeamPreset("Lead the charge", () -> {
+                    StrategyKing k = new StrategyKing(0, 0, false);
+                    return mutable(k, new TrapPawn(1, 0, false), new Commander(2, 0, false));
+                }),
+                new TeamPreset("Royal Planning", () -> {
+                    StrategyKing k = new StrategyKing(0, 0, false);
+                    return mutable(k, new StrategyQueen(1, 0, false));
                 })
             )
         ));

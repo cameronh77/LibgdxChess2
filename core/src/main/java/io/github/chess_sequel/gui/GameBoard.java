@@ -149,7 +149,7 @@ public class GameBoard {
     }
 
     public int getPixelHeight(){
-        return TILE_SIZE* gameRun.getCurrentBoard().getTiles().size();
+        return TILE_SIZE * gameRun.getCurrentBoard().boardY;
     }
 
     public GameRun getGame(){

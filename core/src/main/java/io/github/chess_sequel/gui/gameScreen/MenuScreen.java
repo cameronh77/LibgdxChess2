@@ -13,6 +13,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.chess_sequel.ProjectName;
+import io.github.chess_sequel.engine.player.Player;
+import io.github.chess_sequel.engine.roster.KingDef;
+import io.github.chess_sequel.engine.roster.KingRoster;
+import io.github.chess_sequel.engine.save.PersistentData;
+import io.github.chess_sequel.engine.save.SaveManager;
+import java.util.List;
+import io.github.chess_sequel.engine.pieces.Piece;
 
 /** Title/main menu screen. Provides buttons to start a new run (→ KingSelectionScreen), view the piecetiary, or exit. */
 public class MenuScreen implements Screen {
@@ -37,8 +44,8 @@ public class MenuScreen implements Screen {
 
         playButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y){
-                game.setScreen(new KingSelectionScreen(game));
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new GameScreen(game, buildPlayer()));
             }
         });
         piecetiaryButton = new ImageButton(game.skin.getDrawable("piecetiary"));
@@ -47,6 +54,17 @@ public class MenuScreen implements Screen {
         table.add(playButton).pad(10).width(300).height(200).row();
         table.add(piecetiaryButton).pad(10).width(300).height(200).row();
         table.add(exitButton).pad(10).width(300).height(200).row();
+    }
+
+    private Player buildPlayer() {
+        PersistentData data = SaveManager.load();
+        int kingIdx   = Math.max(0, Math.min(data.selectedKingIndex,  KingRoster.KINGS.size() - 1));
+        KingDef def   = KingRoster.KINGS.get(kingIdx);
+        int presetIdx = Math.max(0, Math.min(data.selectedPresetIndex, def.presets.size() - 1));
+        List<Piece> pieces = def.presets.get(presetIdx).build();
+        Player player = new Player();
+        player.setTeam(pieces);
+        return player;
     }
 
     @Override

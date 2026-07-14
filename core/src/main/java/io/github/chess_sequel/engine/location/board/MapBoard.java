@@ -1,11 +1,15 @@
 package io.github.chess_sequel.engine.location.board;
 
 import io.github.chess_sequel.engine.GameRun;
+import io.github.chess_sequel.engine.interactables.BlueBookcase;
 import io.github.chess_sequel.engine.interactables.Boulder;
+import io.github.chess_sequel.engine.interactables.EmptyBookcase;
+import io.github.chess_sequel.engine.interactables.GreenBookcase;
 import io.github.chess_sequel.engine.interactables.Interactable;
 import io.github.chess_sequel.engine.interactables.MapEntrance;
 import io.github.chess_sequel.engine.interactables.MapExit;
 import io.github.chess_sequel.engine.interactables.NPCPiece;
+import io.github.chess_sequel.engine.interactables.RedBookcase;
 import io.github.chess_sequel.engine.interactables.ShopItem;
 import io.github.chess_sequel.engine.pieces.factories.ShopFactory;
 import io.github.chess_sequel.engine.jsonTypes.EnemyData;
@@ -50,12 +54,13 @@ public class MapBoard extends Board{
     /** Reads the variant's node list and instantiates all interactables for this map layout. */
     public void populateBoard(ZoneVariant variant, GameRun gameRun){
         pieces.clear();
+        int redBookcaseCount = 0;
         for(MapNode node: variant.nodes){
             switch(node.type){
                 case "enemy":
                     EnemyData enemyData = gameRun.getJsonLoader().getEnemyData(gameRun.getCurrentMap(), node.ref);
                     BotPlayer botPlayer = new BotPlayer(gameRun, 3, enemyData.enemyLayout, enemyData.rewards);
-                    NPCPiece npc = new NPCPiece(botPlayer, gameRun, node.x, node.y, enemyData.dialogue);
+                    NPCPiece npc = new NPCPiece(botPlayer, gameRun, node.x, node.y, enemyData.dialogue, enemyData.enemyId, enemyData.defeatBehaviour, enemyData.defeatDialogue);
                     if ("patrol".equals(node.behaviour) && node.waypoints != null) {
                         npc.setBehaviour(new PatrolBehaviour(node.waypoints));
                     } else if ("chase".equals(node.behaviour)) {
@@ -70,6 +75,29 @@ public class MapBoard extends Board{
                     break;
                 case "boulder":
                     addLocation(new Boulder(node.x, node.y));
+                    break;
+                case "empty-bookcase":
+                    addLocation(new EmptyBookcase(node.x, node.y));
+                    break;
+                case "red-bookcase":
+                    addLocation(new RedBookcase(gameRun, node.x, node.y, ++redBookcaseCount));
+                    break;
+                case "blue-bookcase":
+                    addLocation(new BlueBookcase(gameRun, node.x, node.y));
+                    break;
+                case "green-bookcase":
+                    addLocation(new GreenBookcase(gameRun, node.x, node.y));
+                    break;
+                case "random-bookcase":
+                    if (Math.random() < 0.05) {
+                        if (Math.random() < 0.5) {
+                            addLocation(new BlueBookcase(gameRun, node.x, node.y));
+                        } else {
+                            addLocation(new GreenBookcase(gameRun, node.x, node.y));
+                        }
+                    } else {
+                        addLocation(new EmptyBookcase(node.x, node.y));
+                    }
                     break;
                 case "entrance":
                     addLocation(new MapEntrance(gameRun, node.x, node.y, node.ref, node.icon));
@@ -90,6 +118,15 @@ public class MapBoard extends Board{
 
     public void removeLocation(Interactable location){
         locations.remove(location);
+    }
+
+    /** Removes any NPCs flagged for immediate removal after a combat victory. */
+    public void cleanupDefeatedNpcs() {
+        for (Interactable loc : new ArrayList<>(locations)) {
+            if (loc instanceof NPCPiece && ((NPCPiece) loc).shouldRemoveOnDefeat()) {
+                ((NPCPiece) loc).removeFromMap(this);
+            }
+        }
     }
 
     @Override

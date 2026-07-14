@@ -92,7 +92,10 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         ScreenUtils.clear(Color.BLACK);
 
-        if (gameRunInstance.getGameState() == GameState.MATCH_WON) {
+        if (gameRunInstance.getGameState() == GameState.GO_TO_KING_SELECTION) {
+            game.setScreen(new KingSelectionScreen(game));
+            return;
+        } else if (gameRunInstance.getGameState() == GameState.MATCH_WON) {
             showWinOverlay();
             gameRunInstance.setGameState(GameState.NEUTRAL);
         } else if (gameRunInstance.getGameState() == GameState.BOARD_STATE_CHANGED) {

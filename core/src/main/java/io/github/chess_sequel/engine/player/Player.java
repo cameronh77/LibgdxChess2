@@ -46,9 +46,6 @@ public class Player {
         pieces.add(new Pawn(2, 0, false));
         pieces.add(new Pawn(3, 0, false));
         King king = new King(0, 0, false);
-        king.addActivePower(new MeekInheritPower(king));
-        king.addPassivePower(new BouncingBishopsPassive(king));
-        king.addPreGamePower(new WinBonus());
         leadPiece = king;
         pieces.add(leadPiece);
         /**

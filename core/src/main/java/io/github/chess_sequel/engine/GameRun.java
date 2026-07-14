@@ -3,14 +3,19 @@ package io.github.chess_sequel.engine;
 import io.github.chess_sequel.engine.interactables.BombItem;
 import io.github.chess_sequel.engine.interactables.LevelPortal;
 import io.github.chess_sequel.engine.interactables.NPCPiece;
+import io.github.chess_sequel.engine.interactables.RoomDoor;
 import io.github.chess_sequel.engine.interactables.ShopEffect;
 import io.github.chess_sequel.engine.interactables.ShopItem;
 import io.github.chess_sequel.engine.pieces.factories.KingPowerFactory;
+import io.github.chess_sequel.engine.jsonTypes.Coordinates;
 import io.github.chess_sequel.engine.jsonTypes.Dialogue;
 import io.github.chess_sequel.engine.jsonTypes.DialogueChoice;
 import io.github.chess_sequel.engine.jsonTypes.DialogueNode;
+import io.github.chess_sequel.engine.jsonTypes.EnemyData;
 import io.github.chess_sequel.engine.jsonTypes.Rewards;
-import java.util.List;
+import io.github.chess_sequel.engine.jsonTypes.RoomTypeData;
+import io.github.chess_sequel.engine.jsonTypes.RoomVariant;
+import io.github.chess_sequel.engine.jsonTypes.SectionConfig;
 import io.github.chess_sequel.engine.jsonTypes.ZoneData;
 import io.github.chess_sequel.engine.jsonTypes.ZoneVariant;
 import io.github.chess_sequel.engine.location.board.*;
@@ -18,10 +23,25 @@ import io.github.chess_sequel.engine.player.BotPlayer;
 import io.github.chess_sequel.engine.player.Player;
 import io.github.chess_sequel.engine.pieces.classic.King;
 import io.github.chess_sequel.engine.powers.kingPower.PreKingPower;
-
+import io.github.chess_sequel.engine.hub.HubLayout;
+import io.github.chess_sequel.engine.hub.HubRoom;
+import io.github.chess_sequel.engine.interactables.HubDoor;
+import io.github.chess_sequel.engine.interactables.SectionPortal;
+import io.github.chess_sequel.engine.interactables.Throne;
+import io.github.chess_sequel.engine.jsonTypes.NpcQuestDef;
+import io.github.chess_sequel.engine.jsonTypes.QuestCondition;
+import io.github.chess_sequel.engine.jsonTypes.QuestStep;
+import io.github.chess_sequel.engine.save.PersistentData;
+import io.github.chess_sequel.engine.save.NpcQuestState;
+import io.github.chess_sequel.engine.save.SaveManager;
+import io.github.chess_sequel.engine.section.Direction;
+import io.github.chess_sequel.engine.section.RoomNode;
+import io.github.chess_sequel.engine.section.SectionLayout;
+import io.github.chess_sequel.engine.section.SectionLayoutGenerator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -41,6 +61,9 @@ public class GameRun {
     private JsonLoader jsonLoader = new JsonLoader();
     private String currentMap;
     private GameState gameState = GameState.NEUTRAL;
+    private SectionLayout activeSectionLayout;
+    private HubLayout hubLayout;
+    private PersistentData persistentData;
     private Rewards pendingRewards = null;
     private Rewards pendingDisplayReward = null;
 
@@ -53,13 +76,15 @@ public class GameRun {
     private int currentLineIndex;
     private NPCPiece dialogueNPC;
 
-    /** Initialises the run, loads zone data, and pushes the starting map board. */
+    /** Initialises the run, loads all data, and enters the strategy section. */
     public GameRun(Player player){
         this.player = player;
+        persistentData = SaveManager.load();
         jsonLoader.loadZoneData();
-        this.currentMap = "goblin-territory";
-        jsonLoader.setMapSizeXY(currentMap);
-        addMapBoard();
+        jsonLoader.loadSectionData();
+        jsonLoader.loadRoomData();
+        jsonLoader.loadQuestData();
+        enterHub();
     }
 
     /** Pushes a new {@link io.github.chess_sequel.engine.location.board.MatchBoard} for combat against {@code opponent}. */
@@ -96,12 +121,10 @@ public class GameRun {
             }
         }
         if (rewards.powerChoices != null && !rewards.powerChoices.isEmpty()) {
-            List<ShopEffect> offers = new ArrayList<>();
             for (String id : rewards.powerChoices) {
                 ShopEffect e = KingPowerFactory.createEffect(id);
-                if (e != null) offers.add(e);
+                if (e != null) e.apply(player);
             }
-            if (!offers.isEmpty()) setPendingPowerOffer(offers);
         }
     }
 
@@ -243,6 +266,9 @@ public class GameRun {
         Board current = getCurrentBoard();
         io.github.chess_sequel.engine.pieces.Piece tileKing = current.getTiles().get(rx).get(ry).getPiece();
         System.out.println("[POPBOARD] king restored to (" + rx + "," + ry + ") on " + current.getClass().getSimpleName() + ", tile.piece=" + (tileKing == null ? "NULL" : tileKing.getName()) + " whiteToMove=" + current.getWhiteToMove());
+        if (current instanceof io.github.chess_sequel.engine.location.board.MapBoard) {
+            ((io.github.chess_sequel.engine.location.board.MapBoard) current).cleanupDefeatedNpcs();
+        }
         gameState = GameState.BOARD_STATE_CHANGED;
     }
 
@@ -271,6 +297,8 @@ public class GameRun {
     }
 
     public void setGameState(GameState gameState){
+        // Don't overwrite a pending screen transition with a lower-priority state
+        if (this.gameState == GameState.GO_TO_KING_SELECTION) return;
         this.gameState = gameState;
     }
 
@@ -377,6 +405,9 @@ public class GameRun {
 
         if ("combat".equals(node.outcome) && npc != null) {
             npc.startCombat();
+        } else if ("remove".equals(node.outcome) && npc != null) {
+            npc.removeFromMap(getCurrentBoard());
+            setGameState(GameState.BOARD_STATE_CHANGED);
         } else if (node.reward != null) {
             showReward(node.reward);
         } else {
@@ -389,6 +420,384 @@ public class GameRun {
             if (node.id.equals(id)) return node;
         }
         return null;
+    }
+
+    // -------------------------------------------------------------------------
+    // Section navigation
+    // -------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
+    // Hub navigation
+    // -------------------------------------------------------------------------
+
+    /**
+     * Enters the hub, placing the king at the throne's fixed spawn tile.
+     * Hub room boards are cached — NPCs and items persist across visits.
+     */
+    public void enterHub() {
+        if (hubLayout == null) hubLayout = HubLayout.create();
+        HubRoom throne = hubLayout.spawnRoom;
+        hubLayout.currentRoom = throne;
+        if (throne.board == null) throne.board = createHubRoomBoard(throne, null);
+        else repositionKingOnCachedHubRoom(throne, throne.spawnCol, throne.spawnRow);
+        gameBoards.clear();
+        gameBoards.push(throne.board);
+        gameState = GameState.BOARD_STATE_CHANGED;
+    }
+
+    /** Moves the player from the current hub room into the adjacent room in {@code dir}. */
+    public void navigateHubRoom(Direction dir) {
+        if (hubLayout == null) return;
+        HubRoom current = hubLayout.currentRoom;
+        if (!current.doors.contains(dir)) return;
+        HubRoom next = hubLayout.getRoomInDirection(dir);
+        if (next == null) return;
+
+        current.kingExitCol = player.getLeadPiece().getCol();
+        current.kingExitRow = player.getLeadPiece().getRow();
+        gameBoards.pop();
+
+        hubLayout.currentRoom = next;
+        Direction entryFrom = dir.opposite();
+        int[] entry = entryPosition(entryFrom, next.mapX, next.mapY);
+
+        if (next.board == null) {
+            next.board = createHubRoomBoard(next, entryFrom);
+        } else {
+            repositionKingOnCachedHubRoom(next, entry[0], entry[1]);
+        }
+        gameBoards.push(next.board);
+        gameState = GameState.BOARD_STATE_CHANGED;
+    }
+
+    private MapBoard createHubRoomBoard(HubRoom room, Direction entryFrom) {
+        String virtualId = "hub-" + room.id;
+        jsonLoader.registerRoomData(virtualId, room.mapX, room.mapY, 8, 8, new ArrayList<>());
+        currentMap = virtualId;
+        jsonLoader.setMapSizeXY(currentMap);
+
+        int entryX, entryY;
+        if (entryFrom == null && room.spawnCol >= 0) {
+            entryX = room.spawnCol;
+            entryY = room.spawnRow;
+        } else {
+            int[] entry = entryPosition(entryFrom, room.mapX, room.mapY);
+            entryX = entry[0];
+            entryY = entry[1];
+        }
+        player.setLeadPieceX(entryX);
+        player.setLeadPieceY(entryY);
+
+        ZoneVariant zoneVariant = new ZoneVariant();
+        zoneVariant.playerStart = new Coordinates();
+        zoneVariant.playerStart.x = entryX;
+        zoneVariant.playerStart.y = entryY;
+        zoneVariant.nodes = new ArrayList<>();
+
+        MapBoard board = new MapBoard(this, room.mapX, room.mapY, player, zoneVariant);
+
+        for (Direction dir : room.doors) {
+            board.addLocation(new HubDoor(this, doorCol(dir, room.mapX, room.mapY),
+                    doorRow(dir, room.mapX, room.mapY), dir));
+        }
+
+        if (room.portalSectionId != null) {
+            board.addLocation(new SectionPortal(this, room.mapX / 2, room.mapY / 2, room.portalSectionId));
+        }
+
+        if ("throne".equals(room.id)) {
+            board.addLocation(new Throne(this, 4, 4));
+        }
+
+        return board;
+    }
+
+    private void repositionKingOnCachedHubRoom(HubRoom room, int entryX, int entryY) {
+        if (room.kingExitCol >= 0) {
+            room.board.getTiles().get(room.kingExitCol).get(room.kingExitRow).setPiece(null);
+        }
+        io.github.chess_sequel.engine.pieces.Piece occupant =
+                room.board.getTiles().get(entryX).get(entryY).getPiece();
+        if (occupant != null && occupant != player.getLeadPiece()) {
+            room.board.getTiles().get(entryX).get(entryY).setPiece(null);
+        }
+        player.setLeadPieceX(entryX);
+        player.setLeadPieceY(entryY);
+        player.getLeadPiece().setCol(entryX);
+        player.getLeadPiece().setRow(entryY);
+        room.board.getTiles().get(entryX).get(entryY).setPiece(player.getLeadPiece());
+    }
+
+    // -------------------------------------------------------------------------
+    // Section navigation
+    // -------------------------------------------------------------------------
+
+    /** Generates a new section layout and pushes the spawn room as the active board. */
+    public void enterSection(String sectionId) {
+        SectionConfig config = jsonLoader.getSectionConfig(sectionId);
+        activeSectionLayout = SectionLayoutGenerator.generate(config);
+        RoomNode spawn = activeSectionLayout.spawnRoom;
+        spawn.board = createRoomBoard(spawn, null);
+        gameBoards.clear();
+        gameBoards.push(spawn.board);
+        gameState = GameState.BOARD_STATE_CHANGED;
+    }
+
+    /**
+     * Moves the player from the current section room into the adjacent room in {@code dir}.
+     * The current board is cached; on re-entry the king is repositioned without rebuilding.
+     */
+    public void navigateRoom(Direction dir) {
+        if (activeSectionLayout == null) return;
+        RoomNode current = activeSectionLayout.currentRoom;
+        if (!current.doors.contains(dir)) return;
+
+        RoomNode next = activeSectionLayout.getRoomInDirection(dir);
+        if (next == null) return;
+
+        current.kingExitCol = player.getLeadPiece().getCol();
+        current.kingExitRow = player.getLeadPiece().getRow();
+        gameBoards.pop();
+
+        activeSectionLayout.currentRoom = next;
+        next.visited = true;
+        revealAdjacentRooms(next);
+
+        Direction entryFrom = dir.opposite();
+        if (next.board == null) {
+            next.board = createRoomBoard(next, entryFrom);
+        } else {
+            repositionKingOnCachedBoard(next, entryFrom);
+        }
+        gameBoards.push(next.board);
+        gameState = GameState.BOARD_STATE_CHANGED;
+    }
+
+    public SectionLayout getActiveSectionLayout() { return activeSectionLayout; }
+
+    private MapBoard createRoomBoard(RoomNode node, Direction entryFrom) {
+        SectionConfig config = jsonLoader.getSectionConfig(activeSectionLayout.sectionId);
+        RoomTypeData roomTypeData = jsonLoader.getRoomTypeData(config.sectionId, node.type);
+
+        // Room type overrides section defaults; 0 means "use section default"
+        int mapX   = (roomTypeData != null && roomTypeData.mapX   > 0) ? roomTypeData.mapX   : config.mapX;
+        int mapY   = (roomTypeData != null && roomTypeData.mapY   > 0) ? roomTypeData.mapY   : config.mapY;
+        int combatX = (roomTypeData != null && roomTypeData.combatX > 0) ? roomTypeData.combatX : config.combatX;
+        int combatY = (roomTypeData != null && roomTypeData.combatY > 0) ? roomTypeData.combatY : config.combatY;
+
+        node.mapX = mapX; node.mapY = mapY;
+        node.combatX = combatX; node.combatY = combatY;
+
+        String virtualId = config.sectionId + "-" + node.type;
+        ArrayList<EnemyData> enemies = (roomTypeData != null && roomTypeData.enemies != null)
+                ? roomTypeData.enemies : new ArrayList<>();
+        jsonLoader.registerRoomData(virtualId, mapX, mapY, combatX, combatY, enemies);
+        currentMap = virtualId;
+        jsonLoader.setMapSizeXY(currentMap);
+
+        int[] entry = entryPosition(entryFrom, mapX, mapY);
+        int entryX = entry[0], entryY = entry[1];
+        player.setLeadPieceX(entryX);
+        player.setLeadPieceY(entryY);
+
+        ArrayList<io.github.chess_sequel.engine.jsonTypes.MapNode> nodes = new ArrayList<>();
+        if (roomTypeData != null && roomTypeData.variants != null && !roomTypeData.variants.isEmpty()) {
+            RoomVariant variant = pickCompatibleVariant(roomTypeData.variants, node.doors);
+            if (variant.nodes != null) {
+                for (io.github.chess_sequel.engine.jsonTypes.MapNode mn : variant.nodes) {
+                    if (mn.x != entryX || mn.y != entryY) nodes.add(mn);
+                }
+            }
+        }
+
+        ZoneVariant zoneVariant = new ZoneVariant();
+        zoneVariant.playerStart = new Coordinates();
+        zoneVariant.playerStart.x = entryX;
+        zoneVariant.playerStart.y = entryY;
+        zoneVariant.nodes = nodes;
+
+        MapBoard mapBoard = new MapBoard(this, mapX, mapY, player, zoneVariant);
+
+        for (Direction dir : node.doors) {
+            mapBoard.addLocation(new RoomDoor(this, doorCol(dir, mapX, mapY), doorRow(dir, mapX, mapY), dir));
+        }
+
+        return mapBoard;
+    }
+
+    private void revealAdjacentRooms(RoomNode room) {
+        SectionConfig config = jsonLoader.getSectionConfig(activeSectionLayout.sectionId);
+        int w = config.gridWidth, h = config.gridHeight;
+        int[][] offsets = {{1,0},{-1,0},{0,1},{0,-1}};
+        for (int[] o : offsets) {
+            int nx = room.gridX + o[0], ny = room.gridY + o[1];
+            if (nx >= 0 && nx < w && ny >= 0 && ny < h && activeSectionLayout.grid[nx][ny] != null) {
+                activeSectionLayout.grid[nx][ny].revealed = true;
+            }
+        }
+    }
+
+    private void repositionKingOnCachedBoard(RoomNode node, Direction entryFrom) {
+        int[] entry = entryPosition(entryFrom, node.mapX, node.mapY);
+        int entryX = entry[0], entryY = entry[1];
+
+        if (node.kingExitCol >= 0) {
+            node.board.getTiles().get(node.kingExitCol).get(node.kingExitRow).setPiece(null);
+        }
+
+        // Clear whatever occupies the entry tile — the player must be able to land there
+        io.github.chess_sequel.engine.pieces.Piece occupant =
+                node.board.getTiles().get(entryX).get(entryY).getPiece();
+        if (occupant != null && occupant != player.getLeadPiece()) {
+            node.board.getTiles().get(entryX).get(entryY).setPiece(null);
+        }
+
+        player.setLeadPieceX(entryX);
+        player.setLeadPieceY(entryY);
+        player.getLeadPiece().setCol(entryX);
+        player.getLeadPiece().setRow(entryY);
+        node.board.getTiles().get(entryX).get(entryY).setPiece(player.getLeadPiece());
+    }
+
+    // -------------------------------------------------------------------------
+    // Quest and persistent data
+    // -------------------------------------------------------------------------
+
+    public PersistentData getPersistentData() { return persistentData; }
+
+    /**
+     * Flags a passive condition as met (clearSection, defeat, goTo).
+     * Persists immediately. The NPC will acknowledge it on the next conversation.
+     */
+    public void flagConditionMet(String type, String target) {
+        switch (type) {
+            case "clearSection":
+                if (!persistentData.clearedSections.contains(target))
+                    persistentData.clearedSections.add(target);
+                break;
+            case "defeat":
+                if (!persistentData.defeatedEnemies.contains(target))
+                    persistentData.defeatedEnemies.add(target);
+                break;
+            case "goTo":
+                if (!persistentData.visitedLocations.contains(target))
+                    persistentData.visitedLocations.add(target);
+                break;
+        }
+        SaveManager.save(persistentData);
+    }
+
+    /** Returns true if the given quest condition is currently satisfied. */
+    public boolean isConditionMet(QuestCondition cond) {
+        if (cond == null || "none".equals(cond.type)) return true;
+        switch (cond.type) {
+            case "clearSection": return persistentData.hasClearedSection(cond.target);
+            case "defeat":       return persistentData.hasDefeated(cond.target);
+            case "goTo":         return persistentData.hasVisited(cond.target);
+            // talkTo and giveItem are triggered actively in dialogue — treat as met when checked here
+            default: return false;
+        }
+    }
+
+    /**
+     * Called when the player starts talking to a quest NPC.
+     * Returns the appropriate dialogue for their current step:
+     * readyDialogue if the condition is met and reward is pending, pendingDialogue otherwise.
+     * Returns null if this NPC has no quest definition.
+     */
+    public Dialogue getQuestDialogue(String npcId) {
+        NpcQuestDef def = jsonLoader.getQuestDef(npcId);
+        if (def == null) return null;
+        NpcQuestState state = persistentData.getOrCreateNpcState(npcId);
+        if (state.step >= def.steps.size()) return null;
+
+        QuestStep step = def.steps.get(state.step);
+
+        // talkTo condition: talking to this NPC IS the trigger — mark it met now
+        if ("talkTo".equals(step.condition.type) && npcId.equals(step.condition.target)) {
+            flagConditionMet("talkTo", npcId);
+        }
+
+        boolean conditionMet = isConditionMet(step.condition);
+        if (conditionMet && !state.rewardClaimed && step.readyDialogue != null) {
+            return step.readyDialogue;
+        }
+        return step.pendingDialogue;
+    }
+
+    /**
+     * Called after a quest NPC's dialogue resolves. If their condition was met,
+     * gives the reward and advances to the next step.
+     */
+    public void resolveQuestDialogue(String npcId) {
+        NpcQuestDef def = jsonLoader.getQuestDef(npcId);
+        if (def == null) return;
+        NpcQuestState state = persistentData.getOrCreateNpcState(npcId);
+        if (state.step >= def.steps.size()) return;
+
+        QuestStep step = def.steps.get(state.step);
+        boolean conditionMet = isConditionMet(step.condition)
+                || ("talkTo".equals(step.condition.type) && npcId.equals(step.condition.target));
+
+        if (conditionMet && !state.rewardClaimed) {
+            if (step.reward != null) handleRewards(step.reward);
+            state.rewardClaimed = true;
+            state.step++;
+            SaveManager.save(persistentData);
+        }
+    }
+
+    /** Returns which location this NPC should be at given their current quest step. */
+    public String getNpcLocation(String npcId) {
+        NpcQuestDef def = jsonLoader.getQuestDef(npcId);
+        if (def == null) return null;
+        int step = persistentData.getNpcStep(npcId);
+        if (step >= def.steps.size()) return def.steps.get(def.steps.size() - 1).location;
+        return def.steps.get(step).location;
+    }
+
+    private static RoomVariant pickCompatibleVariant(List<RoomVariant> variants, java.util.Set<Direction> requiredDoors) {
+        List<RoomVariant> compatible = new ArrayList<>();
+        for (RoomVariant v : variants) {
+            if (v.possibleDoors == null) {
+                compatible.add(v);
+            } else {
+                boolean ok = true;
+                for (Direction d : requiredDoors) {
+                    if (!v.possibleDoors.contains(d.name())) { ok = false; break; }
+                }
+                if (ok) compatible.add(v);
+            }
+        }
+        if (compatible.isEmpty()) compatible = variants; // fallback: any variant
+        return compatible.get((int)(Math.random() * compatible.size()));
+    }
+
+    private static int[] entryPosition(Direction entryFrom, int mapX, int mapY) {
+        if (entryFrom == null) return new int[]{ mapX / 2, mapY / 2 };
+        switch (entryFrom) {
+            case EAST:  return new int[]{ mapX - 2, mapY / 2 };
+            case WEST:  return new int[]{ 1,        mapY / 2 };
+            case NORTH: return new int[]{ mapX / 2, mapY - 2 };
+            case SOUTH: return new int[]{ mapX / 2, 1        };
+            default:    return new int[]{ mapX / 2, mapY / 2 };
+        }
+    }
+
+    private static int doorCol(Direction dir, int mapX, int mapY) {
+        switch (dir) {
+            case EAST:  return mapX - 1;
+            case WEST:  return 0;
+            default:    return mapX / 2;
+        }
+    }
+
+    private static int doorRow(Direction dir, int mapX, int mapY) {
+        switch (dir) {
+            case NORTH: return mapY - 1;
+            case SOUTH: return 0;
+            default:    return mapY / 2;
+        }
     }
 
 }

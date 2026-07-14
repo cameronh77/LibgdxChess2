@@ -6,7 +6,7 @@ public class DialogueNode {
     public String id;
     public ArrayList<String> lines;
     public ArrayList<DialogueChoice> choices;
-    public String outcome;   // "combat", "leave", or null
+    public String outcome;   // "combat", "remove", "leave", or null
     public String setEntry;  // shifts the entry pointer for next interaction
     public Rewards reward;   // applied when this node resolves
 }

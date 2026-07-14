@@ -9,4 +9,5 @@ public enum GameState {
     NEUTRAL,
     BOARD_STATE_CHANGED,
     MATCH_WON,
+    GO_TO_KING_SELECTION,
 }

@@ -1,0 +1,118 @@
+[
+  {
+    "npcId": "library-keeper",
+    "steps": [
+      {
+        "location": "strategy",
+        "condition": { "type": "talkTo", "target": "library-keeper" },
+        "pendingDialogue": {
+          "entry": "start",
+          "nodes": [
+            {
+              "id": "start",
+              "lines": [
+                "Another one who found their way here.",
+                "These records contain everything — the pillars, the pieces, the one who came before you.",
+                "Ask your questions."
+              ],
+              "choices": [
+                { "text": "What are the pillars?", "next": "pillars" },
+                { "text": "Who came before me?",   "next": "before"  },
+                { "text": "I need to go.",          "next": "leave"   }
+              ]
+            },
+            {
+              "id": "pillars",
+              "lines": [
+                "War. Class. Order. Balance.",
+                "Four constants that hold this world together.",
+                "Balance was shattered. Someone is holding the pieces together.",
+                "That someone is running out of time."
+              ],
+              "choices": [
+                { "text": "Who is it?",    "next": "who"   },
+                { "text": "I need to go.", "next": "leave" }
+              ]
+            },
+            {
+              "id": "who",
+              "lines": ["Some questions have answers that change everything.", "Find out for yourself."],
+              "outcome": "leave"
+            },
+            {
+              "id": "before",
+              "lines": [
+                "Someone just like you. Summoned. Confused.",
+                "They got as far as the throne room.",
+                "I don't know why they stopped."
+              ],
+              "outcome": "leave"
+            },
+            {
+              "id": "leave",
+              "lines": ["I'll be moving my records somewhere safer. Find me there."],
+              "outcome": "leave"
+            }
+          ]
+        },
+        "readyDialogue": null,
+        "reward": null
+      },
+      {
+        "location": "hub",
+        "condition": { "type": "clearSection", "target": "war" },
+        "pendingDialogue": {
+          "entry": "start",
+          "nodes": [
+            {
+              "id": "start",
+              "lines": [
+                "I've moved my records here. Safer.",
+                "There's something I need from the war section — a commander's seal.",
+                "Clear it and bring proof."
+              ],
+              "choices": [
+                { "text": "I'll do it.", "next": "leave" },
+                { "text": "Not yet.",    "next": "leave" }
+              ]
+            },
+            { "id": "leave", "outcome": "leave" }
+          ]
+        },
+        "readyDialogue": {
+          "entry": "start",
+          "nodes": [
+            {
+              "id": "start",
+              "lines": [
+                "You cleared it.",
+                "The records are complete. Here — this knowledge is yours."
+              ],
+              "choices": [
+                { "text": "Thank you.", "next": "leave" }
+              ]
+            },
+            { "id": "leave", "outcome": "leave" }
+          ]
+        },
+        "reward": { "currency": 15, "powerChoices": ["power-bouncing-bishops", "power-all-passant"] }
+      },
+      {
+        "location": "hub",
+        "condition": { "type": "none", "target": "" },
+        "pendingDialogue": {
+          "entry": "start",
+          "nodes": [
+            {
+              "id": "start",
+              "lines": ["You know where to find me if you have questions."],
+              "outcome": "leave"
+            }
+          ]
+        },
+        "readyDialogue": null,
+        "reward": null
+      }
+    ]
+  }
+]

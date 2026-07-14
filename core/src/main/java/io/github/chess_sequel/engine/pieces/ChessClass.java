@@ -2,7 +2,10 @@ package io.github.chess_sequel.engine.pieces;
 
 public enum ChessClass {
     CLASSIC("classic"),
-    GOBLIN("goblin");
+    GOBLIN("goblin"),
+    STRATEGY("strategy"),
+    CONFLICT("conflict"),
+    LOSS("loss");
 
     private final String type;
 

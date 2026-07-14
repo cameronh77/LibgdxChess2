@@ -187,6 +187,7 @@ public class BoardInput extends InputAdapter {
                                     ((BotPlayer) boardAtPower.getBotPlayer()).onLeaderCaptured(boardAtPower);
                                 } else {
                                     boardAtPower.getBotPlayer().takeTurn(boardAtPower);
+                                    resolveStartOfTurnMoves((MatchBoard) boardAtPower);
                                 }
                             }
                         }
@@ -254,6 +255,7 @@ public class BoardInput extends InputAdapter {
                                 ((BotPlayer) boardAtMove.getBotPlayer()).onLeaderCaptured(boardAtMove);
                             } else {
                                 boardAtMove.getBotPlayer().takeTurn(boardAtMove);
+                                resolveStartOfTurnMoves((MatchBoard) boardAtMove);
                             }
                         }
                     }
@@ -298,6 +300,24 @@ public class BoardInput extends InputAdapter {
         hoverScreenX = screenX;
         hoverScreenY = screenY;
         return false;
+    }
+
+    private void resolveStartOfTurnMoves(MatchBoard matchBoard) {
+        for (io.github.chess_sequel.engine.pieces.Piece p : new java.util.ArrayList<>(matchBoard.getPieces())) {
+            if (p.isBlack() != matchBoard.getWhiteToMove()) continue;
+            Move autoMove = p.onTurnStart(matchBoard);
+            if (autoMove != null) {
+                autoMove.execute();
+                if (autoMove.endsTurn()) {
+                    if (autoMove.getCapturedPiece() != null && autoMove.getCapturedPiece() == matchBoard.getBotPlayer().getLeadPiece()) {
+                        ((BotPlayer) matchBoard.getBotPlayer()).onLeaderCaptured(matchBoard);
+                    } else {
+                        matchBoard.getBotPlayer().takeTurn(matchBoard);
+                    }
+                }
+                break;
+            }
+        }
     }
 
     public Piece getHoveredPiece() { return hoveredPiece; }

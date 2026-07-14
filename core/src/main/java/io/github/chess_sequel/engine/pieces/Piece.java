@@ -176,4 +176,13 @@ public abstract class Piece {
     public void onStart(Board board){
 
     }
+
+    /** Returns a move to execute automatically at the start of this piece's turn, or null if none. */
+    public Move onTurnStart(Board board) { return null; }
+
+    /** Called after any move executes on the board. Override to react to other pieces moving. */
+    public void postMove(Move move, Board board) {}
+
+    /** Called when any move is undone. Must mirror postMove exactly. */
+    public void undoPostMove(Move move, Board board) {}
 }

@@ -1,0 +1,299 @@
+[
+  {
+    "sectionId": "strategy",
+    "roomType": "combat",
+    "variants": [
+      {
+        "variantId": "strategy-combat-a",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": [
+          { "type": "enemy",          "ref": "strategy-grunt",  "x": 1, "y": 3 },
+          { "type": "enemy",          "ref": "strategy-patrol", "x": 3, "y": 1 },
+          { "type": "empty-bookcase", "x": 1, "y": 1 },
+          { "type": "empty-bookcase", "x": 3, "y": 3 }
+        ]
+      },
+      {
+        "variantId": "strategy-combat-b",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": [
+          { "type": "enemy",          "ref": "strategy-captain", "x": 1, "y": 1 },
+          { "type": "empty-bookcase", "x": 3, "y": 1 },
+          { "type": "empty-bookcase", "x": 3, "y": 3 }
+        ]
+      },
+      {
+        "variantId": "strategy-combat-c",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": [
+          { "type": "enemy",          "ref": "strategy-grunt",  "x": 3, "y": 3 },
+          { "type": "empty-bookcase", "x": 1, "y": 3 },
+          { "type": "empty-bookcase", "x": 3, "y": 1 }
+        ]
+      }
+    ],
+    "enemies": [
+      {
+        "enemyId": "strategy-grunt",
+        "fixed": true,
+        "enemyLayout": [
+          { "piece": "goblin-pawn", "x": 1, "y": 7 },
+          { "piece": "goblin-pawn", "x": 5, "y": 7 }
+        ],
+        "dialogue": {
+          "entry": "start",
+          "nodes": [
+            {
+              "id": "start",
+              "lines": ["Your movements are predictable.", "I've already calculated every outcome."],
+              "choices": [
+                { "text": "Then you've already lost.", "next": "combat" }
+              ]
+            },
+            { "id": "combat", "outcome": "combat" }
+          ]
+        },
+        "rewards": { "currency": 3 }
+      },
+      {
+        "enemyId": "strategy-patrol",
+        "fixed": true,
+        "enemyLayout": [
+          { "piece": "goblin-drill", "x": 3, "y": 7 },
+          { "piece": "goblin-pawn",  "x": 0, "y": 6 }
+        ],
+        "dialogue": {
+          "entry": "start",
+          "nodes": [
+            {
+              "id": "start",
+              "lines": ["Every position has been mapped.", "You have nowhere to go that I haven't already seen."],
+              "choices": [
+                { "text": "Prove it.", "next": "combat" }
+              ]
+            },
+            { "id": "combat", "outcome": "combat" }
+          ]
+        },
+        "rewards": { "currency": 4 }
+      },
+      {
+        "enemyId": "strategy-captain",
+        "fixed": true,
+        "enemyLayout": [
+          { "piece": "toll-gate",   "x": 4, "y": 7 },
+          { "piece": "goblin-pawn", "x": 1, "y": 6 },
+          { "piece": "goblin-pawn", "x": 6, "y": 6 }
+        ],
+        "dialogue": {
+          "entry": "start",
+          "nodes": [
+            {
+              "id": "start",
+              "lines": ["I control this corridor.", "You will not pass without cost."],
+              "choices": [
+                { "text": "I'll pay in kind.", "next": "combat" }
+              ]
+            },
+            { "id": "combat", "outcome": "combat" }
+          ]
+        },
+        "rewards": { "currency": 5 }
+      }
+    ]
+  },
+  {
+    "sectionId": "strategy",
+    "roomType": "safe",
+    "variants": [
+      {
+        "variantId": "strategy-safe-a",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": []
+      }
+    ],
+    "enemies": []
+  },
+  {
+    "sectionId": "strategy",
+    "roomType": "rest",
+    "variants": [
+      {
+        "variantId": "strategy-rest-a",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": []
+      }
+    ],
+    "enemies": []
+  },
+  {
+    "sectionId": "strategy",
+    "roomType": "shop",
+    "variants": [
+      {
+        "variantId": "strategy-shop-a",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": [
+          { "type": "shopitem", "ref": "orb-passive",        "x": 1, "y": 1, "price": 9 },
+          { "type": "shopitem", "ref": "item-bomb",          "x": 2, "y": 2, "price": 3 },
+          { "type": "shopitem", "ref": "item-essence-horse", "x": 3, "y": 3, "price": 4 }
+        ]
+      }
+    ],
+    "enemies": []
+  },
+  {
+    "sectionId": "strategy",
+    "roomType": "boss",
+    "mapX": 8,
+    "mapY": 8,
+    "variants": [
+      {
+        "variantId": "strategy-boss-a",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": [
+          { "type": "enemy",          "ref": "strategy-commander", "x": 4, "y": 5 },
+          { "type": "empty-bookcase", "x": 1, "y": 2 },
+          { "type": "empty-bookcase", "x": 6, "y": 2 },
+          { "type": "empty-bookcase", "x": 1, "y": 5 },
+          { "type": "empty-bookcase", "x": 6, "y": 5 }
+        ]
+      }
+    ],
+    "enemies": [
+      {
+        "enemyId": "strategy-commander",
+        "fixed": true,
+        "enemyLayout": [
+          { "piece": "goblin-queen", "x": 4, "y": 7 },
+          { "piece": "goblin-drill", "x": 2, "y": 7 },
+          { "piece": "goblin-pawn",  "x": 0, "y": 6 },
+          { "piece": "goblin-pawn",  "x": 3, "y": 6 },
+          { "piece": "goblin-pawn",  "x": 6, "y": 6 }
+        ],
+        "dialogue": {
+          "entry": "start",
+          "nodes": [
+            {
+              "id": "start",
+              "lines": [
+                "You made it this far.",
+                "I'll admit — I didn't calculate for that.",
+                "No matter. Every path ends here."
+              ],
+              "choices": [
+                { "text": "Not mine.", "next": "combat" }
+              ]
+            },
+            { "id": "combat", "outcome": "combat" }
+          ]
+        },
+        "rewards": {
+          "currency": 10,
+          "powerChoices": ["power-bouncing-bishops", "power-all-passant", "power-panopticon"]
+        }
+      }
+    ]
+  },
+  {
+    "sectionId": "strategy",
+    "roomType": "library",
+    "mapX": 8,
+    "mapY": 8,
+    "variants": [
+      {
+        "variantId": "strategy-library-a",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": [
+          { "type": "enemy",         "ref": "library-keeper", "x": 4, "y": 4 },
+
+          { "type": "red-bookcase",  "x": 1, "y": 6 },
+          { "type": "red-bookcase",  "x": 2, "y": 6 },
+          { "type": "red-bookcase",  "x": 3, "y": 6 },
+          { "type": "red-bookcase",  "x": 5, "y": 6 },
+          { "type": "red-bookcase",  "x": 6, "y": 6 },
+          { "type": "red-bookcase",  "x": 1, "y": 5 },
+          { "type": "red-bookcase",  "x": 6, "y": 5 },
+          { "type": "red-bookcase",  "x": 1, "y": 3 },
+          { "type": "red-bookcase",  "x": 6, "y": 3 },
+          { "type": "red-bookcase",  "x": 1, "y": 2 },
+          { "type": "red-bookcase",  "x": 2, "y": 2 },
+          { "type": "red-bookcase",  "x": 3, "y": 2 },
+          { "type": "red-bookcase",  "x": 5, "y": 2 },
+          { "type": "red-bookcase",  "x": 6, "y": 2 },
+
+          { "type": "blue-bookcase",  "x": 3, "y": 3 },
+          { "type": "green-bookcase", "x": 5, "y": 3 }
+        ]
+      }
+    ],
+    "enemies": [
+      {
+        "enemyId": "library-keeper",
+        "fixed": true,
+        "enemyLayout": [
+          { "piece": "goblin-pawn", "x": 4, "y": 7 }
+        ],
+        "dialogue": {
+          "entry": "start",
+          "nodes": [
+            {
+              "id": "start",
+              "lines": [
+                "Another one who found their way here.",
+                "These records contain everything — the pillars, the pieces, the one who came before you.",
+                "Ask your questions."
+              ],
+              "choices": [
+                { "text": "What are the pillars?",    "next": "pillars" },
+                { "text": "Who came before me?",      "next": "before"  },
+                { "text": "I need to go.",            "next": "leave"   }
+              ]
+            },
+            {
+              "id": "pillars",
+              "lines": [
+                "War. Class. Order. Balance.",
+                "Four constants that hold this world together.",
+                "Balance was shattered. Someone is holding the pieces together.",
+                "That someone is running out of time."
+              ],
+              "choices": [
+                { "text": "Who is it?",    "next": "who"   },
+                { "text": "I need to go.", "next": "leave" }
+              ]
+            },
+            {
+              "id": "who",
+              "lines": ["Some questions have answers that change everything.", "Find out for yourself."],
+              "outcome": "leave",
+              "setEntry": "met"
+            },
+            {
+              "id": "before",
+              "lines": [
+                "Someone just like you. Summoned. Confused.",
+                "They got as far as the throne room.",
+                "I don't know why they stopped."
+              ],
+              "outcome": "leave",
+              "setEntry": "met"
+            },
+            {
+              "id": "leave",
+              "lines": ["Come back when you have questions."],
+              "outcome": "leave",
+              "setEntry": "met"
+            },
+            {
+              "id": "met",
+              "lines": ["You know where to find me."],
+              "outcome": "leave"
+            }
+          ]
+        },
+        "rewards": null
+      }
+    ]
+  }
+]

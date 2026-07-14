@@ -71,33 +71,14 @@ public class WinOverlay extends Table {
             }
         }
 
-        // Power choice — player picks one before continuing
-        final ShopEffect[] selectedPower = {null};
         if (rewards != null && rewards.powerChoices != null && !rewards.powerChoices.isEmpty()) {
-            card.add(new Label("Choose a power:", titleStyle)).padBottom(8).padTop(8);
-            card.row();
-
-            Table choiceRow = new Table();
             for (String id : rewards.powerChoices) {
                 ShopEffect effect = KingPowerFactory.createEffect(id);
                 if (effect == null) continue;
-
-                TextButton choiceBtn = new TextButton(effect.getName(), btnStyle);
-                choiceBtn.addListener(new ChangeListener() {
-                    @Override
-                    public void changed(ChangeEvent event, Actor actor) {
-                        selectedPower[0] = effect;
-                        // Highlight selected, dim others
-                        for (com.badlogic.gdx.scenes.scene2d.Actor sibling : choiceRow.getChildren()) {
-                            sibling.setColor(sibling == choiceBtn ? Color.WHITE : new Color(0.55f, 0.55f, 0.55f, 1f));
-                        }
-                    }
-                });
-                choiceRow.add(choiceBtn).pad(6).minWidth(130).height(50);
+                card.add(new Label("Power gained: " + effect.getName(), rewardStyle)).left().padBottom(6);
+                card.row();
+                anyReward = true;
             }
-            card.add(choiceRow).padBottom(8);
-            card.row();
-            anyReward = true;
         }
 
         if (!anyReward) {
@@ -109,9 +90,6 @@ public class WinOverlay extends Table {
         continueBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if (selectedPower[0] != null) {
-                    selectedPower[0].apply(gameRun.getPlayer());
-                }
                 onContinue.run();
             }
         });

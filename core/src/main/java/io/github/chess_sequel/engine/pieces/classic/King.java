@@ -6,6 +6,7 @@ import io.github.chess_sequel.engine.location.board.AlterLayoutBoard;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Castling;
+import io.github.chess_sequel.engine.moves.InteractMove;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.ChessClass;
 import io.github.chess_sequel.engine.pieces.Piece;
@@ -128,6 +129,8 @@ public class King extends Piece {
                 boolean blockedByTerrain = dest.getInteractable() != null && !dest.getInteractable().isPassable();
                 if (!blockedByPiece && !blockedByTerrain) {
                     trueMoves.add(move);
+                } else if (!blockedByPiece && blockedByTerrain) {
+                    trueMoves.add(new InteractMove(this, move.getNewX(), move.getNewY(), board));
                 } else if (!ignoreCheck) {
                     System.out.println("[KING] filtered (" + move.getNewX() + "," + move.getNewY() + ") blockedByPiece=" + blockedByPiece + " blockedByTerrain=" + blockedByTerrain);
                 }

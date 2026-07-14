@@ -8,4 +8,6 @@ public class EnemyData {
     public ArrayList<PiecePlacement> enemyLayout;
     public Dialogue dialogue;
     public Rewards rewards;
+    public String defeatBehaviour; // "remove" (default), "dialogue", "stay"
+    public Dialogue defeatDialogue; // used when defeatBehaviour is "dialogue"
 }

@@ -87,9 +87,9 @@ public class BotPlayer extends Player{
         for(Piece piece: pieces) {
             moves.addAll(piece.generateMoves(board, false));
         }
+        capturesFirst(moves);
 
         for (Move move : moves) {
-            System.out.println("This is a move: x "+move.getNewX() + "  y  " + move.getNewY());
             boolean wasWhiteToMove = board.getWhiteToMove();
             move.execute();
             boolean turnFlipped = board.getWhiteToMove() != wasWhiteToMove;
@@ -113,7 +113,7 @@ public class BotPlayer extends Player{
 
         // Base case – leaf node or game over
         if (depth == 0) {
-            return BoardEvaluator.evaluatePosition(board, board.getWhiteToMove());
+            return BoardEvaluator.evaluatePosition(board);
         }
 
         // MAXIMIZING PLAYER (white)
@@ -126,8 +126,9 @@ public class BotPlayer extends Player{
                 moves.addAll(piece.generateMoves(board, false));
             }
             if(moves.size()==0){
-                return BoardEvaluator.evaluatePosition(board, board.getWhiteToMove());
+                return BoardEvaluator.evaluatePosition(board);
             }
+            capturesFirst(moves);
             for (Move move : moves) {
                 boolean wasWhiteToMove = board.getWhiteToMove();
                 move.execute();
@@ -156,8 +157,9 @@ public class BotPlayer extends Player{
                 moves.addAll(piece.generateMoves(board, false));
             }
             if(moves.size()==0){
-                return BoardEvaluator.evaluatePosition(board, board.getWhiteToMove());
+                return BoardEvaluator.evaluatePosition(board);
             }
+            capturesFirst(moves);
             for (Move move : moves) {
                 boolean wasWhiteToMove = board.getWhiteToMove();
                 move.execute();
@@ -192,6 +194,8 @@ public class BotPlayer extends Player{
         return defeated;
     }
 
-
+    private static void capturesFirst(ArrayList<Move> moves) {
+        moves.sort((a, b) -> Boolean.compare(b.getCapturedPiece() != null, a.getCapturedPiece() != null));
+    }
 
 }

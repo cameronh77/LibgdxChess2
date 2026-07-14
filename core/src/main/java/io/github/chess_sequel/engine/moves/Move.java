@@ -99,6 +99,10 @@ public class Move {
 
         board.tick();
 
+        for (Piece piece : new ArrayList<>(board.getPieces())) {
+            piece.postMove(this, board);
+        }
+
     }
 
 
@@ -138,6 +142,10 @@ public class Move {
         }
 
         board.setTurnCondition(previousCondition);
+
+        for (Piece piece : new ArrayList<>(board.getPieces())) {
+            piece.undoPostMove(this, board);
+        }
 
         board.untick();
 

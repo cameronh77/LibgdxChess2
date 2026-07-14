@@ -23,6 +23,8 @@ import io.github.chess_sequel.engine.pieces.Piece;
 import io.github.chess_sequel.engine.player.Player;
 import io.github.chess_sequel.engine.roster.KingDef;
 import io.github.chess_sequel.engine.roster.KingRoster;
+import io.github.chess_sequel.engine.save.PersistentData;
+import io.github.chess_sequel.engine.save.SaveManager;
 import io.github.chess_sequel.gui.TextureCache;
 
 import java.util.List;
@@ -52,6 +54,11 @@ public class KingSelectionScreen implements Screen {
 
     @Override
     public void show() {
+        PersistentData saved = SaveManager.load();
+        selectedKing   = Math.max(0, Math.min(saved.selectedKingIndex,  KingRoster.KINGS.size() - 1));
+        KingDef savedDef = KingRoster.KINGS.get(selectedKing);
+        selectedPreset = Math.max(0, Math.min(saved.selectedPresetIndex, savedDef.presets.size() - 1));
+
         font = new BitmapFont();
 
         stage = new Stage(new ScreenViewport());
@@ -174,6 +181,11 @@ public class KingSelectionScreen implements Screen {
     }
 
     private void confirm() {
+        PersistentData data = SaveManager.load();
+        data.selectedKingIndex  = selectedKing;
+        data.selectedPresetIndex = selectedPreset;
+        SaveManager.save(data);
+
         List<Piece> pieces = KingRoster.KINGS.get(selectedKing).presets.get(selectedPreset).build();
         Player player = new Player();
         player.setTeam(pieces);

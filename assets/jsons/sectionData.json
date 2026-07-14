@@ -1,0 +1,23 @@
+[
+  {
+    "sectionId": "strategy",
+    "pathId": "war",
+    "gridWidth": 10,
+    "gridHeight": 10,
+    "mapX": 5,
+    "mapY": 5,
+    "combatX": 8,
+    "combatY": 8,
+    "spawnRoomType": "safe",
+    "targetRooms": 12,
+    "guaranteedRooms": [
+      { "type": "boss",    "guaranteed": true,  "chance": 1.0 },
+      { "type": "shop",    "guaranteed": true,  "chance": 1.0 },
+      { "type": "library", "guaranteed": true,  "chance": 1.0 }
+    ],
+    "roomPool": [
+      { "type": "combat", "weight": 5, "max": 8 },
+      { "type": "rest",   "weight": 1, "max": 2 }
+    ]
+  }
+]

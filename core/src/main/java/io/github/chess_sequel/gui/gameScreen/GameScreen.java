@@ -88,6 +88,35 @@ public class GameScreen implements Screen {
         buildUILayout();
     }
 
+    /** Launches gameplay from a pre-built {@link GameRun} (e.g. the test sandbox screen). */
+    public GameScreen(ProjectName game, GameRun testRun) {
+        game.viewport.apply();
+        uiStage = new Stage();
+        dragAndDrop = new DragAndDrop();
+
+        rootTable = new Table();
+        rootTable.setFillParent(true);
+        uiStage.addActor(rootTable);
+
+        gameRunInstance = testRun;
+        board = new GameBoard(gameRunInstance, game);
+
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, board.gameRun.getCurrentBoard().boardX, board.gameRun.getCurrentBoard().boardY);
+
+        this.input = new BoardInput(board, board.gameRun);
+        boardActor = new BoardActor(board, input, dragAndDrop);
+        this.input.setBoardActor(boardActor);
+
+        InputMultiplexer mux = new InputMultiplexer();
+        mux.addProcessor(uiStage);
+        mux.addProcessor(input);
+        Gdx.input.setInputProcessor(mux);
+
+        this.game = game;
+        buildUILayout();
+    }
+
     @Override
     public void render(float delta) {
         ScreenUtils.clear(Color.BLACK);

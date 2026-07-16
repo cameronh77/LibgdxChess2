@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -27,12 +28,14 @@ public class MenuScreen implements Screen {
     Stage stage;
     ImageButton playButton, piecetiaryButton, optionsMenu, exitButton;
     ProjectName game;
+    private BitmapFont font;
+
     public MenuScreen(ProjectName gameEntry){
         this.game = gameEntry;
-
     }
 
     public void show(){
+        font = new BitmapFont();
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
@@ -41,7 +44,6 @@ public class MenuScreen implements Screen {
         stage.addActor(table);
 
         playButton = new ImageButton(game.skin.getDrawable("play"));
-
         playButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -51,8 +53,21 @@ public class MenuScreen implements Screen {
         piecetiaryButton = new ImageButton(game.skin.getDrawable("piecetiary"));
         exitButton = new ImageButton(game.skin.getDrawable("exit"));
 
+        TextButton.TextButtonStyle tbStyle = new TextButton.TextButtonStyle();
+        tbStyle.font = font;
+        tbStyle.fontColor = Color.WHITE;
+        tbStyle.up = game.skin.getDrawable("blue");
+        TextButton testButton = new TextButton("Test Board", tbStyle);
+        testButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new TestScreen(game));
+            }
+        });
+
         table.add(playButton).pad(10).width(300).height(200).row();
         table.add(piecetiaryButton).pad(10).width(300).height(200).row();
+        table.add(testButton).pad(10).width(300).height(60).row();
         table.add(exitButton).pad(10).width(300).height(200).row();
     }
 
@@ -100,5 +115,6 @@ public class MenuScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
+        if (font != null) font.dispose();
     }
 }

@@ -87,6 +87,12 @@ public class GameRun {
         enterHub();
     }
 
+    /** Test-only constructor: skips all loading and hub setup, pushes the pre-built board directly. */
+    public GameRun(Player player, io.github.chess_sequel.engine.location.board.MatchBoard testBoard) {
+        this.player = player;
+        gameBoards.push(testBoard);
+    }
+
     /** Pushes a new {@link io.github.chess_sequel.engine.location.board.MatchBoard} for combat against {@code opponent}. */
     public void addMatchBoard(BotPlayer opponent){
         System.out.println("Adding match board");
@@ -259,6 +265,10 @@ public class GameRun {
     /** Pops the top board (e.g. after a match ends) and restores the king's pre-match position. */
     public void popBoard(){
         gameBoards.pop();
+        if (gameBoards.isEmpty()) {
+            gameState = GameState.GO_TO_KING_SELECTION;
+            return;
+        }
         int rx = player.getLeadPieceX();
         int ry = player.getLeadPieceY();
         player.getLeadPiece().setCol(rx);

@@ -4,6 +4,7 @@ import io.github.chess_sequel.engine.GameRun;
 import io.github.chess_sequel.engine.GameState;
 import io.github.chess_sequel.engine.jsonTypes.PiecePlacement;
 import io.github.chess_sequel.engine.jsonTypes.Rewards;
+import java.util.List;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Move;
@@ -33,6 +34,19 @@ public class BotPlayer extends Player{
         this.gameRun = gameRun;
         this.rewards = rewards;
     }
+
+    /** Test-only constructor: pieces are pre-built; call {@link #setGameRun} before play begins. */
+    public BotPlayer(int skillLevel, java.util.List<Piece> preBuiltPieces) {
+        this.skillLevel = skillLevel;
+        this.rewards = new Rewards();
+        this.pieces.addAll(preBuiltPieces);
+        for (Piece p : this.pieces) {
+            if (p instanceof io.github.chess_sequel.engine.pieces.classic.King) { leadPiece = p; break; }
+        }
+        if (leadPiece == null && !this.pieces.isEmpty()) leadPiece = this.pieces.get(0);
+    }
+
+    public void setGameRun(GameRun gr) { this.gameRun = gr; }
 
     @Override
     public void takeTurn(Board board){

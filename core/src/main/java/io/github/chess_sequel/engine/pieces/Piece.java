@@ -6,9 +6,13 @@ import io.github.chess_sequel.engine.location.board.AlterLayoutBoard;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.moves.AlterLayoutMove;
 import io.github.chess_sequel.engine.moves.Move;
+import io.github.chess_sequel.engine.powers.kingPower.ActiveKingPower;
+import io.github.chess_sequel.engine.powers.kingPower.PassiveKingPower;
+import io.github.chess_sequel.engine.powers.kingPower.PreKingPower;
 import io.github.chess_sequel.engine.powers.pieceAltering.AlterMovePower;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Base class for all chess pieces. Tracks board position ({@code col}/{@code row}),
@@ -20,6 +24,42 @@ public abstract class Piece {
     protected String filePath;
     protected Boolean isFirstMove = true;
     protected ArrayList<AlterMovePower> alterMovePowers = new ArrayList<>();
+
+    protected Board activeBoard;
+    private final List<ActiveKingPower>  activePowers  = new ArrayList<>();
+    private final List<ActiveKingPower>  benchActivePowers = new ArrayList<>();
+    private final List<PassiveKingPower> passivePowers = new ArrayList<>();
+    private final List<PreKingPower>     preGamePowers = new ArrayList<>();
+
+    public void addActivePower(ActiveKingPower power) {
+        if (activePowers.size() < 3) activePowers.add(power);
+        else benchActivePowers.add(power);
+    }
+    public void addPassivePower(PassiveKingPower power)  { passivePowers.add(power); }
+    public void addPreGamePower(PreKingPower power)      { preGamePowers.add(power); }
+    public List<ActiveKingPower>  getActivePowers()     { return activePowers; }
+    public List<ActiveKingPower>  getBenchActivePowers() { return benchActivePowers; }
+    public List<PassiveKingPower> getPassivePowers()    { return passivePowers; }
+    public List<PreKingPower>     getPreGamePowers()    { return preGamePowers; }
+
+    public void swapChosen(int i, int j) {
+        if (i == j || i >= activePowers.size() || j >= activePowers.size()) return;
+        ActiveKingPower tmp = activePowers.get(i);
+        activePowers.set(i, activePowers.get(j));
+        activePowers.set(j, tmp);
+    }
+
+    public void swapChosenWithBench(int chosenIdx, int benchIdx) {
+        if (chosenIdx >= activePowers.size() || benchIdx >= benchActivePowers.size()) return;
+        ActiveKingPower tmp = activePowers.get(chosenIdx);
+        activePowers.set(chosenIdx, benchActivePowers.get(benchIdx));
+        benchActivePowers.set(benchIdx, tmp);
+    }
+
+    public void moveChosenToBench(int chosenIdx) {
+        if (chosenIdx >= activePowers.size()) return;
+        benchActivePowers.add(activePowers.remove(chosenIdx));
+    }
 
     public boolean isBlack() {
         return isBlack;
@@ -144,15 +184,28 @@ public abstract class Piece {
         return trueRow;
     }
 
-    /** Called when this piece captures {@code piece}. Override to apply on-capture effects. */
+    /**
+     * Called when THIS piece is captured by {@code piece}.
+     * Base implementation removes any passive powers from the board.
+     * Subclasses that override must call {@code super.onCapture(piece)} to preserve power cleanup.
+     */
     public void onCapture(Piece piece){
-
+        if (activeBoard == null || passivePowers.isEmpty()) return;
+        for (PassiveKingPower power : passivePowers) activeBoard.removeAura(power);
     }
 
-    /** Reverts any effect applied in {@link #onCapture} — called when a move is undone. */
+    /**
+     * Reverts {@link #onCapture} — called when a move is undone.
+     * Subclasses that override must call {@code super.undoOnCapture(piece)}.
+     */
     public void undoOnCapture(Piece piece){
-
+        if (activeBoard == null || passivePowers.isEmpty()) return;
+        for (PassiveKingPower power : passivePowers) activeBoard.addAura(power);
     }
+
+    /** Convenience alias used by King so it can call its parent's capture logic explicitly. */
+    protected final void onCaptured()     { onCapture(null); }
+    protected final void undoOnCaptured() { undoOnCapture(null); }
 
     public ArrayList<AlterMovePower> getAlterMovePowers(){
         return alterMovePowers;
@@ -170,11 +223,10 @@ public abstract class Piece {
         }
     }
 
-    /**
-     * If the piece needs to do anything at the start of the match
-     */
+    /** Registers passive powers as board auras. Subclasses should call {@code super.onStart(board)} if they override this. */
     public void onStart(Board board){
-
+        this.activeBoard = board;
+        for (PassiveKingPower power : passivePowers) board.addAura(power);
     }
 
     /** Returns a move to execute automatically at the start of this piece's turn, or null if none. */

@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -33,11 +34,13 @@ public class LeftPanel extends Table {
 
     private final GameRun gameRun;
     private final ProjectName game;
+    private final Runnable onPowerLoadout;
     private final BitmapFont font = new BitmapFont();
 
-    public LeftPanel(GameRun gameRun, ProjectName game) {
+    public LeftPanel(GameRun gameRun, ProjectName game, Runnable onPowerLoadout) {
         this.gameRun = gameRun;
         this.game = game;
+        this.onPowerLoadout = onPowerLoadout;
         setBackground(game.skin.getDrawable("blue"));
         top();
     }
@@ -50,14 +53,28 @@ public class LeftPanel extends Table {
                 return;
             case ALTER_LAYOUT:
                 addAlterLayoutButton();
+                addPowerLoadoutButton();
                 addPreGamePowerButtons();
                 break;
             case MAP:
             case SHOP:
                 addAlterLayoutButton();
+                addPowerLoadoutButton();
                 addConsumableButtons();
                 break;
         }
+    }
+
+    private void addPowerLoadoutButton() {
+        Button.ButtonStyle btnStyle = new Button.ButtonStyle();
+        btnStyle.up = game.skin.getDrawable("white");
+        Button btn = new Button(btnStyle);
+        btn.add(new Label("Powers", new Label.LabelStyle(font, Color.BLACK))).pad(6);
+        btn.addListener(new ChangeListener() {
+            @Override public void changed(ChangeEvent event, Actor actor) { onPowerLoadout.run(); }
+        });
+        row();
+        add(btn).width(100).pad(4).top();
     }
 
     private void addAlterLayoutButton() {

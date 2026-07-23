@@ -160,6 +160,9 @@ public class Move {
         return movingPiece;
     }
 
+    public int getOldX() { return oldX; }
+    public int getOldY() { return oldY; }
+
     public int getNewX() {
         return newX;
     }

@@ -8,7 +8,8 @@ import io.github.chess_sequel.engine.pieces.war.strategy.TrapPawn;
 
 /**
  * Places a {@link TrapAura} on a diagonal tile without moving the pawn itself.
- * If a trap was already set, it is removed first.
+ * If a trap was already set, it is removed first (unless {@code keepPreviousTrap} is true,
+ * which lets the Persistence power accumulate multiple traps per pawn).
  * newX/newY stay at the pawn's position so no movement occurs; trap coords are
  * stored separately and returned via getNewX/getNewY for UI tile highlighting.
  */
@@ -18,14 +19,20 @@ public class TrapMove extends Move {
     private final TrapAura previousTrap;
     private final int trapCol;
     private final int trapRow;
+    final boolean keepPreviousTrap;
 
     public TrapMove(TrapPawn pawn, int trapCol, int trapRow, Board board) {
+        this(pawn, trapCol, trapRow, board, false);
+    }
+
+    protected TrapMove(TrapPawn pawn, int trapCol, int trapRow, Board board, boolean keepPreviousTrap) {
         super(pawn, pawn.getCol(), pawn.getRow(), board);
         this.capturedPiece = null;
         this.trapCol = trapCol;
         this.trapRow = trapRow;
         this.newTrap = new TrapAura(pawn, trapCol, trapRow);
         this.previousTrap = pawn.getCurrentTrap();
+        this.keepPreviousTrap = keepPreviousTrap;
     }
 
     @Override public int getNewX() { return trapCol; }
@@ -35,7 +42,7 @@ public class TrapMove extends Move {
     public void execute() {
         previousCondition = board.getTurnCondition();
 
-        if (previousTrap != null) {
+        if (!keepPreviousTrap && previousTrap != null) {
             board.getBoardAuras().remove(previousTrap);
         }
 
@@ -57,7 +64,7 @@ public class TrapMove extends Move {
 
         board.getBoardAuras().remove(newTrap);
 
-        if (previousTrap != null) {
+        if (!keepPreviousTrap && previousTrap != null) {
             board.getBoardAuras().add(previousTrap);
         }
 

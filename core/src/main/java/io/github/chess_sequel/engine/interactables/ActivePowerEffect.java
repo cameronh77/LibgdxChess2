@@ -1,5 +1,6 @@
 package io.github.chess_sequel.engine.interactables;
 
+import io.github.chess_sequel.engine.pieces.Piece;
 import io.github.chess_sequel.engine.pieces.classic.King;
 import io.github.chess_sequel.engine.player.Player;
 import io.github.chess_sequel.engine.powers.kingPower.ActiveKingPower;
@@ -12,12 +13,12 @@ import java.util.function.Function;
  */
 public class ActivePowerEffect implements ShopEffect {
 
-    private final Function<King, ActiveKingPower> factory;
+    private final Function<Piece, ActiveKingPower> factory;
     private final String name;
     private final String iconPath;
     private final String description;
 
-    public ActivePowerEffect(Function<King, ActiveKingPower> factory, String name, String iconPath, String description) {
+    public ActivePowerEffect(Function<Piece, ActiveKingPower> factory, String name, String iconPath, String description) {
         this.factory = factory;
         this.name = name;
         this.iconPath = iconPath;

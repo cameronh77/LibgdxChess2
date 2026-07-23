@@ -6,6 +6,7 @@ public class EnemyData {
     public String enemyId;
     public boolean fixed;
     public ArrayList<PiecePlacement> enemyLayout;
+    public ArrayList<String> powers; // power IDs applied to the lead piece (first piece in enemyLayout)
     public Dialogue dialogue;
     public Rewards rewards;
     public String defeatBehaviour; // "remove" (default), "dialogue", "stay"

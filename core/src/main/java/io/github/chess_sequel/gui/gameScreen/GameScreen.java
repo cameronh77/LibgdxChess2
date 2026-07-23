@@ -51,6 +51,8 @@ public class GameScreen implements Screen {
     private RightPanel rightPanel;
     private BottomPanel bottomPanel;
     private WinOverlay winOverlay;
+    private MapOverlay mapOverlay;
+    private PowerLoadoutOverlay powerLoadoutOverlay;
 
     private final BitmapFont tooltipFont = new BitmapFont();
     private Table pieceTooltip;
@@ -111,6 +113,7 @@ public class GameScreen implements Screen {
 
         rightPanel.updateCurrency();
         updatePieceTooltip(delta);
+        updateMapOverlay();
 
         uiStage.act(delta);
         uiStage.draw();
@@ -177,7 +180,7 @@ public class GameScreen implements Screen {
     private void buildUILayout() {
         centerContainer = new Table();
 
-        leftPanel   = new LeftPanel(gameRunInstance, game);
+        leftPanel   = new LeftPanel(gameRunInstance, game, this::togglePowerLoadout);
         rightPanel  = new RightPanel(gameRunInstance, game, this);
         bottomPanel = new BottomPanel(gameRunInstance, game, input);
 
@@ -205,6 +208,30 @@ public class GameScreen implements Screen {
         rightPanel.refresh(current);
         bottomPanel.refresh(current);
         refreshBanner();
+    }
+
+    private void togglePowerLoadout() {
+        if (powerLoadoutOverlay != null) {
+            powerLoadoutOverlay.remove();
+            powerLoadoutOverlay = null;
+        } else {
+            powerLoadoutOverlay = new PowerLoadoutOverlay(gameRunInstance, game, () -> {
+                if (powerLoadoutOverlay != null) { powerLoadoutOverlay.remove(); powerLoadoutOverlay = null; }
+            });
+            uiStage.addActor(powerLoadoutOverlay);
+        }
+    }
+
+    private void updateMapOverlay() {
+        boolean wantMap = input.isShowingMap() && gameRunInstance.getActiveSectionLayout() != null;
+        if (wantMap && mapOverlay == null) {
+            mapOverlay = new MapOverlay(gameRunInstance);
+            uiStage.addActor(mapOverlay);
+        } else if (!wantMap && mapOverlay != null) {
+            mapOverlay.remove();
+            mapOverlay.dispose();
+            mapOverlay = null;
+        }
     }
 
     private void showWinOverlay() {

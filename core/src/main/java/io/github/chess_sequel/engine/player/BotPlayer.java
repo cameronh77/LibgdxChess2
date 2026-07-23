@@ -9,6 +9,7 @@ import io.github.chess_sequel.engine.location.board.MatchBoard;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.moves.TurnCondition;
 import io.github.chess_sequel.engine.pieces.*;
+import io.github.chess_sequel.engine.pieces.factories.KingPowerFactory;
 import io.github.chess_sequel.engine.pieces.factories.PieceFactory;
 
 import java.util.ArrayList;
@@ -27,11 +28,20 @@ public class BotPlayer extends Player{
     private Rewards rewards;
 
     public BotPlayer(GameRun gameRun, int skillLevel, ArrayList<PiecePlacement> army, Rewards rewards){
+        this(gameRun, skillLevel, army, rewards, null);
+    }
+
+    public BotPlayer(GameRun gameRun, int skillLevel, ArrayList<PiecePlacement> army, Rewards rewards, ArrayList<String> powers){
         this.skillLevel = skillLevel;
         this.army = army;
         this.createPieceList();
         this.gameRun = gameRun;
         this.rewards = rewards;
+        if (powers != null && leadPiece != null) {
+            for (String powerId : powers) {
+                KingPowerFactory.applyPowerToPiece(powerId, leadPiece);
+            }
+        }
     }
 
     @Override

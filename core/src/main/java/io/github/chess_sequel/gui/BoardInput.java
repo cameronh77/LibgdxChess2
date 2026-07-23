@@ -42,6 +42,8 @@ public class BoardInput extends InputAdapter {
     private Piece hoveredPiece = null;
     private float hoverScreenX, hoverScreenY;
 
+    private boolean showingMap = false;
+
     public BoardInput(GameBoard board, GameRun gameRun) {
         this.gameRun = gameRun;
         this.board = board;
@@ -188,6 +190,7 @@ public class BoardInput extends InputAdapter {
                                 } else {
                                     boardAtPower.getBotPlayer().takeTurn(boardAtPower);
                                     resolveStartOfTurnMoves((MatchBoard) boardAtPower);
+                                    checkIndirectLeaderCapture(boardAtPower);
                                 }
                             }
                         }
@@ -256,6 +259,7 @@ public class BoardInput extends InputAdapter {
                             } else {
                                 boardAtMove.getBotPlayer().takeTurn(boardAtMove);
                                 resolveStartOfTurnMoves((MatchBoard) boardAtMove);
+                                checkIndirectLeaderCapture(boardAtMove);
                             }
                         }
                     }
@@ -281,6 +285,69 @@ public class BoardInput extends InputAdapter {
         return true;
     }
 
+    public boolean isShowingMap() { return showingMap; }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        if (keycode == Input.Keys.TAB) {
+            showingMap = true;
+            return true;
+        }
+
+        if (keycode == Input.Keys.ENTER && gameRun.isDialogueActive()) {
+            String line = gameRun.getCurrentDialogueLine();
+            if (line != null) {
+                gameRun.advanceLine();
+            } else {
+                java.util.List<io.github.chess_sequel.engine.jsonTypes.DialogueChoice> choices = gameRun.getCurrentChoices();
+                if (choices != null && choices.size() == 1) {
+                    gameRun.selectChoice(0);
+                }
+            }
+            return true;
+        }
+
+        Board current = gameRun.getCurrentBoard();
+        if (!(current instanceof MapBoard)) return false;
+
+        int dc = 0, dr = 0;
+        switch (keycode) {
+            case Input.Keys.LEFT:  dc = -1; break;
+            case Input.Keys.RIGHT: dc =  1; break;
+            case Input.Keys.DOWN:  dr = -1; break;
+            case Input.Keys.UP:    dr =  1; break;
+            default: return false;
+        }
+
+        Piece lead = gameRun.getPlayer().getLeadPiece();
+        int targetCol = lead.getCol() + dc;
+        int targetRow = lead.getRow() + dr;
+
+        if (targetCol < 0 || targetRow < 0 || targetCol >= current.boardX || targetRow >= current.boardY) return true;
+
+        ArrayList<Move> moves = lead.generateMoves(current, true);
+        for (Move move : moves) {
+            if (move.getNewX() == targetCol && move.getNewY() == targetRow) {
+                move.execute();
+                if (current.getTiles().get(targetCol).get(targetRow).getInteractable() != null) {
+                    current.getTiles().get(targetCol).get(targetRow).getInteractable().interaction();
+                }
+                gameRun.setGameState(GameState.BOARD_STATE_CHANGED);
+                return true;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        if (keycode == Input.Keys.TAB) {
+            showingMap = false;
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
         if (boardActor == null) return false;
@@ -300,6 +367,14 @@ public class BoardInput extends InputAdapter {
         hoverScreenX = screenX;
         hoverScreenY = screenY;
         return false;
+    }
+
+    private void checkIndirectLeaderCapture(Board matchBoard) {
+        if (gameRun.getGameState() == GameState.MATCH_WON) return;
+        Piece leader = matchBoard.getBotPlayer().getLeadPiece();
+        if (leader != null && !matchBoard.getPieces().contains(leader)) {
+            ((BotPlayer) matchBoard.getBotPlayer()).onLeaderCaptured(matchBoard);
+        }
     }
 
     private void resolveStartOfTurnMoves(MatchBoard matchBoard) {

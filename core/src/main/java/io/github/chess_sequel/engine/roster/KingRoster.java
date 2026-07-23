@@ -3,6 +3,8 @@ package io.github.chess_sequel.engine.roster;
 import io.github.chess_sequel.engine.pieces.Piece;
 import io.github.chess_sequel.engine.pieces.classic.*;
 import io.github.chess_sequel.engine.pieces.goblin.*;
+import io.github.chess_sequel.engine.pieces.war.conflict.*;
+import io.github.chess_sequel.engine.pieces.war.loss.*;
 import io.github.chess_sequel.engine.pieces.war.strategy.*;
 import io.github.chess_sequel.engine.powers.kingPower.classic.BouncingBishopsPassive;
 import io.github.chess_sequel.engine.powers.kingPower.classic.MeekInheritPower;
@@ -79,6 +81,52 @@ public class KingRoster {
                 new TeamPreset("Royal Planning", () -> {
                     StrategyKing k = new StrategyKing(0, 0, false);
                     return mutable(k, new StrategyQueen(1, 0, false));
+                })
+            )
+        ));
+
+        KINGS.add(new KingDef(
+            "Conflict King",
+            "pieces/conflict/white-conflict-king.png",
+            Arrays.asList(
+                new TeamPreset("Raiding Party", () -> {
+                    ConflictKing k = new ConflictKing(0, 0, false);
+                    return mutable(k, new Barbarian(1, 0, false), new Barbarian(2, 0, false), new Barbarian(3, 0, false));
+                }),
+                new TeamPreset("Siege", () -> {
+                    ConflictKing k = new ConflictKing(0, 0, false);
+                    return mutable(k, new Trebuchet(1, 0, false), new Trebuchet(2, 0, false));
+                }),
+                new TeamPreset("Cavalry Charge", () -> {
+                    ConflictKing k = new ConflictKing(0, 0, false);
+                    return mutable(k, new Cavalry(1, 0, false), new Cavalry(2, 0, false), new ConflictBishop(3, 0, false));
+                }),
+                new TeamPreset("Berserker", () -> {
+                    ConflictKing k = new ConflictKing(0, 0, false);
+                    return mutable(k, new Berserker(1, 0, false), new Barbarian(2, 0, false));
+                })
+            )
+        ));
+
+        KINGS.add(new KingDef(
+            "Loss King",
+            "pieces/loss/white-loss-king.png",
+            Arrays.asList(
+                new TeamPreset("Haunted", () -> {
+                    LossKing k = new LossKing(0, 0, false);
+                    return mutable(k, new HorselessHeadman(1, 0, false), new LossPawn(2, 0, false), new LossPawn(3, 0, false));
+                }),
+                new TeamPreset("Phylactery", () -> {
+                    LossKing k = new LossKing(0, 0, false);
+                    return mutable(k, new PhylacteryQueen(1, 0, false), new LossBishop(2, 0, false));
+                }),
+                new TeamPreset("Ruins", () -> {
+                    LossKing k = new LossKing(0, 0, false);
+                    return mutable(k, new LossCastle(1, 0, false), new LossCastle(2, 0, false));
+                }),
+                new TeamPreset("Sovereign", () -> {
+                    LossKing k = new LossKing(0, 0, false);
+                    return mutable(k, new PhylacteryQueen(1, 0, false), new HorselessHeadman(2, 0, false), new LossBishop(3, 0, false));
                 })
             )
         ));

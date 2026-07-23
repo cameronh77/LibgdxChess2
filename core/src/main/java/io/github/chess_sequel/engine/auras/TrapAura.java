@@ -44,6 +44,13 @@ public class TrapAura extends Aura {
         owner.setRow(landedY);
         board.getPieces().remove(piece);
         board.getBoardAuras().remove(this);
+
+        for (Aura aura : new ArrayList<>(board.getBoardAuras())) {
+            if (aura instanceof TrapTriggerListener && aura.getOwner() != null
+                    && aura.getOwner().isBlack() == owner.isBlack()) {
+                ((TrapTriggerListener) aura).onTrapTriggered(owner, auraCol, auraRow, board);
+            }
+        }
     }
 
     @Override

@@ -11,12 +11,7 @@ import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.pieces.ChessClass;
 import io.github.chess_sequel.engine.pieces.Piece;
 import io.github.chess_sequel.engine.pieces.PieceType;
-import io.github.chess_sequel.engine.powers.kingPower.ActiveKingPower;
-import io.github.chess_sequel.engine.powers.kingPower.PassiveKingPower;
-import io.github.chess_sequel.engine.powers.kingPower.PreKingPower;
-
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The King piece. Moves one square in any direction and supports castling on 8×8 boards.
@@ -26,39 +21,8 @@ import java.util.List;
  */
 public class King extends Piece {
 
-    private Board activeBoard;
-    private final List<ActiveKingPower>  activePowers  = new ArrayList<>();
-    private final List<PassiveKingPower> passivePowers = new ArrayList<>();
-    private final List<PreKingPower>     preGamePowers = new ArrayList<>();
-
-    public void addActivePower(ActiveKingPower power)  { activePowers.add(power); }
-    public void addPassivePower(PassiveKingPower power) { passivePowers.add(power); }
-    public void addPreGamePower(PreKingPower power)     { preGamePowers.add(power); }
-
     @Override
     public String getDescription() { return "Moves one square in any direction. Protect it at all costs — if it falls, you lose."; }
-
-    public List<ActiveKingPower>  getActivePowers()  { return activePowers; }
-    public List<PassiveKingPower> getPassivePowers()  { return passivePowers; }
-    public List<PreKingPower>     getPreGamePowers()  { return preGamePowers; }
-
-    @Override
-    public void onStart(Board board) {
-        this.activeBoard = board;
-        for (PassiveKingPower power : passivePowers) board.addAura(power);
-    }
-
-    @Override
-    public void onCapture(Piece piece) {
-        if (activeBoard == null) return;
-        for (PassiveKingPower power : passivePowers) activeBoard.removeAura(power);
-    }
-
-    @Override
-    public void undoOnCapture(Piece piece) {
-        if (activeBoard == null) return;
-        for (PassiveKingPower power : passivePowers) activeBoard.addAura(power);
-    }
 
     public King(int x, int y, boolean isBlack){
         super(x, y, isBlack, "king", ChessClass.CLASSIC);
@@ -131,11 +95,8 @@ public class King extends Piece {
                     trueMoves.add(move);
                 } else if (!blockedByPiece && blockedByTerrain) {
                     trueMoves.add(new InteractMove(this, move.getNewX(), move.getNewY(), board));
-                } else if (!ignoreCheck) {
-                    System.out.println("[KING] filtered (" + move.getNewX() + "," + move.getNewY() + ") blockedByPiece=" + blockedByPiece + " blockedByTerrain=" + blockedByTerrain);
                 }
             }
-            if (!ignoreCheck) System.out.println("[KING] raw=" + moves.size() + " trueMoves=" + trueMoves.size() + " board=" + board.getClass().getSimpleName());
 
             if(!ignoreCheck){
                 ArrayList<Move> truerMoves = new ArrayList<>();
@@ -150,7 +111,6 @@ public class King extends Piece {
 
         }
         else{
-            System.out.println("[KING] turn-check FAILED: isBlack=" + isBlack + " board.whiteToMove=" + board.getWhiteToMove() + " board=" + board.getClass().getSimpleName());
             return moves;
         }
     }

@@ -59,7 +59,7 @@ public class MapBoard extends Board{
             switch(node.type){
                 case "enemy":
                     EnemyData enemyData = gameRun.getJsonLoader().getEnemyData(gameRun.getCurrentMap(), node.ref);
-                    BotPlayer botPlayer = new BotPlayer(gameRun, 3, enemyData.enemyLayout, enemyData.rewards);
+                    BotPlayer botPlayer = new BotPlayer(gameRun, 3, enemyData.enemyLayout, enemyData.rewards, enemyData.powers);
                     NPCPiece npc = new NPCPiece(botPlayer, gameRun, node.x, node.y, enemyData.dialogue, enemyData.enemyId, enemyData.defeatBehaviour, enemyData.defeatDialogue);
                     if ("patrol".equals(node.behaviour) && node.waypoints != null) {
                         npc.setBehaviour(new PatrolBehaviour(node.waypoints));

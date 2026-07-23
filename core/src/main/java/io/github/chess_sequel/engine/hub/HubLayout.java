@@ -25,8 +25,9 @@ public class HubLayout {
     /**
      * Builds the fixed hub layout:
      *
-     *   [Throne 8×6] ─SOUTH/NORTH─ [Main 10×7] ─EAST─ [Portal-Strategy 5×5]
-     *                                            ─WEST─ [Portal-Future  5×5]
+     *   [Throne 8×6] ─SOUTH/NORTH─ [Main 10×7] ─EAST─  [Portal-Strategy 5×5]
+     *                                            ─WEST─  [Portal-Conflict 5×5]
+     *                                            ─SOUTH─ [Portal-Loss     5×5]
      *
      * Spawn tile is the throne position (col=4, row=4) in the throne room.
      */
@@ -41,25 +42,33 @@ public class HubLayout {
         main.doors.add(Direction.NORTH);
         main.doors.add(Direction.EAST);
         main.doors.add(Direction.WEST);
+        main.doors.add(Direction.SOUTH);
         main.connections.put(Direction.NORTH, "throne");
         main.connections.put(Direction.EAST,  "portal-strategy");
         main.connections.put(Direction.WEST,  "portal-future");
+        main.connections.put(Direction.SOUTH, "portal-loss");
 
         // Strategy portal room (right offshoot)
         HubRoom portalStrategy = new HubRoom("portal-strategy", 5, 5, -1, -1, "strategy");
         portalStrategy.doors.add(Direction.WEST);
         portalStrategy.connections.put(Direction.WEST, "main");
 
-        // Future portal room (left offshoot) — portal section TBD
-        HubRoom portalFuture = new HubRoom("portal-future", 5, 5, -1, -1, null);
+        // Conflict portal room (left offshoot)
+        HubRoom portalFuture = new HubRoom("portal-future", 5, 5, -1, -1, "conflict");
         portalFuture.doors.add(Direction.EAST);
         portalFuture.connections.put(Direction.EAST, "main");
+
+        // Loss portal room (south offshoot)
+        HubRoom portalLoss = new HubRoom("portal-loss", 5, 5, -1, -1, "loss");
+        portalLoss.doors.add(Direction.NORTH);
+        portalLoss.connections.put(Direction.NORTH, "main");
 
         Map<String, HubRoom> rooms = new LinkedHashMap<>();
         rooms.put(throne.id, throne);
         rooms.put(main.id, main);
         rooms.put(portalStrategy.id, portalStrategy);
         rooms.put(portalFuture.id, portalFuture);
+        rooms.put(portalLoss.id, portalLoss);
 
         return new HubLayout(rooms, throne);
     }

@@ -136,7 +136,9 @@
         "nodes": [
           { "type": "shopitem", "ref": "orb-passive",        "x": 1, "y": 1, "price": 9 },
           { "type": "shopitem", "ref": "item-bomb",          "x": 2, "y": 2, "price": 3 },
-          { "type": "shopitem", "ref": "item-essence-horse", "x": 3, "y": 3, "price": 4 }
+          { "type": "shopitem", "ref": "item-essence-horse", "x": 3, "y": 3, "price": 4 },
+          { "type": "shopitem", "ref": "piece-faction",      "x": 3, "y": 1, "price": 7 },
+          { "type": "shopitem", "ref": "piece-faction",      "x": 1, "y": 3, "price": 7 }
         ]
       }
     ],
@@ -183,6 +185,381 @@
               ],
               "choices": [
                 { "text": "Not mine.", "next": "combat" }
+              ]
+            },
+            { "id": "combat", "outcome": "combat" }
+          ]
+        },
+        "rewards": {
+          "currency": 10,
+          "powerChoices": ["power-bouncing-bishops", "power-all-passant", "power-panopticon"]
+        }
+      }
+    ]
+  },
+  {
+    "sectionId": "conflict",
+    "roomType": "safe",
+    "variants": [
+      {
+        "variantId": "conflict-safe-a",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": []
+      }
+    ],
+    "enemies": []
+  },
+  {
+    "sectionId": "conflict",
+    "roomType": "rest",
+    "variants": [
+      {
+        "variantId": "conflict-rest-a",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": []
+      }
+    ],
+    "enemies": []
+  },
+  {
+    "sectionId": "conflict",
+    "roomType": "shop",
+    "variants": [
+      {
+        "variantId": "conflict-shop-a",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": [
+          { "type": "shopitem", "ref": "orb-passive",        "x": 1, "y": 1, "price": 9 },
+          { "type": "shopitem", "ref": "item-bomb",          "x": 2, "y": 2, "price": 3 },
+          { "type": "shopitem", "ref": "item-essence-horse", "x": 3, "y": 3, "price": 4 },
+          { "type": "shopitem", "ref": "piece-faction",      "x": 3, "y": 1, "price": 7 },
+          { "type": "shopitem", "ref": "piece-faction",      "x": 1, "y": 3, "price": 7 }
+        ]
+      }
+    ],
+    "enemies": []
+  },
+  {
+    "sectionId": "conflict",
+    "roomType": "combat",
+    "variants": [
+      {
+        "variantId": "conflict-combat-a",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": [
+          { "type": "enemy", "ref": "conflict-marauder", "x": 2, "y": 3 }
+        ]
+      },
+      {
+        "variantId": "conflict-combat-b",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": [
+          { "type": "enemy", "ref": "conflict-vanguard", "x": 2, "y": 2 }
+        ]
+      },
+      {
+        "variantId": "conflict-combat-c",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": [
+          { "type": "enemy", "ref": "conflict-striker", "x": 3, "y": 2 }
+        ]
+      }
+    ],
+    "enemies": [
+      {
+        "enemyId": "conflict-marauder",
+        "fixed": true,
+        "enemyLayout": [
+          { "piece": "barbarian", "x": 2, "y": 7 },
+          { "piece": "barbarian", "x": 5, "y": 7 }
+        ],
+        "dialogue": {
+          "entry": "start",
+          "nodes": [
+            {
+              "id": "start",
+              "lines": ["Out of my way.", "I don't need a reason to fight."],
+              "choices": [
+                { "text": "Then let's skip straight to it.", "next": "combat" }
+              ]
+            },
+            { "id": "combat", "outcome": "combat" }
+          ]
+        },
+        "rewards": { "currency": 3 }
+      },
+      {
+        "enemyId": "conflict-vanguard",
+        "fixed": true,
+        "enemyLayout": [
+          { "piece": "trebuchet", "x": 4, "y": 7 },
+          { "piece": "barbarian", "x": 1, "y": 6 },
+          { "piece": "barbarian", "x": 6, "y": 6 }
+        ],
+        "dialogue": {
+          "entry": "start",
+          "nodes": [
+            {
+              "id": "start",
+              "lines": ["Hold the line.", "Nothing gets through."],
+              "choices": [
+                { "text": "We'll see about that.", "next": "combat" }
+              ]
+            },
+            { "id": "combat", "outcome": "combat" }
+          ]
+        },
+        "rewards": { "currency": 5 }
+      },
+      {
+        "enemyId": "conflict-striker",
+        "fixed": true,
+        "enemyLayout": [
+          { "piece": "cavalry",        "x": 3, "y": 7 },
+          { "piece": "conflict-bishop","x": 5, "y": 7 }
+        ],
+        "dialogue": {
+          "entry": "start",
+          "nodes": [
+            {
+              "id": "start",
+              "lines": ["Fast and unpredictable.", "That's how wars are won."],
+              "choices": [
+                { "text": "Not this one.", "next": "combat" }
+              ]
+            },
+            { "id": "combat", "outcome": "combat" }
+          ]
+        },
+        "rewards": { "currency": 4 }
+      }
+    ]
+  },
+  {
+    "sectionId": "loss",
+    "roomType": "safe",
+    "variants": [
+      {
+        "variantId": "loss-safe-a",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": []
+      }
+    ],
+    "enemies": []
+  },
+  {
+    "sectionId": "loss",
+    "roomType": "rest",
+    "variants": [
+      {
+        "variantId": "loss-rest-a",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": []
+      }
+    ],
+    "enemies": []
+  },
+  {
+    "sectionId": "loss",
+    "roomType": "shop",
+    "variants": [
+      {
+        "variantId": "loss-shop-a",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": [
+          { "type": "shopitem", "ref": "orb-passive",        "x": 1, "y": 1, "price": 9 },
+          { "type": "shopitem", "ref": "item-bomb",          "x": 2, "y": 2, "price": 3 },
+          { "type": "shopitem", "ref": "item-essence-horse", "x": 3, "y": 3, "price": 4 },
+          { "type": "shopitem", "ref": "piece-faction",      "x": 3, "y": 1, "price": 7 },
+          { "type": "shopitem", "ref": "piece-faction",      "x": 1, "y": 3, "price": 7 }
+        ]
+      }
+    ],
+    "enemies": []
+  },
+  {
+    "sectionId": "loss",
+    "roomType": "combat",
+    "variants": [
+      {
+        "variantId": "loss-combat-a",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": [
+          { "type": "enemy", "ref": "loss-haunt", "x": 3, "y": 3 }
+        ]
+      },
+      {
+        "variantId": "loss-combat-b",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": [
+          { "type": "enemy", "ref": "loss-wraith", "x": 3, "y": 3 }
+        ]
+      },
+      {
+        "variantId": "loss-combat-c",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": [
+          { "type": "enemy", "ref": "loss-siege", "x": 3, "y": 3 }
+        ]
+      }
+    ],
+    "enemies": [
+      {
+        "enemyId": "loss-haunt",
+        "fixed": true,
+        "enemyLayout": [
+          { "piece": "loss-pawn",          "x": 3, "y": 7 },
+          { "piece": "loss-pawn",          "x": 5, "y": 7 },
+          { "piece": "horseless-headman",  "x": 4, "y": 6 }
+        ],
+        "dialogue": {
+          "entry": "start",
+          "nodes": [
+            {
+              "id": "start",
+              "lines": ["We don't die.", "We just come back angrier."],
+              "choices": [
+                { "text": "We'll see about that.", "next": "combat" }
+              ]
+            },
+            { "id": "combat", "outcome": "combat" }
+          ]
+        },
+        "rewards": { "currency": 3 }
+      },
+      {
+        "enemyId": "loss-wraith",
+        "fixed": true,
+        "enemyLayout": [
+          { "piece": "loss-bishop", "x": 3, "y": 7 },
+          { "piece": "loss-castle", "x": 5, "y": 7 }
+        ],
+        "dialogue": {
+          "entry": "start",
+          "nodes": [
+            {
+              "id": "start",
+              "lines": ["You can't hit what you can't see.", "And you can't move where we've been."],
+              "choices": [
+                { "text": "I'll manage.", "next": "combat" }
+              ]
+            },
+            { "id": "combat", "outcome": "combat" }
+          ]
+        },
+        "rewards": { "currency": 4 }
+      },
+      {
+        "enemyId": "loss-siege",
+        "fixed": true,
+        "enemyLayout": [
+          { "piece": "loss-castle", "x": 2, "y": 7 },
+          { "piece": "loss-castle", "x": 6, "y": 7 },
+          { "piece": "loss-pawn",   "x": 4, "y": 6 }
+        ],
+        "dialogue": {
+          "entry": "start",
+          "nodes": [
+            {
+              "id": "start",
+              "lines": ["Every step you take, we haunt.", "Turn back while you still can."],
+              "choices": [
+                { "text": "Not a chance.", "next": "combat" }
+              ]
+            },
+            { "id": "combat", "outcome": "combat" }
+          ]
+        },
+        "rewards": { "currency": 5 }
+      }
+    ]
+  },
+  {
+    "sectionId": "loss",
+    "roomType": "boss",
+    "mapX": 8,
+    "mapY": 8,
+    "variants": [
+      {
+        "variantId": "loss-boss-a",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": [
+          { "type": "enemy", "ref": "loss-sovereign", "x": 4, "y": 5 }
+        ]
+      }
+    ],
+    "enemies": [
+      {
+        "enemyId": "loss-sovereign",
+        "fixed": true,
+        "enemyLayout": [
+          { "piece": "loss-king",         "x": 4, "y": 7 },
+          { "piece": "phylactery-queen",  "x": 2, "y": 7 },
+          { "piece": "horseless-headman", "x": 3, "y": 6 },
+          { "piece": "loss-bishop",       "x": 6, "y": 7 },
+          { "piece": "loss-pawn",         "x": 1, "y": 7 },
+          { "piece": "loss-pawn",         "x": 7, "y": 6 }
+        ],
+        "dialogue": {
+          "entry": "start",
+          "nodes": [
+            {
+              "id": "start",
+              "lines": [
+                "You've come all this way.",
+                "Through strategy. Through conflict.",
+                "And now you're here, where everything ends.",
+                "Nothing you do here will matter.",
+                "But you'll try anyway. They always do."
+              ],
+              "choices": [
+                { "text": "Then let's get this over with.", "next": "combat" }
+              ]
+            },
+            { "id": "combat", "outcome": "combat" }
+          ]
+        },
+        "rewards": { "currency": 10 }
+      }
+    ]
+  },
+  {
+    "sectionId": "conflict",
+    "roomType": "boss",
+    "mapX": 8,
+    "mapY": 8,
+    "variants": [
+      {
+        "variantId": "conflict-boss-a",
+        "possibleDoors": ["NORTH", "SOUTH", "EAST", "WEST"],
+        "nodes": [
+          { "type": "enemy", "ref": "conflict-warlord", "x": 4, "y": 5 }
+        ]
+      }
+    ],
+    "enemies": [
+      {
+        "enemyId": "conflict-warlord",
+        "fixed": true,
+        "enemyLayout": [
+          { "piece": "berserker", "x": 4, "y": 7 },
+          { "piece": "cavalry",   "x": 2, "y": 7 },
+          { "piece": "cavalry",   "x": 6, "y": 7 },
+          { "piece": "barbarian", "x": 1, "y": 6 },
+          { "piece": "barbarian", "x": 7, "y": 6 }
+        ],
+        "dialogue": {
+          "entry": "start",
+          "nodes": [
+            {
+              "id": "start",
+              "lines": [
+                "You've been carving through my ranks.",
+                "I respect that.",
+                "But this ends now."
+              ],
+              "choices": [
+                { "text": "I'm not done yet.", "next": "combat" }
               ]
             },
             { "id": "combat", "outcome": "combat" }

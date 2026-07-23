@@ -19,5 +19,45 @@
       { "type": "combat", "weight": 5, "max": 8 },
       { "type": "rest",   "weight": 1, "max": 2 }
     ]
+  },
+  {
+    "sectionId": "conflict",
+    "pathId": "war",
+    "gridWidth": 8,
+    "gridHeight": 8,
+    "mapX": 5,
+    "mapY": 5,
+    "combatX": 8,
+    "combatY": 8,
+    "spawnRoomType": "safe",
+    "targetRooms": 8,
+    "guaranteedRooms": [
+      { "type": "boss",  "guaranteed": true, "chance": 1.0 },
+      { "type": "shop",  "guaranteed": true, "chance": 1.0 }
+    ],
+    "roomPool": [
+      { "type": "combat", "weight": 5, "max": 5 },
+      { "type": "rest",   "weight": 1, "max": 2 }
+    ]
+  },
+  {
+    "sectionId": "loss",
+    "pathId": "war",
+    "gridWidth": 8,
+    "gridHeight": 8,
+    "mapX": 5,
+    "mapY": 5,
+    "combatX": 8,
+    "combatY": 8,
+    "spawnRoomType": "safe",
+    "targetRooms": 8,
+    "guaranteedRooms": [
+      { "type": "boss",  "guaranteed": true, "chance": 1.0 },
+      { "type": "shop",  "guaranteed": true, "chance": 1.0 }
+    ],
+    "roomPool": [
+      { "type": "combat", "weight": 5, "max": 5 },
+      { "type": "rest",   "weight": 1, "max": 2 }
+    ]
   }
 ]

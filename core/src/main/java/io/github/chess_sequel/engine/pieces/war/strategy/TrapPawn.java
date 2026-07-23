@@ -1,11 +1,13 @@
 package io.github.chess_sequel.engine.pieces.war.strategy;
 
+import io.github.chess_sequel.engine.auras.Aura;
 import io.github.chess_sequel.engine.auras.TrapAura;
 import io.github.chess_sequel.engine.location.board.AlterLayoutBoard;
 import io.github.chess_sequel.engine.location.board.Board;
 import io.github.chess_sequel.engine.moves.Move;
 import io.github.chess_sequel.engine.moves.TrapMove;
 import io.github.chess_sequel.engine.pieces.ChessClass;
+import io.github.chess_sequel.engine.pieces.Piece;
 import io.github.chess_sequel.engine.pieces.classic.Pawn;
 
 import java.util.ArrayList;
@@ -20,6 +22,8 @@ import java.util.ArrayList;
 public class TrapPawn extends Pawn {
 
     TrapAura currentTrap;
+    private boolean deadfallActive = false;
+    private final ArrayList<TrapAura> removedOnCapture = new ArrayList<>();
 
     public TrapPawn(int x, int y, boolean isBlack) {
         super(x, y, isBlack, "trap-pawn", ChessClass.STRATEGY);
@@ -78,6 +82,50 @@ public class TrapPawn extends Pawn {
         board.addAura(currentTrap);
     }
 
+    @Override
+    public void onStart(Board board) {
+        super.onStart(board);
+        if (!deadfallActive) return;
+        deadfallActive = false;
+        int offset = isBlack ? -1 : 1;
+        int nextRow = row + offset;
+        if (nextRow < 0 || nextRow >= board.boardY) return;
+        // Try left diagonal then right diagonal; place on first empty tile found
+        for (int dc : new int[]{-1, 1}) {
+            int trapCol = col + dc;
+            if (trapCol < 0 || trapCol >= board.boardX) continue;
+            if (board.getTiles().get(trapCol).get(nextRow).getPiece() != null) continue;
+            TrapAura trap = new TrapAura(this, trapCol, nextRow);
+            board.addAura(trap);
+            currentTrap = trap;
+            return;
+        }
+    }
+
+    @Override
+    public void onCapture(Piece piece) {
+        super.onCapture(piece);
+        if (activeBoard == null) return;
+        removedOnCapture.clear();
+        for (Aura aura : new ArrayList<>(activeBoard.getBoardAuras())) {
+            if (aura instanceof TrapAura && aura.getOwner() == this) {
+                removedOnCapture.add((TrapAura) aura);
+                activeBoard.removeAura(aura);
+            }
+        }
+    }
+
+    @Override
+    public void undoOnCapture(Piece piece) {
+        super.undoOnCapture(piece);
+        if (activeBoard == null) return;
+        for (TrapAura trap : removedOnCapture) {
+            activeBoard.addAura(trap);
+        }
+        removedOnCapture.clear();
+    }
+
     public TrapAura getCurrentTrap() { return currentTrap; }
     public void setCurrentTrap(TrapAura trap) { this.currentTrap = trap; }
+    public void setDeadfallActive(boolean active) { this.deadfallActive = active; }
 }

@@ -1,9 +1,12 @@
 {
-selectedKingIndex: 0
+selectedKingIndex: 2
 selectedPresetIndex: 0
 clearedSections: []
 defeatedEnemies: [
 	strategy-grunt
+	conflict-marauder
+	strategy-patrol
+	strategy-captain
 ]
 visitedLocations: []
 unlocks: []
